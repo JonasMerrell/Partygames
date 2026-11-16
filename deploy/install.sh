@@ -11,6 +11,7 @@ admin=${SUDO_USER:-jonas}
 
 cert=${1:-}; key=${2:-}
 if [ -z "$cert" ]; then
+  command -v openssl >/dev/null || { echo "openssl not installed; pass CERT KEY (on the VM: /var/lib/hohmann-reach/web-tls/fullchain.pem and key.pem)" >&2; exit 1; }
   for f in $(grep -rl "BEGIN CERTIFICATE" /var/lib/hohmann-reach 2>/dev/null); do
     if openssl x509 -in "$f" -noout -issuer 2>/dev/null | grep -qi "let's encrypt\|O = Let's Encrypt\|ISRG"; then
       [ -z "$cert" ] || { echo "several Let's Encrypt certificates found; pass CERT KEY explicitly" >&2; exit 1; }

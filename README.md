@@ -47,7 +47,7 @@ switch-game                 # which one is running
 sudo partyhall-update       # install the latest release
 ```
 
-First-time setup (as root, from an unpacked release): `sh partyhall/deploy/install.sh`.
+First-time setup (as root, from an unpacked release): `sh partyhall/deploy/install.sh /var/lib/hohmann-reach/web-tls/fullchain.pem /var/lib/hohmann-reach/web-tls/key.pem`.
 Uploaded games live in `/var/lib/partyhall/games`, built-in ones in
 `/opt/partyhall/games`.
 
