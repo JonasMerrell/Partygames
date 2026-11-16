@@ -145,8 +145,8 @@ export default async function (ctx) {
       if (S.captain?.id === p.id) tags.push(h('span.mt-tag.cap', 'Captain'));
       if (S.mate?.id === p.id) tags.push(h('span.mt-tag.mate', 'First Mate'));
       if (S.nominee?.id === p.id) tags.push(h('span.mt-tag.nom', 'Nominee'));
-      if (!S.captain && S.lastCaptain === p.id) tags.push(h('span.mt-tag.old', 'Last Captain'));
-      if (!S.captain && S.lastMate === p.id) tags.push(h('span.mt-tag.old', 'Last Mate'));
+      if (!S.captain && !S.reveal && S.lastCaptain === p.id) tags.push(h('span.mt-tag.old', 'Last Captain'));
+      if (!S.captain && !S.reveal && S.lastMate === p.id) tags.push(h('span.mt-tag.old', 'Last Mate'));
       if (S.cleared.has(p.id)) tags.push(h('span.mt-tag.ok', 'Not the Ringleader'));
       let vote = null;
       if (S.votes) vote = S.votes.has(p.id) ? h('div.mt-vote.' + (S.votes.get(p.id) ? 'aye' : 'nay'), S.votes.get(p.id) ? 'AYE' : 'NAY') : null;
@@ -168,7 +168,7 @@ export default async function (ctx) {
         h('div.mt-trow', h('div.mt-tlabel.steady', 'Steady'), slots(STEADY_TO_WIN, S.steady, 'steady')),
         h('div.mt-trow', h('div.mt-tlabel.mutiny', 'Mutiny'), slots(MUTINY_TO_WIN, S.mutiny, 'mutiny', powers))),
       banner ? h('div.mt-phase', h('h1', banner)) : phaseEl,
-      h('div.mt-seats', seats.map(chip))));
+      h('div.mt-seats' + (n > 7 ? '.many' : ''), { style: { '--n': n } }, seats.map(chip))));
   }
 
   // ---------- deck ----------
@@ -473,13 +473,14 @@ css.textContent = `
     background: linear-gradient(180deg, color-mix(in srgb, var(--card) 80%, transparent), transparent); border-radius: 24px; padding: 2vh 2vw; }
   .mt-phase h1 { font-size: 2.3em; margin: 0; animation: pop .3s ease-out; }
   .mt-phase p { font-size: 1.15em; color: var(--dim); margin: 0; max-width: 1100px; }
-  .mt-big { height: 20vh; filter: drop-shadow(0 0 30px rgba(255,255,255,.15)); animation: pop .4s ease-out; margin-top: .5em; }
+  .mt-big { height: 17vh; filter: drop-shadow(0 0 30px rgba(255,255,255,.15)); animation: pop .4s ease-out; margin-top: .5em; }
   .mt-backs { display: flex; gap: 1em; margin-top: .6em; }
   .mt-back { width: 3.2em; height: 4.4em; border-radius: 10px; background: linear-gradient(160deg, #2b3a66, #141b33);
     border: 3px solid #5a6aa8; display: flex; align-items: center; justify-content: center; color: #8fa0e0; font-size: 1.3em;
     animation: deal .5s ease-out backwards; }
   @keyframes deal { from { transform: translateY(-40px) rotate(-12deg); opacity: 0; } }
-  .mt-seats { display: grid; grid-template-columns: repeat(auto-fit, minmax(7.5em, 1fr)); gap: .8vw; }
+  .mt-seats { display: grid; grid-template-columns: repeat(var(--n), minmax(0, 1fr)); gap: .8vw; margin-top: .6em; }
+  .mt-seats.many { font-size: .8em; }
   .mt-seat { background: color-mix(in srgb, var(--c) 14%, var(--card)); border: 3px solid var(--c); border-radius: 18px;
     padding: .6em .7em; position: relative; min-height: 3.6em; display: flex; flex-direction: column; gap: .3em; }
   .mt-seat.away { opacity: .5; }
