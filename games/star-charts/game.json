@@ -1,0 +1,10 @@
+{
+  "name": "Star Charts",
+  "description": "Two teams, one sky of words. Your astronomer gives one-word clues; find your stars and steer clear of the black hole.",
+  "icon": "🔭",
+  "color": "#ffb547",
+  "minPlayers": 4,
+  "maxPlayers": 16,
+  "lateJoin": true,
+  "music": "think"
+}
