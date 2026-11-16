@@ -54,7 +54,7 @@ export default async function (ctx) {
 
 | | |
 |---|---|
-| `ctx.el` | The TV's stage element. Draw anything into it. |
+| `ctx.el` | The TV's stage element. Draw anything into it. The TV is a fixed 16:9 frame (1em = 1/64 of its width, so size things in em); if your content overflows, the stage is zoomed down to fit. |
 | `ctx.players` / `ctx.connected` | Arrays of `{ id, name, color, connected }`. |
 | `ctx.player(id)` | One player. |
 | `ctx.show(to, view)` | Put a view on phones. `to` is `'all'`, a player, an id or a list. Phones that reconnect get their last view back. |

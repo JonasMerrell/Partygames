@@ -16,6 +16,35 @@ let sock = null, room = null, games = [], game = null, run = null;
 
 const joinUrl = () => location.host;
 
+// Keep every screen inside the 16:9 frame: if what's showing is taller or
+// wider than the frame, zoom it down until it fits.
+function fitScreen() {
+  const el = [...app.children].find((c) => !c.classList.contains('t-overlay'));
+  if (!el) return;
+  el.style.zoom = '';
+  const cs = getComputedStyle(app);
+  const availH = app.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom);
+  const availW = app.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight);
+  let needH = el.scrollHeight, needW = el.scrollWidth;
+  // A game screen fills the frame; what matters is whether its stage overflows.
+  const stage = el.classList.contains('game') && el.querySelector(':scope > .stage');
+  if (stage) {
+    stage.style.zoom = '';
+    const over = stage.scrollHeight - stage.clientHeight;
+    const overW = stage.scrollWidth - stage.clientWidth;
+    if (over > 1 || overW > 1) {
+      stage.style.zoom = String(Math.max(0.35, Math.min(stage.clientHeight / stage.scrollHeight, stage.clientWidth / stage.scrollWidth)));
+    }
+    return;
+  }
+  const z = Math.min(1, availH / needH, availW / needW);
+  if (z < 0.995) el.style.zoom = String(Math.max(0.35, z));
+}
+let fitQueued = false;
+const queueFit = () => { if (!fitQueued) { fitQueued = true; requestAnimationFrame(() => { fitQueued = false; fitScreen(); }); } };
+new MutationObserver(queueFit).observe(app, { childList: true, subtree: true, characterData: true });
+addEventListener('resize', queueFit);
+
 // ---------- game picker ----------
 async function picker(err) {
   keepAwake(false);
@@ -101,7 +130,7 @@ function lobby() {
       : h('p.sub', 'Waiting for players…')),
     h('div.row',
       h('button.big', { disabled: !enough, onclick: start }, enough ? 'Everybody\'s in!' : `Need ${min}+ players`),
-      game?.hasTutorial && h('button.ghost', { onclick: () => playTutorial(document.body, game) }, '▶ How to play'),
+      game?.hasTutorial && h('button.ghost', { onclick: () => playTutorial(app, game) }, '▶ How to play'),
       h('button.ghost', { onclick: quit }, 'Pick another game'),
       muteButton())));
   list.forEach((p) => shown.add(p.id));
@@ -318,7 +347,7 @@ function makeRun() {
     games = await (await fetch('/api/games')).json();
     const g = games.find((x) => x.id === tut);
     if (g) {
-      await playTutorial(document.body, g, { controls: false });
+      await playTutorial(app, g, { controls: false });
       app.replaceChildren(h('div.say.t-end', { style: { '--accent': g.color || '#7d8cff' } },
         h('div.t-icon', g.icon || '🎲'), h('h1', `Let's play ${g.name}!`),
         h('p', `Open ${location.host}/host on the TV, then join on your phone.`)));

@@ -76,12 +76,26 @@ body.phone main { max-width: 520px; margin: 0 auto; padding: 16px 16px calc(24px
 .swatch.on { border-color: var(--fg); transform: scale(1.15); }
 
 /* ---------- TV ---------- */
-body.tv { font-size: clamp(18px, 1.6vw, 34px); }
-body.tv main { min-height: 100vh; padding: 3vh 4vw; }
+/* The TV is always a 16:9 frame, letterboxed into any window. Font sizes
+   scale with the frame (1em = 1/64 of its width), and host.js shrinks a
+   screen whose content would not fit. */
+body.tv { height: 100vh; overflow: hidden; display: grid; place-items: center; background-color: #0b0910; }
+body.tv main#app { position: relative; width: min(100vw, calc(100vh * 16 / 9)); height: min(100vh, calc(100vw * 9 / 16));
+  font-size: calc(min(100vw, 100vh * 16 / 9) / 64); padding: 2.2% 3%; overflow: hidden;
+  background: radial-gradient(80% 80% at 20% -10%, #2b2160 0%, transparent 60%),
+              radial-gradient(70% 70% at 110% 110%, #3a1d4f 0%, transparent 60%), var(--bg); }
+body.tv main#app > * { transform-origin: top center; }
+body.tv main#app > .t-overlay { transform: none; }
 body.tv.offline::after { content: 'Reconnecting to server…'; position: fixed; bottom: 16px; left: 50%; transform: translateX(-50%);
   background: #4a3a10; color: #ffe9a8; padding: 8px 16px; border-radius: 12px; }
 .picker .sub { text-align: center; }
-.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr)); gap: 24px; margin-top: 2em; }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(9.2em, 1fr)); gap: .7em; margin-top: 1em; }
+body.tv .picker .logo { font-size: 2.4em; margin: 0 0 .2em; }
+body.tv .gcard { padding: .7em .8em; border-radius: .7em; gap: .2em; }
+body.tv .gcard h3 { font-size: .95em; }
+body.tv .gcard p { font-size: .62em; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+body.tv .gicon { font-size: 1.5em; }
+body.tv .tag { font-size: .55em; }
 .gcard { background: var(--card); border: 2px solid var(--line); border-radius: 24px; padding: 28px; text-align: left;
   cursor: pointer; display: flex; flex-direction: column; gap: 6px; transition: transform .12s, border-color .12s; }
 .gcard:hover, .gcard:focus-visible { transform: translateY(-4px); border-color: var(--accent); }
@@ -107,20 +121,20 @@ body.tv.offline::after { content: 'Reconnecting to server…'; position: fixed; 
 .chip .x:hover { opacity: 1; }
 @keyframes pop { from { transform: scale(.4); opacity: 0; } }
 
-.game { display: flex; flex-direction: column; min-height: 94vh; }
+.game { display: flex; flex-direction: column; height: 100%; }
 .hostbar { display: flex; align-items: center; gap: 20px; color: var(--dim); }
 .roomcode-sm { font-weight: 900; letter-spacing: .15em; }
 .timer { flex: 1; text-align: center; font-size: 2em; font-weight: 900; color: var(--fg); font-variant-numeric: tabular-nums; }
 .timer.urgent { color: var(--err); animation: pulse .5s ease-in-out infinite alternate; }
 @keyframes pulse { to { transform: scale(1.15); } }
-.game .stage { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; gap: 3vh; }
+.game .stage { min-height: 0; overflow: hidden; flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; gap: 3vh; }
 .say h1 { font-size: 3.2em; }
 .say p { font-size: 1.4em; color: var(--dim); }
 
 .inspired { color: var(--dim); font-weight: 600; font-size: .7em; }
 
 /* ---------- How to play ---------- */
-.t-overlay { position: fixed; inset: 0; z-index: 50; display: flex; flex-direction: column; align-items: center;
+.t-overlay { position: absolute; inset: 0; z-index: 50; display: flex; flex-direction: column; align-items: center;
   padding: 3vh 4vw; gap: 2.5vh; text-align: center;
   background: radial-gradient(900px 600px at 50% 40%, color-mix(in srgb, var(--accent) 22%, #1f1a33), #100d19); }
 .t-head { width: 100%; display: flex; justify-content: space-between; align-items: center; color: var(--dim); font-weight: 800; }
@@ -189,4 +203,4 @@ body.tv.offline::after { content: 'Reconnecting to server…'; position: fixed; 
 @keyframes t-pulse { to { transform: scale(1.1); } }
 @keyframes t-float { 50% { transform: translateY(-14px); } }
 body.recording .t-head .t-ctrl { display: none; }
-.t-end { min-height: 94vh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; animation: t-rise .6s both; }
+.t-end { height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; animation: t-rise .6s both; }

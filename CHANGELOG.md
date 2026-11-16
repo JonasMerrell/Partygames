@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.12.0
+
+- The TV is always a 16:9 frame, letterboxed into any window, and screens that would overflow are shrunk to fit.
+
 ## 0.11.0
 
 - New game: Gobble Gallery, a Thanksgiving drawing game for kids and grown-ups, 2–10 players. Everyone picks one of two picture cards ("🦃 Turkey on roller skates", "🥧 Pie with a smiley face", 109 in all) and draws it on a kid-sized pad with crayons, a paint bucket and an eraser. Each drawing goes up framed on the TV and everyone else taps which card it is from four big buttons marked by colour, shape and emoji; the TV reads the choices out loud for players who can't read yet. Right guesses win 2 pies, artists win a pie for everyone who gets theirs, nobody loses points, and everyone gets an award at the end. Quick (1 round), Normal or Relaxed (2 rounds).
