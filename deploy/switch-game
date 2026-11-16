@@ -1,0 +1,24 @@
+#!/bin/sh
+# Pick which server owns port 7777 on this VM. The choice survives reboots.
+#   sudo switch-game party     Party Hall
+#   sudo switch-game hohmann   Hohmann's Reach
+#   switch-game                show which one is running
+set -eu
+running() { systemctl is-active --quiet "$1"; }
+show() {
+  if running partyhall.service; then echo "party (Party Hall) is running on 7777"
+  elif running hohmann-reach.service; then echo "hohmann (Hohmann's Reach) is running on 7777"
+  else echo "nothing is running on 7777"; fi
+}
+case "${1:-status}" in
+  party|partyhall)
+    systemctl disable --now hohmann-reach.service 2>/dev/null || true
+    systemctl enable --now partyhall.service ;;
+  hohmann|hohmann-reach|reach)
+    systemctl disable --now partyhall.service 2>/dev/null || true
+    systemctl enable --now hohmann-reach.service ;;
+  status) ;;
+  *) echo "usage: switch-game [party|hohmann|status]" >&2; exit 2 ;;
+esac
+sleep 1
+show

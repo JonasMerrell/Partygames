@@ -1,0 +1,30 @@
+[Unit]
+Description=Party Hall party games server
+After=network-online.target
+Wants=network-online.target
+# Shares port 7777 with Hohmann's Reach: starting one stops the other.
+Conflicts=hohmann-reach.service
+
+[Service]
+User=partyhall
+Group=partyhall
+EnvironmentFile=-/etc/partyhall/env
+Environment=PARTY_ADMIN_TOKEN_FILE=/etc/partyhall/admin-token
+# HTTPS: install.sh adds a drop-in with LoadCredential=tls-cert:... and
+# LoadCredential=tls-key:... pointing at the certificate Hohmann's Reach keeps
+# for the DuckDNS name. systemd hands the service a private copy at start, and
+# partyhall picks it up from $CREDENTIALS_DIRECTORY.
+ExecStart=/opt/partyhall/partyhall --port 7777 \
+  --games /var/lib/partyhall/games --games /opt/partyhall/games
+Restart=on-failure
+RestartSec=3
+AmbientCapabilities=
+NoNewPrivileges=yes
+ProtectSystem=strict
+ProtectHome=yes
+PrivateTmp=yes
+ReadWritePaths=/var/lib/partyhall
+MemoryMax=512M
+
+[Install]
+WantedBy=multi-user.target

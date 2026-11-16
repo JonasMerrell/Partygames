@@ -1,0 +1,9 @@
+{
+  "name": "Quick Poll",
+  "description": "Template: copy this folder to start a new game.",
+  "icon": "📊",
+  "color": "#5df08a",
+  "minPlayers": 1,
+  "maxPlayers": 16,
+  "lateJoin": true
+}

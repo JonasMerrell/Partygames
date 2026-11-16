@@ -1,0 +1,8 @@
+{
+  "name": "Face-Off",
+  "description": "Everyone writes funny answers to prompts, then the room votes on head-to-head match-ups.",
+  "icon": "🥊",
+  "color": "#ff7d5d",
+  "minPlayers": 3,
+  "maxPlayers": 12
+}

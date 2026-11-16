@@ -1,0 +1,29 @@
+#!/bin/sh
+# Install the latest Party Hall release from GitHub, keeping uploaded games.
+#   sudo partyhall-update [tag]
+set -eu
+repo=JonasMerrell/partyhall
+asset=partyhall-x86_64-linux.tar.gz
+if [ -n "${1:-}" ]; then base="https://github.com/$repo/releases/download/$1"
+else base="https://github.com/$repo/releases/latest/download"; fi
+tmp=$(mktemp -d); trap 'rm -rf "$tmp"' EXIT
+cd "$tmp"
+curl -fsSL -o "$asset" "$base/$asset"
+curl -fsSL -o "$asset.sha256" "$base/$asset.sha256"
+sha256sum -c "$asset.sha256"
+tar -xzf "$asset"
+install -m 755 partyhall/partyhall /opt/partyhall/partyhall.new
+mv /opt/partyhall/partyhall.new /opt/partyhall/partyhall
+rm -rf /opt/partyhall/games.new && cp -r partyhall/games /opt/partyhall/games.new
+rm -rf /opt/partyhall/games && mv /opt/partyhall/games.new /opt/partyhall/games
+install -m 755 partyhall/deploy/switch-game /usr/local/bin/switch-game
+install -m 755 partyhall/deploy/partyhall-update /usr/local/bin/partyhall-update
+if ! cmp -s partyhall/deploy/partyhall.service /etc/systemd/system/partyhall.service; then
+  install -m 644 partyhall/deploy/partyhall.service /etc/systemd/system/partyhall.service
+  systemctl daemon-reload
+fi
+/opt/partyhall/partyhall --version
+if systemctl is-active --quiet partyhall.service; then
+  systemctl restart partyhall.service
+  echo "restarted partyhall"
+fi
