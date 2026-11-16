@@ -1,0 +1,9 @@
+{
+  "name": "Saltwind Isles",
+  "description": "Settle a windswept island chain: roll for cargo, trade with friends, build bridges, huts and lighthouses. First to the target score wins.",
+  "icon": "🏝️",
+  "color": "#3fd6c0",
+  "minPlayers": 2,
+  "maxPlayers": 6,
+  "music": "think"
+}
