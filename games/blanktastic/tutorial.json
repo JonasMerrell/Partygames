@@ -1,69 +1,77 @@
 [
- {
-  "title": "A Judge reads the prompt",
-  "text": "Each round one player is the Judge. A prompt with a blank goes up on the TV.",
-  "scene": [
-   {
-    "tv": "My grandma's secret talent is ____."
-   }
-  ]
- },
- {
-  "title": "Play your funniest card",
-  "text": "Everyone else picks the answer card from their hand that fills the blank best, or writes their own.",
-  "scene": [
-   {
-    "phone": "Your hand",
-    "buttons": [
-     "a pet rock",
-     "breakdancing",
-     "talking to pigeons"
+  {
+    "title": "A Judge reads the prompt",
+    "text": "Each round one player is the Judge. A prompt with a blank goes up on the TV.",
+    "scene": [
+      {
+        "tv": "My grandma's secret talent is ____."
+      }
     ],
-    "tap": 2
-   },
-   {
-    "card": "talking to pigeons",
-    "color": "#f2c14e",
-    "fx": "pop"
-   }
-  ],
-  "flow": true
- },
- {
-  "title": "The Judge picks a star",
-  "text": "Answers are shown without names. The Judge picks a favourite and that player wins the star.",
-  "scene": [
-   {
-    "card": "breakdancing",
-    "color": "#5fa8d3"
-   },
-   {
-    "card": "talking to pigeons",
-    "color": "#f2c14e",
-    "fx": "glow"
-   },
-   {
-    "card": "a pet rock",
-    "color": "#8cc084"
-   },
-   {
-    "icon": "⭐"
-   }
-  ]
- },
- {
-  "title": "Take turns judging",
-  "text": "The Judge rotates every round. Collect the most stars to win.",
-  "scene": [
-   {
-    "icon": "⚖️",
-    "label": "Judge rotates"
-   },
-   {
-    "icon": "⭐⭐⭐",
-    "label": "most stars wins",
-    "fx": "float"
-   }
-  ]
- }
+    "audio": "audio/tut_1.wav",
+    "ms": 7540
+  },
+  {
+    "title": "Play your funniest card",
+    "text": "Everyone else picks the answer card from their hand that fills the blank best, or writes their own.",
+    "scene": [
+      {
+        "phone": "Your hand",
+        "buttons": [
+          "a pet rock",
+          "breakdancing",
+          "talking to pigeons"
+        ],
+        "tap": 2
+      },
+      {
+        "card": "talking to pigeons",
+        "color": "#f2c14e",
+        "fx": "pop"
+      }
+    ],
+    "flow": true,
+    "audio": "audio/tut_2.wav",
+    "ms": 7100
+  },
+  {
+    "title": "The Judge picks a star",
+    "text": "Answers are shown without names. The Judge picks a favourite and that player wins the star.",
+    "scene": [
+      {
+        "card": "breakdancing",
+        "color": "#5fa8d3"
+      },
+      {
+        "card": "talking to pigeons",
+        "color": "#f2c14e",
+        "fx": "glow"
+      },
+      {
+        "card": "a pet rock",
+        "color": "#8cc084"
+      },
+      {
+        "icon": "\u2b50"
+      }
+    ],
+    "audio": "audio/tut_3.wav",
+    "ms": 6940
+  },
+  {
+    "title": "Take turns judging",
+    "text": "The Judge rotates every round. Collect the most stars to win.",
+    "scene": [
+      {
+        "icon": "\u2696\ufe0f",
+        "label": "Judge rotates"
+      },
+      {
+        "icon": "\u2b50\u2b50\u2b50",
+        "label": "most stars wins",
+        "fx": "float"
+      }
+    ],
+    "audio": "audio/tut_4.wav",
+    "ms": 5740
+  }
 ]

@@ -1,60 +1,68 @@
 [
- {
-  "title": "Something strange",
-  "text": "The TV shows an obscure word, an odd law or a strange fact, with the real meaning hidden.",
-  "scene": [
-   {
-    "tv": "BUMFUZZLE",
-    "sub": "What does it mean?"
-   }
-  ]
- },
- {
-  "title": "Write a convincing fake",
-  "text": "Make up an answer that sounds real enough to fool everyone.",
-  "scene": [
-   {
-    "phone": "BUMFUZZLE means…",
-    "type": "a hat for sheep"
-   },
-   {
-    "icon": "🤥"
-   }
-  ],
-  "flow": true
- },
- {
-  "title": "Find the truth",
-  "text": "The real answer is shuffled in with the fakes. Vote for the one you think is true.",
-  "scene": [
-   {
-    "phone": "Which is real?",
-    "buttons": [
-     "a hat for sheep",
-     "to confuse",
-     "a tiny boat"
+  {
+    "title": "Something strange",
+    "text": "The TV shows an obscure word, an odd law or a strange fact, with the real meaning hidden.",
+    "scene": [
+      {
+        "tv": "BUMFUZZLE",
+        "sub": "What does it mean?"
+      }
     ],
-    "tap": 1
-   }
-  ]
- },
- {
-  "title": "Scoring",
-  "text": "Points for finding the truth, and even more for every player your fake fools. The last prompt is the finale!",
-  "scene": [
-   {
-    "score": "+500",
-    "label": "found the truth"
-   },
-   {
-    "score": "+500",
-    "label": "per player fooled",
-    "color": "#f2c14e"
-   },
-   {
-    "icon": "🎭",
-    "fx": "float"
-   }
-  ]
- }
+    "audio": "audio/tut_1.wav",
+    "ms": 8420
+  },
+  {
+    "title": "Write a convincing fake",
+    "text": "Make up an answer that sounds real enough to fool everyone.",
+    "scene": [
+      {
+        "phone": "BUMFUZZLE means\u2026",
+        "type": "a hat for sheep"
+      },
+      {
+        "icon": "\ud83e\udd25"
+      }
+    ],
+    "flow": true,
+    "audio": "audio/tut_2.wav",
+    "ms": 5740
+  },
+  {
+    "title": "Find the truth",
+    "text": "The real answer is shuffled in with the fakes. Vote for the one you think is true.",
+    "scene": [
+      {
+        "phone": "Which is real?",
+        "buttons": [
+          "a hat for sheep",
+          "to confuse",
+          "a tiny boat"
+        ],
+        "tap": 1
+      }
+    ],
+    "audio": "audio/tut_3.wav",
+    "ms": 7500
+  },
+  {
+    "title": "Scoring",
+    "text": "Points for finding the truth, and even more for every player your fake fools. The last prompt is the finale!",
+    "scene": [
+      {
+        "score": "+500",
+        "label": "found the truth"
+      },
+      {
+        "score": "+500",
+        "label": "per player fooled",
+        "color": "#f2c14e"
+      },
+      {
+        "icon": "\ud83c\udfad",
+        "fx": "float"
+      }
+    ],
+    "audio": "audio/tut_4.wav",
+    "ms": 7780
+  }
 ]

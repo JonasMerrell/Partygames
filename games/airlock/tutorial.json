@@ -1,103 +1,113 @@
 [
- {
-  "title": "Two rooms, two teams",
-  "text": "Everyone gets a secret card: Crew or Swarm. Split into two real rooms, the station modules.",
-  "scene": [
-   {
-    "icon": "🧑‍🚀",
-    "label": "Crew"
-   },
-   {
-    "icon": "👾",
-    "label": "Swarm"
-   },
-   {
-    "tv": "Module A | Module B"
-   }
-  ]
- },
- {
-  "title": "Two key cards",
-  "text": "The Crew has the Captain. The Swarm has the Mimic. Everyone else is a regular member of a team.",
-  "scene": [
-   {
-    "card": "CAPTAIN",
-    "color": "#5fa8d3",
-    "label": "Crew"
-   },
-   {
-    "card": "MIMIC",
-    "color": "#e8553d",
-    "label": "Swarm",
-    "fx": "shake"
-   }
-  ]
- },
- {
-  "title": "Share carefully",
-  "text": "Show your card to people you trust, from your phone, or keep it hidden. Talk, bluff and work out who is who.",
-  "scene": [
-   {
-    "phone": "Your card: Crew",
-    "buttons": [
-     "Show card",
-     "Show colour only"
+  {
+    "title": "Two rooms, two teams",
+    "text": "Everyone gets a secret card: Crew or Swarm. Split into two real rooms, the station modules.",
+    "scene": [
+      {
+        "icon": "\ud83e\uddd1\u200d\ud83d\ude80",
+        "label": "Crew"
+      },
+      {
+        "icon": "\ud83d\udc7e",
+        "label": "Swarm"
+      },
+      {
+        "tv": "Module A | Module B"
+      }
     ],
-    "tap": 1
-   },
-   {
-    "icon": "🤝"
-   },
-   {
-    "phone": "Ben showed you: Crew"
-   }
-  ],
-  "flow": true
- },
- {
-  "title": "Chiefs and the airlock",
-  "text": "Each room elects a chief. At the end of every round the chiefs send people through the airlock to the other room.",
-  "scene": [
-   {
-    "phone": "Vote for chief",
-    "buttons": [
-     "Ana",
-     "Cy",
-     "Dee"
+    "audio": "audio/tut_1.wav",
+    "ms": 8060
+  },
+  {
+    "title": "Two key cards",
+    "text": "The Crew has the Captain. The Swarm has the Mimic. Everyone else is a regular member of a team.",
+    "scene": [
+      {
+        "card": "CAPTAIN",
+        "color": "#5fa8d3",
+        "label": "Crew"
+      },
+      {
+        "card": "MIMIC",
+        "color": "#e8553d",
+        "label": "Swarm",
+        "fx": "shake"
+      }
     ],
-    "tap": 1
-   },
-   {
-    "icon": "🚪",
-    "label": "airlock",
-    "fx": "pulse"
-   },
-   {
-    "tv": "Round 2 of 3",
-    "sub": "4:00"
-   }
-  ],
-  "flow": true
- },
- {
-  "title": "Who wins",
-  "text": "After the last round: if the Mimic is in the same room as the Captain, the Swarm wins. Otherwise the Crew wins.",
-  "scene": [
-   {
-    "card": "MIMIC",
-    "color": "#e8553d"
-   },
-   {
-    "icon": "➕"
-   },
-   {
-    "card": "CAPTAIN",
-    "color": "#5fa8d3"
-   },
-   {
-    "icon": "👾",
-    "label": "Swarm wins"
-   }
-  ]
- }
+    "audio": "audio/tut_2.wav",
+    "ms": 7140
+  },
+  {
+    "title": "Share carefully",
+    "text": "Show your card to people you trust, from your phone, or keep it hidden. Talk, bluff and work out who is who.",
+    "scene": [
+      {
+        "phone": "Your card: Crew",
+        "buttons": [
+          "Show card",
+          "Show colour only"
+        ],
+        "tap": 1
+      },
+      {
+        "icon": "\ud83e\udd1d"
+      },
+      {
+        "phone": "Ben showed you: Crew"
+      }
+    ],
+    "flow": true,
+    "audio": "audio/tut_3.wav",
+    "ms": 8740
+  },
+  {
+    "title": "Chiefs and the airlock",
+    "text": "Each room elects a chief. At the end of every round the chiefs send people through the airlock to the other room.",
+    "scene": [
+      {
+        "phone": "Vote for chief",
+        "buttons": [
+          "Ana",
+          "Cy",
+          "Dee"
+        ],
+        "tap": 1
+      },
+      {
+        "icon": "\ud83d\udeaa",
+        "label": "airlock",
+        "fx": "pulse"
+      },
+      {
+        "tv": "Round 2 of 3",
+        "sub": "4:00"
+      }
+    ],
+    "flow": true,
+    "audio": "audio/tut_4.wav",
+    "ms": 8140
+  },
+  {
+    "title": "Who wins",
+    "text": "After the last round: if the Mimic is in the same room as the Captain, the Swarm wins. Otherwise the Crew wins.",
+    "scene": [
+      {
+        "card": "MIMIC",
+        "color": "#e8553d"
+      },
+      {
+        "icon": "\u2795"
+      },
+      {
+        "card": "CAPTAIN",
+        "color": "#5fa8d3"
+      },
+      {
+        "icon": "\ud83d\udc7e",
+        "label": "Swarm wins"
+      }
+    ],
+    "audio": "audio/tut_5.wav",
+    "ms": 8420
+  }
 ]

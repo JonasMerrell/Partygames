@@ -1,62 +1,68 @@
 [
- {
-  "title": "Same nine tiles",
-  "text": "Everyone gets the same rack of nine letter tiles.",
-  "scene": [
-   {
-    "card": "R",
-    "color": "#f2c14e"
-   },
-   {
-    "card": "A",
-    "color": "#5fa8d3"
-   },
-   {
-    "card": "T",
-    "color": "#8cc084"
-   },
-   {
-    "card": "E",
-    "color": "#f78fb3"
-   },
-   {
-    "card": "S",
-    "color": "#f4a259"
-   }
-  ]
- },
- {
-  "title": "Forge words fast",
-  "text": "Type as many words as you can before the furnace cools. Every word is checked against a dictionary.",
-  "scene": [
-   {
-    "phone": "Your words",
-    "type": "STARE, RATES, TEAS"
-   },
-   {
-    "icon": "🔥",
-    "fx": "pulse"
-   }
-  ]
- },
- {
-  "title": "Scoring",
-  "text": "A word scores its tile values, plus 5 for six letters or more. Words nobody else found score DOUBLE!",
-  "scene": [
-   {
-    "score": "+8",
-    "label": "tile values"
-   },
-   {
-    "score": "+5",
-    "label": "6+ letters",
-    "color": "#f2c14e"
-   },
-   {
-    "score": "×2",
-    "label": "nobody else found it",
-    "color": "#8cc084"
-   }
-  ]
- }
+  {
+    "title": "Same nine tiles",
+    "text": "Everyone gets the same rack of nine letter tiles.",
+    "scene": [
+      {
+        "card": "R",
+        "color": "#f2c14e"
+      },
+      {
+        "card": "A",
+        "color": "#5fa8d3"
+      },
+      {
+        "card": "T",
+        "color": "#8cc084"
+      },
+      {
+        "card": "E",
+        "color": "#f78fb3"
+      },
+      {
+        "card": "S",
+        "color": "#f4a259"
+      }
+    ],
+    "audio": "audio/tut_1.wav",
+    "ms": 5540
+  },
+  {
+    "title": "Forge words fast",
+    "text": "Type as many words as you can before the furnace cools. Every word is checked against a dictionary.",
+    "scene": [
+      {
+        "phone": "Your words",
+        "type": "STARE, RATES, TEAS"
+      },
+      {
+        "icon": "\ud83d\udd25",
+        "fx": "pulse"
+      }
+    ],
+    "audio": "audio/tut_2.wav",
+    "ms": 7380
+  },
+  {
+    "title": "Scoring",
+    "text": "A word scores its tile values, plus 5 for six letters or more. Words nobody else found score DOUBLE!",
+    "scene": [
+      {
+        "score": "+8",
+        "label": "tile values"
+      },
+      {
+        "score": "+5",
+        "label": "6+ letters",
+        "color": "#f2c14e"
+      },
+      {
+        "score": "\u00d72",
+        "label": "nobody else found it",
+        "color": "#8cc084"
+      }
+    ],
+    "audio": "audio/tut_3.wav",
+    "ms": 8980
+  }
 ]

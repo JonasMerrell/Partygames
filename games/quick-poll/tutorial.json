@@ -1,20 +1,22 @@
 [
- {
-  "title": "A tiny template",
-  "text": "Quick Poll asks everyone one question and counts the votes. Copy its folder to start your own game.",
-  "scene": [
-   {
-    "phone": "Cats or dogs?",
-    "buttons": [
-     "Cats",
-     "Dogs"
+  {
+    "title": "A tiny template",
+    "text": "Quick Poll asks everyone one question and counts the votes. Copy its folder to start your own game.",
+    "scene": [
+      {
+        "phone": "Cats or dogs?",
+        "buttons": [
+          "Cats",
+          "Dogs"
+        ],
+        "tap": 0
+      },
+      {
+        "tv": "Cats 3 \u00b7 Dogs 2"
+      }
     ],
-    "tap": 0
-   },
-   {
-    "tv": "Cats 3 · Dogs 2"
-   }
-  ],
-  "flow": true
- }
+    "flow": true,
+    "audio": "audio/tut_1.wav",
+    "ms": 7660
+  }
 ]

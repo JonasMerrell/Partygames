@@ -1,5 +1,16 @@
 # Changelog
 
+## Unreleased
+
+- New game: Bot Brawl, 2–8 players. Program four moves, then watch scrapyard robots shove, zap and tumble through a factory. Race for flags or survive the night shift.
+- New game: Same Frequency, 3–12 players. Give a clue, find the hidden spot on a shared radio dial, and see who's on your wavelength.
+- New game: Press Conference, 4–12 players. Take the podium outside city hall: everyone knows your ridiculous story except you, so field questions and figure it out.
+- Subspace Intercept plays faster: everyone writes their 3 clues at once (in three separate boxes), everyone jams a clue from the other crew at once, then crews take turns decoding. A crew needs 3 access codes to win.
+- Every game has its own looping music, and the lobby plays the chosen game's music with its own themed lobby screen.
+- The TV has separate Music and Sound effects volume sliders.
+- The game list on the TV shows 3 bigger cards per row.
+- Tutorial narration uses new recorded voices.
+
 ## 0.14.1
 
 - Subspace Intercept is back in the game list with its own setting: two crews on relay station Kestrel, and a jammer from the other crew who swaps one clue for a fake through the Static. New console look, new word list and tutorial, and the announcer now uses the browser's voice.

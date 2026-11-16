@@ -1,73 +1,81 @@
 [
- {
-  "title": "A ring space station",
-  "text": "Take turns rolling and flying your ship around a ring of station modules.",
-  "scene": [
-   {
-    "dice": [
-     4,
-     2
-    ]
-   },
-   {
-    "icon": "🚀"
-   },
-   {
-    "icon": "🛰️",
-    "label": "the ring"
-   }
-  ],
-  "flow": true
- },
- {
-  "title": "Buy and build",
-  "text": "Land on a free module to buy it. Own a full set to build domes and raise the rent.",
-  "scene": [
-   {
-    "phone": "Buy Hydroponics?",
-    "buttons": [
-     "Buy",
-     "Pass"
+  {
+    "title": "A ring space station",
+    "text": "Take turns rolling and flying your ship around a ring of station modules.",
+    "scene": [
+      {
+        "dice": [
+          4,
+          2
+        ]
+      },
+      {
+        "icon": "\ud83d\ude80"
+      },
+      {
+        "icon": "\ud83d\udef0\ufe0f",
+        "label": "the ring"
+      }
     ],
-    "tap": 0
-   },
-   {
-    "card": "DOME",
-    "color": "#8cc084",
-    "fx": "pop"
-   }
-  ],
-  "flow": true
- },
- {
-  "title": "Charge rent",
-  "text": "Anyone who lands on your module pays you rent. Deal and trade with other pilots from your phone.",
-  "scene": [
-   {
-    "icon": "🚀"
-   },
-   {
-    "icon": "💸"
-   },
-   {
-    "score": "+120",
-    "label": "rent"
-   }
-  ],
-  "flow": true
- },
- {
-  "title": "Stay solvent",
-  "text": "Run out of money and you're out. The last pilot solvent, or the richest when the clock runs out, wins.",
-  "scene": [
-   {
-    "icon": "💰",
-    "fx": "float"
-   },
-   {
-    "icon": "🏆",
-    "label": "last one solvent"
-   }
-  ]
- }
+    "flow": true,
+    "audio": "audio/tut_1.wav",
+    "ms": 8060
+  },
+  {
+    "title": "Buy and build",
+    "text": "Land on a free module to buy it. Own a full set to build domes and raise the rent.",
+    "scene": [
+      {
+        "phone": "Buy Hydroponics?",
+        "buttons": [
+          "Buy",
+          "Pass"
+        ],
+        "tap": 0
+      },
+      {
+        "card": "DOME",
+        "color": "#8cc084",
+        "fx": "pop"
+      }
+    ],
+    "flow": true,
+    "audio": "audio/tut_2.wav",
+    "ms": 6860
+  },
+  {
+    "title": "Charge rent",
+    "text": "Anyone who lands on your module pays you rent. Deal and trade with other pilots from your phone.",
+    "scene": [
+      {
+        "icon": "\ud83d\ude80"
+      },
+      {
+        "icon": "\ud83d\udcb8"
+      },
+      {
+        "score": "+120",
+        "label": "rent"
+      }
+    ],
+    "flow": true,
+    "audio": "audio/tut_3.wav",
+    "ms": 7020
+  },
+  {
+    "title": "Stay solvent",
+    "text": "Run out of money and you're out. The last pilot solvent, or the richest when the clock runs out, wins.",
+    "scene": [
+      {
+        "icon": "\ud83d\udcb0",
+        "fx": "float"
+      },
+      {
+        "icon": "\ud83c\udfc6",
+        "label": "last one solvent"
+      }
+    ],
+    "audio": "audio/tut_4.wav",
+    "ms": 8539
+  }
 ]

@@ -1,62 +1,70 @@
 [
- {
-  "title": "An innocent question",
-  "text": "Everyone answers an innocent question.",
-  "scene": [
-   {
-    "tv": "What did you do last weekend?"
-   },
-   {
-    "phone": "Your answer",
-    "type": "I cleaned the bathtub"
-   }
-  ],
-  "flow": true
- },
- {
-  "title": "Twist it",
-  "text": "Each answer goes anonymously to another player, who writes a new question that makes it sound terrible.",
-  "scene": [
-   {
-    "card": "I cleaned the bathtub",
-    "color": "#f2c14e"
-   },
-   {
-    "icon": "➜"
-   },
-   {
-    "phone": "Write a new question",
-    "type": "How do you hide evidence?"
-   }
-  ]
- },
- {
-  "title": "Vote for the best twist",
-  "text": "Each twisted pair goes up on the TV. Vote for your favourite.",
-  "scene": [
-   {
-    "tv": "How do you hide evidence?",
-    "sub": "I cleaned the bathtub"
-   },
-   {
-    "icon": "😂",
-    "fx": "pulse"
-   }
-  ]
- },
- {
-  "title": "Scoring",
-  "text": "The twister scores 500 per vote and the original answerer 200, multiplied by the round number.",
-  "scene": [
-   {
-    "score": "+500",
-    "label": "per vote, twister"
-   },
-   {
-    "score": "+200",
-    "label": "per vote, answerer",
-    "color": "#f2c14e"
-   }
-  ]
- }
+  {
+    "title": "An innocent question",
+    "text": "Everyone answers an innocent question.",
+    "scene": [
+      {
+        "tv": "What did you do last weekend?"
+      },
+      {
+        "phone": "Your answer",
+        "type": "I cleaned the bathtub"
+      }
+    ],
+    "flow": true,
+    "audio": "audio/tut_1.wav",
+    "ms": 4820
+  },
+  {
+    "title": "Twist it",
+    "text": "Each answer goes anonymously to another player, who writes a new question that makes it sound terrible.",
+    "scene": [
+      {
+        "card": "I cleaned the bathtub",
+        "color": "#f2c14e"
+      },
+      {
+        "icon": "\u279c"
+      },
+      {
+        "phone": "Write a new question",
+        "type": "How do you hide evidence?"
+      }
+    ],
+    "audio": "audio/tut_2.wav",
+    "ms": 6780
+  },
+  {
+    "title": "Vote for the best twist",
+    "text": "Each twisted pair goes up on the TV. Vote for your favourite.",
+    "scene": [
+      {
+        "tv": "How do you hide evidence?",
+        "sub": "I cleaned the bathtub"
+      },
+      {
+        "icon": "\ud83d\ude02",
+        "fx": "pulse"
+      }
+    ],
+    "audio": "audio/tut_3.wav",
+    "ms": 7820
+  },
+  {
+    "title": "Scoring",
+    "text": "The twister scores 500 per vote and the original answerer 200, multiplied by the round number.",
+    "scene": [
+      {
+        "score": "+500",
+        "label": "per vote, twister"
+      },
+      {
+        "score": "+200",
+        "label": "per vote, answerer",
+        "color": "#f2c14e"
+      }
+    ],
+    "audio": "audio/tut_4.wav",
+    "ms": 7620
+  }
 ]

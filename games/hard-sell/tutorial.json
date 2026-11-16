@@ -1,80 +1,88 @@
 [
- {
-  "title": "Meet the customer",
-  "text": "Each round one player is the customer and picks who they are today.",
-  "scene": [
-   {
-    "phone": "Who are you?",
-    "buttons": [
-     "a pirate",
-     "a toddler",
-     "an astronaut"
+  {
+    "title": "Meet the customer",
+    "text": "Each round one player is the customer and picks who they are today.",
+    "scene": [
+      {
+        "phone": "Who are you?",
+        "buttons": [
+          "a pirate",
+          "a toddler",
+          "an astronaut"
+        ],
+        "tap": 0
+      },
+      {
+        "icon": "\ud83c\udff4\u200d\u2620\ufe0f",
+        "label": "the customer"
+      }
     ],
-    "tap": 0
-   },
-   {
-    "icon": "🏴‍☠️",
-    "label": "the customer"
-   }
-  ],
-  "flow": true
- },
- {
-  "title": "Glue two cards together",
-  "text": "Everyone else glues two word cards from their hand into a product.",
-  "scene": [
-   {
-    "card": "WATERPROOF",
-    "color": "#f2c14e"
-   },
-   {
-    "icon": "➕"
-   },
-   {
-    "card": "TOASTER",
-    "color": "#5fa8d3"
-   },
-   {
-    "icon": "➜"
-   },
-   {
-    "card": "Waterproof Toaster",
-    "color": "#f4a259",
-    "fx": "pop"
-   }
-  ]
- },
- {
-  "title": "Pitch it out loud",
-  "text": "Take turns pitching your product to the customer. Sell it with everything you've got!",
-  "scene": [
-   {
-    "icon": "🎤",
-    "label": "pitch time",
-    "fx": "pulse"
-   },
-   {
-    "tv": "Waterproof Toaster",
-    "sub": "pitched by Ana"
-   }
-  ]
- },
- {
-  "title": "The customer buys one",
-  "text": "The customer buys their favourite. The other sellers also vote for a crowd favourite.",
-  "scene": [
-   {
-    "phone": "Buy which product?",
-    "buttons": [
-     "Waterproof Toaster",
-     "Singing Shovel"
+    "flow": true,
+    "audio": "audio/tut_1.wav",
+    "ms": 4940
+  },
+  {
+    "title": "Glue two cards together",
+    "text": "Everyone else glues two word cards from their hand into a product.",
+    "scene": [
+      {
+        "card": "WATERPROOF",
+        "color": "#f2c14e"
+      },
+      {
+        "icon": "\u2795"
+      },
+      {
+        "card": "TOASTER",
+        "color": "#5fa8d3"
+      },
+      {
+        "icon": "\u279c"
+      },
+      {
+        "card": "Waterproof Toaster",
+        "color": "#f4a259",
+        "fx": "pop"
+      }
     ],
-    "tap": 0
-   },
-   {
-    "icon": "💰"
-   }
-  ],
-  "flow": true
- }
+    "audio": "audio/tut_2.wav",
+    "ms": 6300
+  },
+  {
+    "title": "Pitch it out loud",
+    "text": "Take turns pitching your product to the customer. Sell it with everything you've got!",
+    "scene": [
+      {
+        "icon": "\ud83c\udfa4",
+        "label": "pitch time",
+        "fx": "pulse"
+      },
+      {
+        "tv": "Waterproof Toaster",
+        "sub": "pitched by Ana"
+      }
+    ],
+    "audio": "audio/tut_3.wav",
+    "ms": 6340
+  },
+  {
+    "title": "The customer buys one",
+    "text": "The customer buys their favourite. The other sellers also vote for a crowd favourite.",
+    "scene": [
+      {
+        "phone": "Buy which product?",
+        "buttons": [
+          "Waterproof Toaster",
+          "Singing Shovel"
+        ],
+        "tap": 0
+      },
+      {
+        "icon": "\ud83d\udcb0"
+      }
+    ],
+    "flow": true,
+    "audio": "audio/tut_4.wav",
+    "ms": 7140
+  }
 ]

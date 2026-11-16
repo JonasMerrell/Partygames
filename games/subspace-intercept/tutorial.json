@@ -1,7 +1,7 @@
 [
   {
     "title": "Two crews, one relay",
-    "text": "Split into Team Alpha and Team Beta. Each crew has a secret five-letter access code to crack.",
+    "text": "Split into Team Alpha and Team Beta. Each crew cracks five-letter access codes. Three codes takes the relay.",
     "ms": 8000,
     "scene": [
       {
@@ -22,7 +22,7 @@
   },
   {
     "title": "Send three clues",
-    "text": "Each turn one sender gets a secret word and types three one-word clues for their crew.",
+    "text": "Everyone gets a secret word at the same time and types three one-word clues for their own crew.",
     "ms": 7500,
     "scene": [
       {
@@ -34,7 +34,7 @@
   },
   {
     "title": "The other crew jams one",
-    "text": "Before your crew sees them, a jammer from the other crew swaps one clue for a fake.",
+    "text": "Then everyone jams at once: you swap one clue of a player on the other crew for a fake.",
     "ms": 7500,
     "scene": [
       {
@@ -58,7 +58,7 @@
   },
   {
     "title": "Guess out loud, then crack the code",
-    "text": "Your crew calls out its guess. Right? Reveal one letter of your code, or risk the turn and guess all five.",
+    "text": "Crews take turns guessing each word out loud. Right? Reveal one letter of your code, or risk it and guess all five.",
     "ms": 9000,
     "scene": [
       {
@@ -75,7 +75,7 @@
   },
   {
     "title": "Signal lost",
-    "text": "Miss, and the other crew decodes a letter instead. First crew to complete its code takes the relay!",
+    "text": "Miss, and the other crew decodes a letter instead. First crew to crack three codes takes the relay!",
     "ms": 7500,
     "scene": [
       {

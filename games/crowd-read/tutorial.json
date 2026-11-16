@@ -1,58 +1,64 @@
 [
- {
-  "title": "A secret yes or no",
-  "text": "A question goes to everyone. Answer it honestly and secretly.",
-  "scene": [
-   {
-    "tv": "Have you ever sung in the shower?"
-   },
-   {
-    "phone": "Your answer",
-    "buttons": [
-     "Yes",
-     "No"
+  {
+    "title": "A secret yes or no",
+    "text": "A question goes to everyone. Answer it honestly and secretly.",
+    "scene": [
+      {
+        "tv": "Have you ever sung in the shower?"
+      },
+      {
+        "phone": "Your answer",
+        "buttons": [
+          "Yes",
+          "No"
+        ],
+        "tap": 0
+      }
     ],
-    "tap": 0
-   }
-  ],
-  "flow": true
- },
- {
-  "title": "Read the room",
-  "text": "Now guess how many people in the room said yes, including you.",
-  "scene": [
-   {
-    "phone": "How many said yes?",
-    "buttons": [
-     "3",
-     "4",
-     "5"
+    "flow": true,
+    "audio": "audio/tut_1.wav",
+    "ms": 8100
+  },
+  {
+    "title": "Read the room",
+    "text": "Now guess how many people in the room said yes, including you.",
+    "scene": [
+      {
+        "phone": "How many said yes?",
+        "buttons": [
+          "3",
+          "4",
+          "5"
+        ],
+        "tap": 1
+      },
+      {
+        "icon": "\ud83d\udd2e"
+      }
     ],
-    "tap": 1
-   },
-   {
-    "icon": "🔮"
-   }
-  ]
- },
- {
-  "title": "Scoring",
-  "text": "Exact guesses score big. Off by one or two still scores. The last round is a double-points confession round!",
-  "scene": [
-   {
-    "score": "+1000",
-    "label": "exact"
-   },
-   {
-    "score": "+500",
-    "label": "off by 1",
-    "color": "#f2c14e"
-   },
-   {
-    "score": "+200",
-    "label": "off by 2",
-    "color": "#8cc084"
-   }
-  ]
- }
+    "audio": "audio/tut_2.wav",
+    "ms": 5380
+  },
+  {
+    "title": "Scoring",
+    "text": "Exact guesses score big. Off by one or two still scores. The last round is a double-points confession round!",
+    "scene": [
+      {
+        "score": "+1000",
+        "label": "exact"
+      },
+      {
+        "score": "+500",
+        "label": "off by 1",
+        "color": "#f2c14e"
+      },
+      {
+        "score": "+200",
+        "label": "off by 2",
+        "color": "#8cc084"
+      }
+    ],
+    "audio": "audio/tut_3.wav",
+    "ms": 9820
+  }
 ]
