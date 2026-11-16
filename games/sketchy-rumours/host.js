@@ -88,7 +88,7 @@ export default async function (ctx) {
   let pace = PACES.normal;
   if (vip) {
     paint(h('div.sr-page.sr-center', h('h1.sr-title', 'Picking the pace…'),
-      h('p.sr-sub', h('b', { style: { color: vip.color } }, vip.name), ' is choosing how long everyone gets to draw.')));
+      h('p.sr-sub', h('b.pname', { style: { '--pc': vip.color } }, vip.name), ' is choosing how long everyone gets to draw.')));
     show(ctx.connected.filter((p) => p.id !== vip.id), { sr: 'wait', text: `${vip.name} is picking the pace…` });
     const got = await ctx.ask(vip, {
       title: 'How fast should we go?',
@@ -199,7 +199,7 @@ export default async function (ctx) {
     const fx = h('div.sr-fx');
     const foot = h('div.sr-foot');
     paint(h('div.sr-page.sr-reveal',
-      h('h1.sr-title', h('span', { style: { color: owner.color } }, owner.name), '’s notebook'),
+      h('h1.sr-title', h('span.pname', { style: { '--pc': owner.color } }, owner.name), '’s notebook'),
       track, foot, fx));
     const others = ctx.players.filter((p) => p.id !== owner.id);
     const reactView = { sr: 'react', title: `${owner.name}'s notebook`, emojis: REACTIONS };
@@ -251,8 +251,8 @@ export default async function (ctx) {
   }
 
   function pageCard(pg, i) {
-    const by = h('div.sr-by', { style: { color: pg.by.color } },
-      i === 0 ? `${pg.by.name} started it` : pg.type === 'draw' ? `drawn by ${pg.by.name}` : `${pg.by.name} guessed`);
+    const who = h('span.pname', { style: { '--pc': pg.by.color } }, pg.by.name);
+    const by = h('div.sr-by', i === 0 ? [who, ' started it'] : pg.type === 'draw' ? ['drawn by ', who] : [who, ' guessed']);
     if (pg.type === 'draw') {
       return h('div.sr-card.sr-polaroid', h('div.sr-tape'),
         pg.missing ? h('div.sr-blank', 'blank page 🫥') : h('img', { src: pg.value, alt: '' }), by);
@@ -315,7 +315,7 @@ function addStyles() {
   .sr-words { font-size: 2em; line-height: 1.15; overflow-wrap: anywhere; }
   .sr-auto { font-size: .9em; opacity: .6; }
   .sr-by { font-family: var(--hand); font-size: 1.2em; padding: .6em 0; text-align: center; font-weight: 700;
-    -webkit-text-stroke: .3px #0006; }
+    color: var(--ink); }
   .sr-arrow { flex: none; font-size: 2.4em; color: #8d97c4; }
   .sr-foot { min-height: 3em; font-size: 1.6em; padding: 0 4vw; }
   .sr-verdict { animation: sr-in .5s ease-out; }

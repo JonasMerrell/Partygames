@@ -467,8 +467,8 @@ css.textContent = `
   .mt-slot img { width: 100%; height: 100%; object-fit: contain; padding: 4px; }
   .mt-slot-in { display: flex; flex-direction: column; align-items: center; gap: .2em; padding: .3em; }
   .mt-pw, .mt-win { display: flex; flex-direction: column; align-items: center; font-size: 1.4em; line-height: 1.1; }
-  .mt-pw small, .mt-win small { font-size: .45em; color: var(--dim); font-weight: 700; }
-  .mt-danger, .mt-veto { font-size: .6em; font-weight: 800; color: ${GOLD}; text-transform: uppercase; letter-spacing: .05em; }
+  .mt-pw small, .mt-win small { font-size: .5em; color: var(--dim); font-weight: 700; }
+  .mt-danger, .mt-veto { font-size: .68em; font-weight: 800; color: ${GOLD}; text-transform: uppercase; letter-spacing: .05em; }
   .mt-phase { min-height: 17vh; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: .3em;
     background: linear-gradient(180deg, color-mix(in srgb, var(--card) 80%, transparent), transparent); border-radius: 24px; padding: 2vh 2vw; }
   .mt-phase h1 { font-size: 2.3em; margin: 0; animation: pop .3s ease-out; }
@@ -493,7 +493,7 @@ css.textContent = `
   .mt-role { font-weight: 900; font-size: .85em; text-transform: uppercase; }
   .r-crew .mt-role { color: ${CREW}; } .r-mutineer .mt-role { color: ${RED}; } .r-ringleader .mt-role { color: ${GOLD}; }
   .mt-tags { display: flex; flex-wrap: wrap; gap: .3em; }
-  .mt-tag { font-size: .62em; font-weight: 900; text-transform: uppercase; letter-spacing: .04em; border-radius: 99px; padding: .15em .6em; }
+  .mt-tag { font-size: .7em; font-weight: 900; text-transform: uppercase; letter-spacing: .04em; border-radius: 99px; padding: .15em .6em; }
   .mt-tag.cap { background: ${GOLD}; color: #1a1206; }
   .mt-tag.mate { background: ${CREW}; color: #061a22; }
   .mt-tag.nom { border: 2px solid ${CREW}; color: ${CREW}; }

@@ -44,7 +44,7 @@ const joinUrl = () => location.host;
 // wider than the frame, zoom it down until it fits.
 function fitScreen() {
   const el = [...app.children].find((c) => !c.classList.contains('t-overlay'));
-  if (!el || el.classList.contains('picker')) return;
+  if (!el || el.classList.contains('picker')) return; // the picker scrolls instead
   el.style.zoom = '';
   const cs = getComputedStyle(app);
   const availH = app.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom);

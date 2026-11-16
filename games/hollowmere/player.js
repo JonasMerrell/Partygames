@@ -83,17 +83,17 @@ function injectCss() {
     box-shadow: 0 4px 12px rgba(0,0,0,0.3); font-family: 'Cinzel', serif;
   }
   .hmp-pick.mine { border-color: #d4ac0d; box-shadow: 0 0 12px rgba(212,172,13,0.35); }
-  .hmp-pick b { color: #d4ac0d; font-size: .9em; }
+  .hmp-pick b { color: #d4ac0d; font-size: 1em; }
   .hmp-pick:disabled, .hmp-skip:disabled { opacity: .4; }
   .hmp-skip { grid-column: 1 / -1; text-align: center; font-family: 'Cinzel', serif; }
   .hmp-hand {
     margin-top: 20px; padding: 14px 10px; border-top: 2px solid #4d3a5a;
     background: rgba(29, 23, 41, 0.65); border-radius: 16px; display: flex; flex-direction: column; gap: 10px;
   }
-  .hmp-k { color: #d4ac0d; font-family: 'Cinzel', serif; font-weight: 800; text-transform: uppercase; letter-spacing: .08em; font-size: .75em; }
+  .hmp-k { color: #d4ac0d; font-family: 'Cinzel', serif; font-weight: 800; text-transform: uppercase; letter-spacing: .08em; font-size: .8em; }
   .hmp-heirs { display: flex; flex-wrap: wrap; gap: 10px; }
   .hmp-heir { display: flex; flex-direction: column; align-items: center; width: 6.2em; text-align: center; font-weight: 800; font-size: .8em; font-family: 'Cinzel', serif; }
-  .hmp-heir b { color: #d4ac0d; font-size: .85em; }
+  .hmp-heir b { color: #d4ac0d; font-size: 1em; }
   .hmp-heir i { color: var(--dim); }
   .hmp-heir.out span { text-decoration: line-through; opacity: .5; }
   .hmp-cards { display: flex; flex-wrap: wrap; gap: 8px; }
@@ -106,7 +106,7 @@ function injectCss() {
     background: linear-gradient(135deg, #3d2f14, #241c0b); border-color: #f1c40f;
     box-shadow: 0 0 10px rgba(241, 196, 15, 0.25);
   }
-  .hmp-card small { color: var(--dim); font-weight: 600; }
+  .hmp-card small { color: var(--dim); font-weight: 600; font-size: 1em; }
   .hmp-ci { font-size: 1.6em; }
   `;
   document.head.append(css);

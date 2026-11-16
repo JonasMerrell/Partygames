@@ -107,8 +107,8 @@ css.textContent = `
   .scp-status span { color: var(--dim); font-size: .9em; }
   .scp-clue { font-size: 1.5em; letter-spacing: .04em; }
   .scp-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 5px; }
-  .scp-cell { position: relative; aspect-ratio: 1.15; border-radius: 9px; border: 2px solid #4d4580; padding: 2px;
-    background: linear-gradient(160deg, #3a3266, #221c40); font-weight: 800; font-size: clamp(8px, 2.5vw, 13px);
+  .scp-cell { position: relative; aspect-ratio: 1; border-radius: 9px; border: 2px solid #4d4580; padding: 1px;
+    background: linear-gradient(160deg, #3a3266, #221c40); font-weight: 800; font-size: clamp(10px, 3.6vw, 16px); letter-spacing: -.02em;
     display: flex; align-items: center; justify-content: center; overflow: hidden; cursor: pointer; color: var(--fg); }
   .scp-cell span { overflow-wrap: anywhere; line-height: 1.05; }
   .scp-cell:disabled { cursor: default; }

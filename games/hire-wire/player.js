@@ -80,7 +80,7 @@ export default function (ctx) {
     .hw-hint { color: var(--dim); font-size: .9em; }
     .hw-tools { display: flex; gap: 10px; align-items: center; }
     .hw-count { margin-left: auto; color: var(--dim); font-weight: 800; font-variant-numeric: tabular-nums; }
-    .hw-label { color: var(--dim); font-size: .75em; font-weight: 900; letter-spacing: .12em; text-transform: uppercase; margin-top: 4px; }
+    .hw-label { color: var(--dim); font-size: .85em; font-weight: 900; letter-spacing: .12em; text-transform: uppercase; margin-top: 4px; }
     .hw-bank { display: flex; flex-wrap: wrap; gap: 8px; }
     .hw-tile { background: #fff7d6; color: #1b1f2e; border: 0; border-radius: 9px; padding: 9px 12px; font-weight: 800; font-size: 1.02em;
       box-shadow: 0 4px 0 #c9b98a; cursor: pointer; touch-action: manipulation; }

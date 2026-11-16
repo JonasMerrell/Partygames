@@ -355,17 +355,17 @@ css.textContent = `
   .sc-card { position: relative; aspect-ratio: 1.75; border-radius: 14px; display: flex; align-items: center; justify-content: center;
     background: linear-gradient(160deg, #3a3266, #221c40); border: 2px solid #4d4580; box-shadow: inset 0 2px 0 #ffffff1a;
     overflow: hidden; padding: 0 .3em; }
-  .sc-word { position: relative; font-weight: 900; font-size: clamp(14px, 1.25vw, 30px); letter-spacing: .03em; overflow-wrap: anywhere; z-index: 1; }
+  .sc-word { position: relative; font-weight: 900; font-size: .82em; letter-spacing: .03em; overflow-wrap: anywhere; z-index: 1; }
   .sc-art { position: absolute; inset: 12% 30%; opacity: .9; }
-  .sc-card.open .sc-word { font-size: clamp(11px, .9vw, 22px); align-self: flex-end; margin-bottom: .3em; opacity: .85; }
+  .sc-card.open .sc-word { font-size: .7em; align-self: flex-end; margin-bottom: .25em; }
   .sc-card.open .sc-art { inset: 6% 32% 32%; }
   .sc-card.k-sun { background: linear-gradient(160deg, #ffc867, #d9781f); border-color: #ffd998; color: #3b1d00; }
   .sc-card.k-moon { background: linear-gradient(160deg, #8fd2ff, #3a6fc7); border-color: #c2e6ff; color: #04173a; }
   .sc-card.k-dust { background: linear-gradient(160deg, #57506f, #3a3550); border-color: #6c6490; color: #cfc8e8; }
   .sc-card.k-hole { background: radial-gradient(circle at 50% 50%, #000 30%, #2b0f3f 70%, #150a22); border-color: #c77dff; color: #f2d9ff;
     animation: sc-swirl 3s ease-in-out infinite alternate; }
-  .sc-card.ghost { opacity: .45; filter: saturate(.6); }
-  .sc-card.ghost .sc-word { font-size: clamp(11px, .9vw, 22px); align-self: flex-end; margin-bottom: .3em; }
+  .sc-card.ghost { opacity: .7; filter: saturate(.6); }
+  .sc-card.ghost .sc-word { font-size: .7em; align-self: flex-end; margin-bottom: .25em; }
   .sc-card.ghost .sc-art { inset: 6% 32% 32%; }
   .sc-card.flash { animation: sc-flip .6s ease-out; box-shadow: 0 0 50px #fff8; }
   @keyframes sc-flip { from { transform: rotateY(90deg) scale(1.1); } }

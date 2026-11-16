@@ -51,7 +51,7 @@ export default async function (ctx) {
           h('div.tf-masks', s.masks.map((m) => h('img' + (m.open ? '.open' : ''), { src: art(m.open || reveal ? m.role : null), alt: '' }))),
           h('div.tf-gold', s.out ? 'OUT' : `🪙 ${s.gold}`))))),
       h('div.tf-log', h('h3', 'The ball so far'),
-        h('ol', log.slice(-12).reverse().map((parts) => h('li', txt(parts)))))));
+        h('ol', log.slice(-7).reverse().map((parts) => h('li', txt(parts)))))));
   }
 
   // ---------- phones ----------
@@ -347,7 +347,7 @@ css.textContent = `
   .tf-gold { font-weight: 900; font-size: 1.2em; font-variant-numeric: tabular-nums; }
   .tf-log { background: var(--bg2); border: 2px solid var(--line); border-radius: 20px; padding: 1em 1.2em; max-height: 82vh; overflow: hidden; }
   .tf-log h3 { color: var(--accent); margin: 0 0 .5em; }
-  .tf-log ol { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: .45em; font-size: .85em; }
+  .tf-log ol { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: .45em; font-size: .8em; }
   .tf-log li { border-bottom: 1px solid var(--line); padding-bottom: .35em; }
   .tf-log li:first-child { font-weight: 800; }
   .tf-log li:last-child { border: 0; }

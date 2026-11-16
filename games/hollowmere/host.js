@@ -124,6 +124,7 @@ export default async function (ctx) {
       portrait(x, 44).replace('<svg ', '<svg x="2" y="2" ');
     tok[x.id] = g; tokens.append(g);
   }
+  const side = h('div.hm-side');
   const boom = h('div.hm-boom');
   const bloom = h('div.hm-bloom');
   ctx.el.replaceChildren(h('div.hm', h('div.hm-boardwrap', board, boom, bloom), side));
@@ -494,9 +495,9 @@ function injectCss() {
     border: 4px solid #3d2a1c; outline: 2px solid #b7950b;
     box-shadow: 0 20px 60px #000a, inset 0 0 80px rgba(0,0,0,0.5);
   }
-  .hm-room { fill: #fff; opacity: .45; font-family: 'Cinzel', serif; font-weight: 900; font-size: 15px; letter-spacing: .14em; }
-  .hm-room.hm-out { opacity: .85; fill: #d8cfee; font-size: 17px; }
-  .hm-exitlbl { opacity: 1; fill: #2ecc71; font-size: 17px; }
+  .hm-room { fill: #fff; opacity: .55; font-family: 'Cinzel', serif; font-weight: 900; font-size: 18px; letter-spacing: .12em; }
+  .hm-room.hm-out { opacity: .85; fill: #d8cfee; font-size: 19px; }
+  .hm-exitlbl { opacity: 1; fill: #2ecc71; font-size: 19px; }
   .hm-exit { filter: drop-shadow(0 0 8px #2ecc71); }
   .hm-trap {
     fill: #8b0000; fill-opacity: .32; stroke: #c0392b; stroke-width: 2.5; stroke-dasharray: 6 3;
@@ -562,8 +563,8 @@ function injectCss() {
 
   .hm-side { display: flex; flex-direction: column; gap: 10px; font-size: .85em; }
   .hm-side > div { background: var(--card); border: 2px solid var(--line); border-radius: 16px; padding: 10px 14px; }
-  .hm-k { color: var(--dim); font-family: 'Cinzel', serif; font-weight: 800; text-transform: uppercase; letter-spacing: .08em; font-size: .75em; }
-  .hm-small { color: var(--dim); font-size: .75em; }
+  .hm-k { color: var(--dim); font-family: 'Cinzel', serif; font-weight: 800; text-transform: uppercase; letter-spacing: .08em; font-size: .8em; }
+  .hm-small { color: var(--dim); font-size: .8em; }
   .hm-will { text-align: center; border-color: #d4ac0d !important; background: linear-gradient(#3a2f1a, var(--card)) !important; }
   .hm-will .portrait { margin: 6px auto 0; display: block; }
   .hm-wname { font-family: 'Cinzel', serif; font-size: 1.5em; font-weight: 900; }

@@ -277,13 +277,24 @@ export default async function (ctx) {
       ctx.el.replaceChildren(h('div.tt-recap', { style: { '--tc': team.color } },
         h('h1', 'Time!'),
         h('p.tt-sub', `${giver.name} scored ${pts >= 0 ? '+' : ''}${pts} for the ${team.name}`),
-        h('div.tt-cards', log.length ? log.map((c, i) => h('div.tt-rcard.tt-' + c.result, { style: { '--i': i } },
-          h('div.tt-rword', c.word),
-          h('div.tt-small', c.result === 'got' ? `+${c.points}` : c.result === 'skip' ? 'skipped'
-            : c.result === 'glitch' ? `⚡ ${c.by.name} −1` : 'out of time')))
-          : h('p.tt-sub', 'No cards. The robot froze up!')),
+        recapCards(log),
         scoreRow()));
       await ctx.sleep(Math.min(14000, 6000 + log.length * 700));
+    }
+
+    function recapCards(log) {
+      if (!log.length) return h('p.tt-sub', 'No cards. The robot froze up!');
+      // Scored and buzzed cards get a tile; skips are one line so a fast round still fits the screen.
+      const big = log.filter((c) => c.result === 'got' || c.result === 'glitch');
+      const shown = big.slice(0, 18);
+      const missed = log.filter((c) => c.result === 'skip' || c.result === 'timeout');
+      return h('div.tt-recapbody',
+        shown.length ? h('div.tt-cards' + (shown.length > 10 ? '.tt-dense' : ''), shown.map((c, i) => h('div.tt-rcard.tt-' + c.result, { style: { '--i': i } },
+          h('div.tt-rword', c.word),
+          h('div.tt-small', c.result === 'got' ? `+${c.points}` : `⚡ ${c.by.name} −1`)))) : null,
+        big.length > shown.length ? h('p.tt-sub', `+${big.length - shown.length} more`) : null,
+        missed.length ? h('p.tt-missed', `↷ ${missed.length} skipped: `,
+          missed.slice(0, 12).map((c) => c.word).join(', ') + (missed.length > 12 ? ', …' : '')) : null);
     }
 
     function scoreRow() {
@@ -599,7 +610,11 @@ const CSS = `
   .tt-rcard.tt-got .tt-rword { color: #5df08a; }
   .tt-rcard.tt-glitch { border-color: #ff3344; }
   .tt-rcard.tt-glitch .tt-rword { color: #ff3344; }
-  .tt-rcard.tt-skip, .tt-rcard.tt-timeout { opacity: 0.55; }
+  .tt-recapbody { display: flex; flex-direction: column; align-items: center; gap: .6em; }
+  .tt-cards.tt-dense { gap: 10px; }
+  .tt-cards.tt-dense .tt-rcard { padding: .3em .7em; min-width: 5em; }
+  .tt-cards.tt-dense .tt-rword { font-size: 1.05em; }
+  .tt-missed { color: #b8c4d0; font-size: 1em; margin: 0; max-width: 40em; text-align: center; text-transform: uppercase; }
 
   .tt-final h1 {
     font-family: 'Oswald', sans-serif;

@@ -128,7 +128,7 @@ document.head.append(Object.assign(document.createElement('style'), { id: 'lette
   .lf-tile { position: relative; width: 4.2em; height: 4.2em; border-radius: 14px; display: grid; place-items: center;
     font-size: 1.6em; font-weight: 900; color: #3a1d05; background: linear-gradient(160deg, #ffd27a, #e8932e);
     box-shadow: 0 8px 0 #9a5512, 0 0 30px #ff8a2a55; animation: pop .35s ease-out; }
-  .lf-tile sub { position: absolute; right: 8px; bottom: 4px; font-size: .45em; }
+  .lf-tile sub { position: absolute; right: 6px; bottom: 2px; font-size: .58em; font-weight: 900; }
   .lf-small .lf-tile { font-size: .9em; }
   .lf-results { display: flex; flex-direction: column; gap: 10px; width: min(1100px, 100%); }
   .lf-res { display: grid; grid-template-columns: 8em 12em 1fr; gap: 16px; text-align: left; align-items: center;

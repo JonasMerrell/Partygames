@@ -172,8 +172,9 @@ export default async function (ctx) {
       lastCheer.set(p.id, now);
       const text = { push: '🔥 Push on!', camp: '⛺ Make camp!', boom: '😱 Avalanche!' }[data.value];
       if (!text) return;
-      const b = h('div.pf-cheer', { style: { '--pc': p.color, left: `${8 + Math.random() * 70}%` } }, `${p.name}: ${text}`);
+      const b = h('div.pf-cheer', { style: { '--pc': p.color } }, `${p.name}: ${text}`);
       cheers.append(b);
+      while (cheers.children.length > 4) cheers.firstChild.remove();
       ctx.sfx('pop');
       setTimeout(() => b.remove(), 2700);
     });

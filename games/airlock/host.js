@@ -264,10 +264,11 @@ export default async function (ctx) {
     let choose;
     const chosen = new Promise((r) => (choose = r));
     put(h('div.al-intro',
-      h('div.al-introcards', ['captain', 'back', 'mimic'].map((r) => h('img', { src: card(r) }))),
-      h('h1', 'Airlock'),
-      h('p.lead', 'The station is split into two modules: this room and another one. Somewhere on board are the Captain and a shapeshifting Mimic.'),
-      h('ul.al-rules',
+      h('div.al-introleft',
+        h('div.al-introcards', ['captain', 'back', 'mimic'].map((r) => h('img', { src: card(r) }))),
+        h('h1', 'Airlock'),
+        h('p.lead', 'The station is split into two modules: this room and another one. Somewhere on board are the Captain and a shapeshifting Mimic.')),
+      h('div.al-introright', h('ul.al-rules',
         h('li', h('b', { style: { color: TEAMS.crew.color } }, 'Crew'), ' wins if the Captain ends up in a different module from the Mimic.'),
         h('li', h('b', { style: { color: TEAMS.swarm.color } }, 'Swarm'), ' wins if the Mimic ends up in the same module as the Captain.'),
         h('li', 'Use your phone to show your card or just your colour to someone in your module. Trust carefully.'),
@@ -275,7 +276,7 @@ export default async function (ctx) {
         h('li', 'Three rounds, then the airlock seals for good. Then the cards are revealed.')),
       h('p.sub', 'Pick a game length:'),
       h('div.row', Object.entries(LENGTHS).map(([k, v]) => h('button' + (k === 'standard' ? '.big' : '.ghost'),
-        { onclick: () => choose(k) }, `${v.label} · ${v.rounds.map(fmt).join(' / ')}`)))));
+        { onclick: () => choose(k) }, `${v.label} · ${v.rounds.map(fmt).join(' / ')}`))))));
     ctx.show('all', { title: 'Airlock', wait: 'The host is picking a game length…' });
     const stop = ctx.clock(30);
     const timer = ctx.sleep(30000).then(() => 'standard');
@@ -405,11 +406,14 @@ function injectCss() {
   document.getElementById('airlock-css')?.remove();
   const css = Object.assign(document.createElement('style'), { id: 'airlock-css' });
   css.textContent = `
-  .al-intro { display: flex; flex-direction: column; align-items: center; gap: 1.2vh; max-width: 1200px; }
-  .al-intro h1 { font-size: 4em; letter-spacing: .04em; margin: 0; }
-  .al-intro .lead { font-size: 1.3em; max-width: 900px; margin: 0; }
-  .al-introcards { display: flex; gap: 2vw; }
-  .al-introcards img { height: 24vh; filter: drop-shadow(0 10px 24px #0008); }
+  .al-intro { display: grid; grid-template-columns: 1fr 1.25fr; gap: 2.5em; align-items: center; width: 100%; max-width: 58em; }
+  .al-introleft { display: flex; flex-direction: column; align-items: center; gap: .6em; }
+  .al-introright { display: flex; flex-direction: column; align-items: flex-start; gap: .5em; }
+  .al-introright .row { flex-wrap: wrap; justify-content: flex-start; }
+  .al-intro h1 { font-size: 3.6em; letter-spacing: .04em; margin: 0; }
+  .al-intro .lead { font-size: 1.15em; margin: 0; }
+  .al-introcards { display: flex; gap: .8em; }
+  .al-introcards img { height: 8.5em; filter: drop-shadow(0 10px 24px #0008); }
   .al-introcards img:first-child { transform: rotate(-8deg); }
   .al-introcards img:last-child { transform: rotate(8deg); }
   .al-rules { text-align: left; font-size: 1.05em; max-width: 1000px; margin: .4em 0; display: grid; gap: .3em; }

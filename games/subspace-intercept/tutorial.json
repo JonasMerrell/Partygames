@@ -1,54 +1,93 @@
 [
   {
-    "title": "Step 1: Two Starfleet Teams",
-    "text": "Welcome to Subspace Intercept. You are divided into Team Alpha and Team Beta. Each team must crack a five-letter Starfleet override code.",
-    "audio": "audio/tut_1.wav",
-    "ms": 9200,
+    "title": "Two crews, one relay",
+    "text": "Split into Team Alpha and Team Beta. Each crew cracks five-letter access codes. Three codes takes the relay.",
+    "ms": 8000,
     "scene": [
-      { "icon": "🖖", "label": "Team Alpha: ? ? ? ? ?", "fx": "pop" },
-      { "icon": "⚡", "label": "VS" },
-      { "icon": "🛡️", "label": "Team Beta: ? ? ? ? ?", "fx": "pop" }
+      {
+        "icon": "📡",
+        "label": "Team Alpha: ? ? ? ? ?",
+        "fx": "pop"
+      },
+      {
+        "icon": "⚡",
+        "label": "VS"
+      },
+      {
+        "icon": "🛰️",
+        "label": "Team Beta: ? ? ? ? ?",
+        "fx": "pop"
+      }
     ]
   },
   {
-    "title": "Step 2: Transmit Three Clues",
-    "text": "Each cycle, one Sender receives a secret word and transmits three one-word clues to their crewmates.",
-    "audio": "audio/tut_2.wav",
+    "title": "Send three clues",
+    "text": "Everyone gets a secret word at the same time and types three one-word clues for their own crew.",
     "ms": 7500,
     "scene": [
-      { "phone": "Secret Word: Warp Core", "type": "antimatter engine fast", "label": "Sender" }
+      {
+        "phone": "Secret word: Fuel Cell",
+        "type": "battery power energy",
+        "label": "Sender"
+      }
     ]
   },
   {
-    "title": "Step 3: Borg Assimilation",
-    "text": "Before your crewmates see them, an opposing Borg operative assimilates one clue, replacing it with a decoy word.",
-    "audio": "audio/tut_3.wav",
+    "title": "The other crew jams one",
+    "text": "Then everyone jams at once: you swap one clue of a player on the other crew for a fake.",
     "ms": 7500,
     "scene": [
-      { "card": "antimatter", "color": "#ff9900", "label": "Marker 01" },
-      { "card": "engine", "back": "POTATO", "color": "#39ff14", "label": "Assimilated!", "fx": "shake" },
-      { "card": "fast", "color": "#ff9900", "label": "Marker 03" }
+      {
+        "card": "battery",
+        "color": "#3ee6c1",
+        "label": "Clue 01"
+      },
+      {
+        "card": "power",
+        "back": "POTATO",
+        "color": "#ff4fd8",
+        "label": "Jammed!",
+        "fx": "shake"
+      },
+      {
+        "card": "energy",
+        "color": "#3ee6c1",
+        "label": "Clue 03"
+      }
     ]
   },
   {
-    "title": "Step 4: Call It Out & Crack the Code",
-    "text": "Your crewmates call out their guess in person! If correct, reveal one letter of your code—or risk your turn to guess all five letters at once.",
-    "audio": "audio/tut_4.wav",
-    "ms": 9500,
+    "title": "Guess out loud, then crack the code",
+    "text": "Crews take turns guessing each word out loud. Right? Reveal one letter of your code, or risk it and guess all five.",
+    "ms": 9000,
     "scene": [
-      { "tv": "WARP CORE!", "sub": "Transmission confirmed" },
-      { "score": "A _ P _ _", "label": "1 letter or all 5!", "fx": "pop" }
+      {
+        "tv": "FUEL CELL!",
+        "sub": "Transmission confirmed"
+      },
+      {
+        "score": "A _ P _ _",
+        "label": "1 letter or all 5!",
+        "fx": "pop"
+      }
     ],
     "flow": true
   },
   {
-    "title": "Step 5: Signal Lost",
-    "text": "If you miss, the opposing team unlocks a letter instead. First team to complete their override code wins!",
-    "audio": "audio/tut_5.wav",
+    "title": "Signal lost",
+    "text": "Miss, and the other crew decodes a letter instead. First crew to crack three codes takes the relay!",
     "ms": 7500,
     "scene": [
-      { "icon": "🚨", "label": "Miss = Enemy advances", "fx": "pulse" },
-      { "icon": "🏆", "label": "Crack 5 letters to win", "fx": "float" }
+      {
+        "icon": "🚨",
+        "label": "Miss = they advance",
+        "fx": "pulse"
+      },
+      {
+        "icon": "🏆",
+        "label": "Crack 5 letters to win",
+        "fx": "float"
+      }
     ]
   }
 ]
