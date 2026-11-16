@@ -1,9 +1,9 @@
-// Tin Tongue: two robot teams take turns. The clue-giver's voice chip only
-// does one-syllable words; their team guesses out loud. The other team sees
-// the word too and hits BZZT on a slip. A card scores one point per
-// syllable (max 3); a BZZT costs the clue team a point.
+// Tin Tongue: 1950s Retro-Mechanical Tin Toy & Blueprint Host Engine.
+// Drives TV host screen, interlocking brass gear timers, Solari split-flap cards,
+// rotary odometer scores, custom looping BGM and bespoke SFX.
+import * as audio from '/sdk/audio.js';
 import { WORDS } from './words.js';
-import { robot, injectCss, BOT_CSS } from './art.js';
+import { robot, injectCss, BOT_CSS, gearsSvg } from './art.js';
 
 const TURN_TIME = 60;         // seconds per turn
 const READY_TIME = 20;        // clue-giver has this long to press Start
@@ -22,290 +22,616 @@ export default async function (ctx) {
   const { h } = ctx;
   injectCss('tin-tongue-css', BOT_CSS + CSS);
 
-  const people = ctx.shuffle(ctx.connected);
-  if (people.length < 4) {
-    return ctx.say('Not enough players', 'Tin Tongue needs at least 4 people: two teams of two.', 5000);
+  // ---------- Audio Subsystem ----------
+  ctx.music(null); // Mute generic platform music
+  let bgm = null;
+  try {
+    bgm = new Audio(ctx.asset('audio/bg_loop.wav'));
+    bgm.loop = true;
+    bgm.volume = 0.35;
+    if (!audio.isMuted()) {
+      bgm.play().catch(() => {});
+    }
+  } catch (e) {}
+
+  function playSfx(name, vol = 0.7) {
+    if (audio.isMuted()) return;
+    try {
+      const sfx = new Audio(ctx.asset(`audio/${name}.wav`));
+      sfx.volume = vol;
+      sfx.play().catch(() => {});
+    } catch (e) {}
   }
-  const teams = TEAMS.map((t, i) => ({
-    ...t, i, members: people.filter((_, k) => k % 2 === i), score: 0, next: 0, best: null,
-  }));
-  const teamOf = new Map();
-  for (const t of teams) for (const p of t.members) teamOf.set(p.id, t);
-  const bot = (color, mood, cls = '') => {
-    const d = h('div.tt-botwrap' + cls);
-    d.innerHTML = robot(color, mood);
-    return d;
-  };
 
-  let deck = ctx.shuffle(WORDS);
-  const draw = () => {
-    if (!deck.length) deck = ctx.shuffle(WORDS);
-    return deck.pop();
-  };
+  try {
+    const people = ctx.shuffle(ctx.connected);
+    if (people.length < 4) {
+      return ctx.say('Not enough players', 'Tin Tongue needs at least 4 people: two teams of two.', 5000);
+    }
+    const teams = TEAMS.map((t, i) => ({
+      ...t, i, members: people.filter((_, k) => k % 2 === i), score: 0, next: 0, best: null,
+    }));
+    const teamOf = new Map();
+    for (const t of teams) for (const p of t.members) teamOf.set(p.id, t);
+    const bot = (color, mood, cls = '') => {
+      const d = h('div.tt-botwrap' + cls);
+      d.innerHTML = robot(color, mood);
+      return d;
+    };
 
-  // One message handler for the whole game; it forwards to the turn in play.
-  let turn = null;
-  ctx.on('message', (p, data) => turn?.(p, data?.kind === 'choice' ? data.value : data));
+    let deck = ctx.shuffle(WORDS);
+    const draw = () => {
+      if (!deck.length) deck = ctx.shuffle(WORDS);
+      return deck.pop();
+    };
 
-  // ---------- intro ----------
-  ctx.el.replaceChildren(h('div.tt-intro',
-    h('h1.tt-title', 'Tin ', h('span', 'Tongue')),
-    h('p.tt-tag', 'Your voice chip only does one-syllable words.'),
-    h('div.tt-teams', teams.map((t) => h('div.tt-team', { style: { '--tc': t.color } },
-      bot(t.color, 'idle'),
-      h('h2', t.name),
-      h('div.tt-roster', t.members.map((p) => h('span', p.name)))))),
-    h('ol.tt-rules', RULES.map((r) => h('li', r)))));
-  for (const t of teams) {
-    ctx.show(t.members, {
-      title: `You're a ${t.name.slice(0, -1)}!`,
-      text: `Team ${t.name}: ${t.members.map((p) => p.name).join(', ')}\n\n${RULES.join('\n')}`,
-      color: t.color, buzz: true,
-    });
-  }
-  await ctx.sleep(12000);
+    // One message handler for the whole game; it forwards to the turn in play.
+    let turn = null;
+    ctx.on('message', (p, data) => turn?.(p, data?.kind === 'choice' ? data.value : data));
 
-  // ---------- turns ----------
-  const rounds = Math.max(...teams.map((t) => t.members.length));
-  for (let r = 0; r < rounds; r++) {
+    // ---------- intro ----------
+    ctx.el.replaceChildren(h('div.tt-intro',
+      h('div.tt-draft-header',
+        h('span.tt-patent-no', 'PATENT SPEC. NO. 1954-TT'),
+        h('span.tt-patent-title', 'ELECTRO-MECHANICAL VOICE-CHIP CALIBRATOR')),
+      h('h1.tt-title', 'Tin ', h('span', 'Tongue')),
+      h('p.tt-tag', 'Your voice chip only does one-syllable words.'),
+      h('div.tt-teams', teams.map((t) => h('div.tt-team', { style: { '--tc': t.color } },
+        bot(t.color, 'idle'),
+        h('h2', t.name),
+        h('div.tt-roster', t.members.map((p) => h('span', p.name)))))),
+      h('ol.tt-rules', RULES.map((r) => h('li', r)))));
     for (const t of teams) {
-      const giver = nextGiver(t);
-      if (!giver) continue;
-      await playTurn(t, giver, `Turn ${r + 1} of ${rounds}`);
-    }
-  }
-
-  // ---------- final ----------
-  const [a, b] = teams;
-  const tie = a.score === b.score;
-  const win = a.score > b.score ? a : b;
-  const stars = teams.map((t) => t.best).filter(Boolean).sort((x, y) => y.pts - x.pts);
-  ctx.show('all', { title: 'Game over!', wait: tie ? 'A tie! Back to the lobby soon…' : `The ${win.name} win! Back to the lobby soon…` });
-  ctx.el.replaceChildren(h('div.tt-final',
-    h('h1', tie ? 'A dead heat!' : `The ${win.name} win!`),
-    h('div.tt-teams', teams.map((t) => h('div.tt-team' + (!tie && t === win ? '.tt-win' : ''), { style: { '--tc': t.color } },
-      bot(t.color, tie || t === win ? 'happy' : 'glitch'),
-      h('h2', t.name), h('div.tt-big', t.score)))),
-    stars[0] && stars[0].pts > 0 && h('p.tt-star', `Smoothest talker: ${stars[0].p.name}, ${stars[0].pts} points in one turn`)));
-  ctx.sfx?.('win');
-  await ctx.sleep(10000);
-
-  function nextGiver(t) {
-    for (let k = 0; k < t.members.length; k++) {
-      const p = t.members[t.next++ % t.members.length];
-      if (ctx.player(p.id)?.connected) return p;
-    }
-    return null;
-  }
-
-  async function playTurn(team, giver, label) {
-    const other = teams[1 - team.i];
-    const guessers = team.members.filter((p) => p.id !== giver.id);
-
-    // Get ready.
-    ctx.el.replaceChildren(h('div.tt-ready', { style: { '--tc': team.color } },
-      h('p.tt-label', label),
-      bot(team.color, 'idle'),
-      h('h1', h('span', giver.name), ' is up for the ', team.name),
-      h('p.tt-sub', `${other.name}: you'll see the word too. Listen for slips!`),
-      scoreRow()));
-    ctx.show(team.members.filter((p) => p.id !== giver.id), { title: 'Get ready to guess!', wait: `${giver.name} is about to give clues.`, color: team.color });
-    ctx.show(other.members, { title: 'Get ready to listen', wait: `You'll see ${giver.name}'s word. Hit BZZT on any slip.`, color: other.color });
-    await ctx.ask(giver, {
-      title: 'You\'re up!',
-      text: `Hide your screen from your team. You have ${TURN_TIME} seconds.\n\n${RULES[0]}`,
-      choices: ['Start'], color: team.color, buzz: true,
-    }, { timeout: READY_TIME, clock: false, after: { wait: 'Here we go…', color: team.color } });
-
-    // TV layout, built once and updated in place.
-    const timer = h('div.tt-timer');
-    const ring = h('div.tt-ring', timer);
-    const tally = h('div.tt-tally');
-    const last = h('div.tt-last');
-    const face = h('div.tt-face');
-    const setFace = (mood) => { face.replaceChildren(bot(team.color, mood)); };
-    const scores = h('div.tt-scorewrap', scoreRow());
-    ctx.el.replaceChildren(h('div.tt-turn', { style: { '--tc': team.color } },
-      h('div.tt-turnhead', h('p.tt-label', label), h('h2', h('span', giver.name), ' clues for the ', team.name)),
-      h('div.tt-mid', face, ring, h('div.tt-side', tally, last)),
-      scores));
-    setFace('talk');
-
-    const log = [];
-    let card = null, dealtAt = 0, moodTimer = null;
-    const endAt = Date.now() + TURN_TIME * 1000;
-    const mood = (m) => { setFace(m); clearTimeout(moodTimer); moodTimer = setTimeout(() => setFace('talk'), 1300); };
-    const refresh = () => {
-      const got = log.filter((c) => c.result === 'got');
-      const net = log.reduce((s, c) => s + (c.result === 'got' ? c.points : c.result === 'glitch' ? -1 : 0), 0);
-      tally.replaceChildren(
-        h('div', h('b', net), ` point${Math.abs(net) === 1 ? '' : 's'}`),
-        h('div.tt-small', `✓ ${got.length}   ↷ ${log.filter((c) => c.result === 'skip').length}   ⚡ ${log.filter((c) => c.result === 'glitch').length}`));
-      scores.replaceChildren(scoreRow());
-    };
-    const showLast = (c) => {
-      const txt = c.result === 'got' ? [`✓ ${c.word}`, `+${c.points}`]
-        : c.result === 'skip' ? [`↷ ${c.word}`, 'skipped']
-          : [`⚡ ${c.word}`, `BZZT from ${c.by.name}  −1`];
-      last.replaceChildren(h('div.tt-lastcard.tt-' + c.result, h('div', txt[0]), h('div.tt-small', txt[1])));
-    };
-    const views = (flash) => {
-      const left = Math.max(1, Math.round((endAt - Date.now()) / 1000));
-      ctx.show(giver, {
-        tt: 'give', word: card.word, points: card.points, syllables: card.syllables, card: card.id, left, flash,
-        team: team.name, color: team.color, buzz: !!flash,
-        title: card.word.toUpperCase(), text: `${card.points} point${card.points > 1 ? 's' : ''}. One-syllable words only!`,
-        choices: [{ label: '✅ Got it', value: { tt: 'got', card: card.id } }, { label: '↷ Skip', value: { tt: 'skip', card: card.id } }],
+      ctx.show(t.members, {
+        title: `You're a ${t.name.slice(0, -1)}!`,
+        text: `Team ${t.name}: ${t.members.map((p) => p.name).join(', ')}\n\n${RULES.join('\n')}`,
+        color: t.color, buzz: true,
       });
-      ctx.show(other.members, {
-        tt: 'watch', word: card.word, points: card.points, card: card.id, left, giver: giver.name, color: other.color,
-        title: `${giver.name} is cluing: ${card.word.toUpperCase()}`, text: 'Tap BZZT on any word with 2+ syllables, or any part of the word.',
-        choices: [{ label: '⚡ BZZT!', value: { tt: 'glitch', card: card.id } }],
-      });
-      ctx.show(guessers, { tt: 'guess', left, giver: giver.name, title: 'Guess out loud!', wait: `${giver.name} is giving clues.`, color: team.color });
-    };
-    const deal = (flash) => {
-      card = { id: (card?.id || 0) + 1, ...draw() };
-      dealtAt = Date.now();
-      views(flash);
-    };
+    }
+    await ctx.sleep(12000);
 
-    turn = (p, d) => {
-      if (!p || !d || !d.tt || !card || Date.now() >= endAt) return;
-      const now = Date.now();
-      if (d.tt === 'got' || d.tt === 'skip') {
-        if (p.id !== giver.id || d.card !== card.id) return;
-        const c = { ...card, result: d.tt, at: now };
-        log.push(c);
-        if (c.result === 'got') { team.score += c.points; mood('happy'); ctx.sfx?.('ding'); } else ctx.sfx?.('whoosh');
-        showLast(c); refresh(); deal();
-      } else if (d.tt === 'glitch') {
-        if (teamOf.get(p.id) !== other) return;
-        const prev = log.at(-1);
-        if (d.card === card.id && now - dealtAt >= GLITCH_GRACE) {
-          // A slip on the card in play: it's lost.
-          const c = { ...card, result: 'glitch', by: p, at: now };
-          log.push(c);
-          team.score -= 1;
-          mood('glitch'); ctx.sfx?.('glitch'); showLast(c); refresh(); deal({ by: p.name });
-        } else if (prev && prev.result !== 'glitch' && now - prev.at < GLITCH_GRACE + 1500
-          && (d.card === prev.id || d.card === card.id)) {
-          // They slipped right before Got it / Skip: the card before loses its points.
-          if (prev.result === 'got') team.score -= prev.points;
-          prev.result = 'glitch'; prev.by = p;
-          team.score -= 1;
-          mood('glitch'); ctx.sfx?.('glitch'); showLast(prev); refresh(); views({ by: p.name, late: true });
-        }
+    // ---------- turns ----------
+    const rounds = Math.max(...teams.map((t) => t.members.length));
+    for (let r = 0; r < rounds; r++) {
+      for (const t of teams) {
+        const giver = nextGiver(t);
+        if (!giver) continue;
+        await playTurn(t, giver, `Turn ${r + 1} of ${rounds}`);
       }
-    };
-
-    ctx.sfx?.('start');
-    ctx.music?.('tense');
-    deal();
-    refresh();
-    let lastS = TURN_TIME + 1;
-    while (Date.now() < endAt) {
-      const s = Math.ceil((endAt - Date.now()) / 1000);
-      if (s !== lastS && s <= 10) ctx.sfx?.(s % 2 ? 'tick' : 'tock');
-      lastS = s;
-      timer.textContent = s;
-      ring.style.setProperty('--p', `${(s / TURN_TIME) * 100}%`);
-      ring.classList.toggle('tt-urgent', s <= 10);
-      await ctx.sleep(100);
     }
-    turn = null;
-    clearTimeout(moodTimer);
-    ctx.sfx?.('timeup');
-    ctx.music?.('party');
-    if (card) log.push({ ...card, result: 'timeout' });
 
-    // Recap.
-    const pts = log.reduce((s, c) => s + (c.result === 'got' ? c.points : c.result === 'glitch' ? -1 : 0), 0);
-    const gotPts = log.filter((c) => c.result === 'got').reduce((s, c) => s + c.points, 0);
-    if (!team.best || gotPts > team.best.pts) team.best = { p: giver, pts: gotPts };
-    ctx.show('all', { title: 'Time!', wait: 'Look at the TV for the recap.', buzz: true });
-    ctx.el.replaceChildren(h('div.tt-recap', { style: { '--tc': team.color } },
-      h('h1', 'Time!'),
-      h('p.tt-sub', `${giver.name} scored ${pts >= 0 ? '+' : ''}${pts} for the ${team.name}`),
-      recapCards(log),
-      scoreRow()));
-    await ctx.sleep(Math.min(14000, 6000 + log.length * 700));
-  }
+    // ---------- final ----------
+    const [a, b] = teams;
+    const tie = a.score === b.score;
+    const win = a.score > b.score ? a : b;
+    const stars = teams.map((t) => t.best).filter(Boolean).sort((x, y) => y.pts - x.pts);
+    ctx.show('all', { title: 'Game over!', wait: tie ? 'A tie! Back to the lobby soon…' : `The ${win.name} win! Back to the lobby soon…` });
+    ctx.el.replaceChildren(h('div.tt-final',
+      h('h1', tie ? 'A dead heat!' : `The ${win.name} win!`),
+      h('div.tt-teams', teams.map((t) => h('div.tt-team' + (!tie && t === win ? '.tt-win' : ''), { style: { '--tc': t.color } },
+        bot(t.color, tie || t === win ? 'happy' : 'glitch'),
+        h('h2', t.name), h('div.tt-big', t.score)))),
+      stars[0] && stars[0].pts > 0 && h('p.tt-star', `Smoothest talker: ${stars[0].p.name}, ${stars[0].pts} points in one turn`)));
+    playSfx('tin_chime', 0.9);
+    ctx.sfx?.('win');
+    await ctx.sleep(10000);
 
-  function recapCards(log) {
-    if (!log.length) return h('p.tt-sub', 'No cards. The robot froze up!');
-    // Scored and buzzed cards get a tile; skips are one line so a fast round still fits the screen.
-    const big = log.filter((c) => c.result === 'got' || c.result === 'glitch');
-    const shown = big.slice(0, 18);
-    const missed = log.filter((c) => c.result === 'skip' || c.result === 'timeout');
-    return h('div.tt-recapbody',
-      shown.length ? h('div.tt-cards' + (shown.length > 10 ? '.tt-dense' : ''), shown.map((c) => h('div.tt-rcard.tt-' + c.result,
-        h('div.tt-rword', c.word),
-        h('div.tt-small', c.result === 'got' ? `+${c.points}` : `⚡ ${c.by.name} −1`)))) : null,
-      big.length > shown.length ? h('p.tt-sub', `+${big.length - shown.length} more`) : null,
-      missed.length ? h('p.tt-missed', `↷ ${missed.length} skipped: `,
-        missed.slice(0, 12).map((c) => c.word).join(', ') + (missed.length > 12 ? ', …' : '')) : null);
-  }
+    function nextGiver(t) {
+      for (let k = 0; k < t.members.length; k++) {
+        const p = t.members[t.next++ % t.members.length];
+        if (ctx.player(p.id)?.connected) return p;
+      }
+      return null;
+    }
 
-  function scoreRow() {
-    return h('div.tt-scores', teams.map((t) => h('div.tt-score', { style: { '--tc': t.color } },
-      h('span', t.name), h('b', t.score))));
+    async function playTurn(team, giver, label) {
+      const other = teams[1 - team.i];
+      const guessers = team.members.filter((p) => p.id !== giver.id);
+
+      // Get ready
+      playSfx('windup_ratchet', 0.85);
+      ctx.el.replaceChildren(h('div.tt-ready', { style: { '--tc': team.color } },
+        h('p.tt-label', label),
+        bot(team.color, 'idle'),
+        h('h1', h('span', giver.name), ' is up for the ', team.name),
+        h('p.tt-sub', `${other.name}: you'll see the word too. Listen for slips!`),
+        scoreRow()));
+      ctx.show(team.members.filter((p) => p.id !== giver.id), { title: 'Get ready to guess!', wait: `${giver.name} is about to give clues.`, color: team.color });
+      ctx.show(other.members, { title: 'Get ready to listen', wait: `You'll see ${giver.name}'s word. Hit BZZT on any slip.`, color: other.color });
+      await ctx.ask(giver, {
+        title: 'You\'re up!',
+        text: `Hide your screen from your team. You have ${TURN_TIME} seconds.\n\n${RULES[0]}`,
+        choices: ['Start'], color: team.color, buzz: true,
+      }, { timeout: READY_TIME, clock: false, after: { wait: 'Here we go…', color: team.color } });
+
+      // TV layout with Interlocking Brass Gears and Solari Display
+      const timer = h('div.tt-timer');
+      const ring = h('div.tt-ring');
+      ring.innerHTML = gearsSvg();
+      ring.append(timer);
+
+      const tally = h('div.tt-tally');
+      const last = h('div.tt-last');
+      const face = h('div.tt-face');
+      const setFace = (mood) => { face.replaceChildren(bot(team.color, mood)); };
+      const scores = h('div.tt-scorewrap', scoreRow());
+      ctx.el.replaceChildren(h('div.tt-turn', { style: { '--tc': team.color } },
+        h('div.tt-turnhead', h('p.tt-label', label), h('h2', h('span', giver.name), ' clues for the ', team.name)),
+        h('div.tt-mid', face, ring, h('div.tt-side', tally, last)),
+        scores));
+      setFace('talk');
+
+      const log = [];
+      let card = null, dealtAt = 0, moodTimer = null;
+      const endAt = Date.now() + TURN_TIME * 1000;
+      const mood = (m) => { setFace(m); clearTimeout(moodTimer); moodTimer = setTimeout(() => setFace('talk'), 1300); };
+      const refresh = () => {
+        const got = log.filter((c) => c.result === 'got');
+        const net = log.reduce((s, c) => s + (c.result === 'got' ? c.points : c.result === 'glitch' ? -1 : 0), 0);
+        tally.replaceChildren(
+          h('div.tt-odometer-box',
+            h('span.tt-odometer-label', 'NET TALLY'),
+            h('div.tt-odometer', h('b', net), ` point${Math.abs(net) === 1 ? '' : 's'}`)),
+          h('div.tt-small', `✓ ${got.length}   ↷ ${log.filter((c) => c.result === 'skip').length}   ⚡ ${log.filter((c) => c.result === 'glitch').length}`));
+        scores.replaceChildren(scoreRow());
+      };
+      const showLast = (c) => {
+        const txt = c.result === 'got' ? [`✓ ${c.word}`, `+${c.points}`]
+          : c.result === 'skip' ? [`↷ ${c.word}`, 'skipped']
+            : [`⚡ ${c.word}`, `BZZT from ${c.by.name}  −1`];
+        const cardEl = h('div.tt-solari.tt-lastcard.tt-' + c.result,
+          h('div.tt-solari-flap.tt-solari-top', h('span', txt[0])),
+          h('div.tt-solari-hinge'),
+          h('div.tt-solari-flap.tt-solari-bottom', h('span', txt[0])),
+          h('div.tt-solari-sub', txt[1]));
+        cardEl.classList.add('flip-in');
+        last.replaceChildren(cardEl);
+      };
+      const views = (flash) => {
+        const left = Math.max(1, Math.round((endAt - Date.now()) / 1000));
+        ctx.show(giver, {
+          tt: 'give', word: card.word, points: card.points, syllables: card.syllables, card: card.id, left, flash,
+          team: team.name, color: team.color, buzz: !!flash,
+          title: card.word.toUpperCase(), text: `${card.points} point${card.points > 1 ? 's' : ''}. One-syllable words only!`,
+          choices: [{ label: '✅ Got it', value: { tt: 'got', card: card.id } }, { label: '↷ Skip', value: { tt: 'skip', card: card.id } }],
+        });
+        ctx.show(other.members, {
+          tt: 'watch', word: card.word, points: card.points, card: card.id, left, giver: giver.name, color: other.color,
+          title: `${giver.name} is cluing: ${card.word.toUpperCase()}`, text: 'Tap BZZT on any word with 2+ syllables, or any part of the word.',
+          choices: [{ label: '⚡ BZZT!', value: { tt: 'glitch', card: card.id } }],
+        });
+        ctx.show(guessers, { tt: 'guess', left, giver: giver.name, title: 'Guess out loud!', wait: `${giver.name} is giving clues.`, color: team.color });
+      };
+      const deal = (flash) => {
+        card = { id: (card?.id || 0) + 1, ...draw() };
+        dealtAt = Date.now();
+        playSfx('split_flap_clatter', 0.65);
+        views(flash);
+      };
+
+      turn = (p, d) => {
+        if (!p || !d || !d.tt || !card || Date.now() >= endAt) return;
+        const now = Date.now();
+        if (d.tt === 'got' || d.tt === 'skip') {
+          if (p.id !== giver.id || d.card !== card.id) return;
+          const c = { ...card, result: d.tt, at: now };
+          log.push(c);
+          if (c.result === 'got') {
+            team.score += c.points;
+            mood('happy');
+            playSfx('tin_chime', 0.8);
+            ctx.sfx?.('ding');
+          } else {
+            ctx.sfx?.('whoosh');
+          }
+          showLast(c); refresh(); deal();
+        } else if (d.tt === 'glitch') {
+          if (teamOf.get(p.id) !== other) return;
+          const prev = log.at(-1);
+          if (d.card === card.id && now - dealtAt >= GLITCH_GRACE) {
+            // A slip on the card in play: it's lost.
+            const c = { ...card, result: 'glitch', by: p, at: now };
+            log.push(c);
+            team.score -= 1;
+            mood('glitch');
+            playSfx('spring_boing_klaxon', 0.9);
+            ctx.sfx?.('glitch');
+            showLast(c); refresh(); deal({ by: p.name });
+          } else if (prev && prev.result !== 'glitch' && now - prev.at < GLITCH_GRACE + 1500
+            && (d.card === prev.id || d.card === card.id)) {
+            // They slipped right before Got it / Skip: the card before loses its points.
+            if (prev.result === 'got') team.score -= prev.points;
+            prev.result = 'glitch'; prev.by = p;
+            team.score -= 1;
+            mood('glitch');
+            playSfx('spring_boing_klaxon', 0.9);
+            ctx.sfx?.('glitch');
+            showLast(prev); refresh(); views({ by: p.name, late: true });
+          }
+        }
+      };
+
+      ctx.sfx?.('start');
+      deal();
+      refresh();
+      let lastS = TURN_TIME + 1;
+      while (Date.now() < endAt) {
+        const s = Math.ceil((endAt - Date.now()) / 1000);
+        if (s !== lastS && s <= 10) ctx.sfx?.(s % 2 ? 'tick' : 'tock');
+        lastS = s;
+        timer.textContent = s;
+        ring.style.setProperty('--p', `${(s / TURN_TIME) * 100}%`);
+        ring.classList.toggle('tt-urgent', s <= 10);
+        await ctx.sleep(100);
+      }
+      turn = null;
+      clearTimeout(moodTimer);
+      ctx.sfx?.('timeup');
+      if (card) log.push({ ...card, result: 'timeout' });
+
+      // Recap screen with Solari cards
+      const pts = log.reduce((s, c) => s + (c.result === 'got' ? c.points : c.result === 'glitch' ? -1 : 0), 0);
+      const gotPts = log.filter((c) => c.result === 'got').reduce((s, c) => s + c.points, 0);
+      if (!team.best || gotPts > team.best.pts) team.best = { p: giver, pts: gotPts };
+      ctx.show('all', { title: 'Time!', wait: 'Look at the TV for the recap.', buzz: true });
+      ctx.el.replaceChildren(h('div.tt-recap', { style: { '--tc': team.color } },
+        h('h1', 'Time!'),
+        h('p.tt-sub', `${giver.name} scored ${pts >= 0 ? '+' : ''}${pts} for the ${team.name}`),
+        recapCards(log),
+        scoreRow()));
+      await ctx.sleep(Math.min(14000, 6000 + log.length * 700));
+    }
+
+    function recapCards(log) {
+      if (!log.length) return h('p.tt-sub', 'No cards. The robot froze up!');
+      // Scored and buzzed cards get a tile; skips are one line so a fast round still fits the screen.
+      const big = log.filter((c) => c.result === 'got' || c.result === 'glitch');
+      const shown = big.slice(0, 18);
+      const missed = log.filter((c) => c.result === 'skip' || c.result === 'timeout');
+      return h('div.tt-recapbody',
+        shown.length ? h('div.tt-cards' + (shown.length > 10 ? '.tt-dense' : ''), shown.map((c, i) => h('div.tt-rcard.tt-' + c.result, { style: { '--i': i } },
+          h('div.tt-rword', c.word),
+          h('div.tt-small', c.result === 'got' ? `+${c.points}` : `⚡ ${c.by.name} −1`)))) : null,
+        big.length > shown.length ? h('p.tt-sub', `+${big.length - shown.length} more`) : null,
+        missed.length ? h('p.tt-missed', `↷ ${missed.length} skipped: `,
+          missed.slice(0, 12).map((c) => c.word).join(', ') + (missed.length > 12 ? ', …' : '')) : null);
+    }
+
+    function scoreRow() {
+      return h('div.tt-scores', teams.map((t) => h('div.tt-score', { style: { '--tc': t.color } },
+        h('span.tt-odometer-name', t.name),
+        h('div.tt-odometer-drum', h('b', t.score)))));
+    }
+  } finally {
+    if (bgm) {
+      bgm.pause();
+      bgm.removeAttribute('src');
+      bgm = null;
+    }
   }
 }
 
 const CSS = `
-  .tt-intro, .tt-ready, .tt-turn, .tt-recap, .tt-final { width: 100%; max-width: 1500px; display: flex; flex-direction: column; align-items: center; gap: 2.5vh; }
-  .tt-title { font-size: 4.5em; font-weight: 900; letter-spacing: -.02em; margin: 0; }
+  /* Prussian Cyanotype Blueprint Drafting Grid */
+  .tt-intro, .tt-ready, .tt-turn, .tt-recap, .tt-final {
+    width: 100%;
+    max-width: 1500px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2.2vh;
+    background: #09233b;
+    background-image:
+      linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+      linear-gradient(rgba(100, 200, 255, 0.12) 2px, transparent 2px),
+      linear-gradient(90deg, rgba(100, 200, 255, 0.12) 2px, transparent 2px);
+    background-size: 20px 20px, 20px 20px, 100px 100px, 100px 100px;
+    border: 4px solid #1a4f78;
+    box-shadow: inset 0 0 100px rgba(0, 10, 25, 0.8), 0 10px 40px rgba(0, 0, 0, 0.6);
+    border-radius: 12px;
+    padding: 3vh 2vw;
+    position: relative;
+    box-sizing: border-box;
+    font-family: 'Share Tech Mono', 'Oswald', monospace;
+  }
+
+  .tt-draft-header {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    border-bottom: 2px dashed rgba(100, 200, 255, 0.35);
+    padding-bottom: 8px;
+    font-size: 0.85em;
+    color: #64b5f6;
+    letter-spacing: 0.15em;
+  }
+
+  .tt-title {
+    font-family: 'Oswald', sans-serif;
+    font-size: 4.8em;
+    font-weight: 900;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    margin: 0;
+    color: #faf5eb;
+    text-shadow: 3px 3px 0 #0d1f30, 0 0 20px rgba(255, 184, 77, 0.4);
+  }
   .tt-title span { color: var(--accent); }
-  .tt-tag, .tt-sub { color: var(--dim); font-size: 1.3em; margin: 0; }
-  .tt-label { color: var(--dim); text-transform: uppercase; letter-spacing: .15em; font-weight: 800; margin: 0; }
-  .tt-teams { display: flex; gap: 5vw; justify-content: center; flex-wrap: wrap; }
-  .tt-team { background: color-mix(in srgb, var(--tc) 14%, var(--card)); border: 3px solid var(--tc); border-radius: 28px;
-    padding: 2.5vh 3vw; min-width: 16em; display: flex; flex-direction: column; align-items: center; gap: .5em; animation: pop .4s ease-out; }
-  .tt-team h2 { color: var(--tc); font-size: 1.8em; margin: 0; }
-  .tt-team.tt-win { box-shadow: 0 0 60px color-mix(in srgb, var(--tc) 55%, transparent); }
-  .tt-roster { display: flex; flex-wrap: wrap; gap: .4em .8em; justify-content: center; font-weight: 800; }
-  .tt-botwrap .tt-bot { width: 8em; height: auto; }
-  .tt-rules { text-align: left; font-size: 1.15em; max-width: 46em; margin: 0; padding-left: 1.4em; }
-  .tt-rules li { margin: .3em 0; }
+
+  .tt-tag, .tt-sub {
+    color: #90caf9;
+    font-size: 1.3em;
+    letter-spacing: 0.04em;
+    margin: 0;
+  }
+  .tt-label {
+    color: #64b5f6;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    font-weight: 700;
+    margin: 0;
+  }
+
+  .tt-teams { display: flex; gap: 4vw; justify-content: center; flex-wrap: wrap; }
+
+  /* Brushed Tin-Plate Cards with Stamped Brass Rivets */
+  .tt-team {
+    background: linear-gradient(135deg, #abb5bf 0%, #dbe3eb 45%, #929ea9 80%, #c4cbd3 100%);
+    border: 4px solid #6b7784;
+    border-radius: 14px;
+    box-shadow:
+      inset 2px 2px 0 rgba(255, 255, 255, 0.7),
+      inset -2px -2px 0 rgba(0, 0, 0, 0.5),
+      0 12px 24px rgba(0, 0, 0, 0.5);
+    position: relative;
+    color: #121e29;
+    padding: 2.5vh 3vw;
+    min-width: 16em;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.6em;
+  }
+
+  /* Stamped Brass Corner Rivets */
+  .tt-team::before, .tt-team::after {
+    content: '';
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    background: radial-gradient(circle at 35% 35%, #fff1a8, #d4af37 60%, #735914 100%);
+    border-radius: 50%;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
+  }
+  .tt-team::before { top: 10px; left: 10px; }
+  .tt-team::after { top: 10px; right: 10px; }
+
+  .tt-team h2 {
+    font-family: 'Oswald', sans-serif;
+    color: #121e29;
+    font-size: 2em;
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    text-shadow: 1px 1px 0 rgba(255, 255, 255, 0.8);
+  }
+  .tt-team.tt-win {
+    box-shadow: 0 0 60px rgba(255, 184, 77, 0.8);
+    border-color: #d4af37;
+  }
+  .tt-roster {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4em 0.8em;
+    justify-content: center;
+    font-weight: 700;
+    color: #1a2632;
+  }
+  .tt-botwrap .tt-bot { width: 8.5em; height: auto; }
+
+  .tt-rules {
+    text-align: left;
+    font-size: 1.18em;
+    max-width: 48em;
+    margin: 0;
+    padding: 18px 24px 18px 40px;
+    background: rgba(10, 35, 60, 0.7);
+    border: 2px dashed rgba(100, 200, 255, 0.4);
+    border-radius: 8px;
+    color: #e0f2fe;
+  }
+  .tt-rules li { margin: 0.4em 0; }
+
   .tt-ready h1, .tt-turnhead h2 { margin: 0; }
   .tt-ready h1 span, .tt-turnhead h2 span { color: var(--tc); }
-  .tt-ready h1 { font-size: 2.6em; }
-  .tt-turnhead h2 { font-size: 2em; }
-  .tt-mid { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 4vw; width: 100%; }
+  .tt-ready h1 { font-size: 2.6em; color: #faf5eb; }
+  .tt-turnhead h2 { font-size: 2em; color: #faf5eb; }
+
+  .tt-mid {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: 4vw;
+    width: 100%;
+  }
   .tt-face { justify-self: end; }
-  .tt-face .tt-bot { width: 11em; height: auto; }
-  .tt-ring { --p: 100%; width: 13em; height: 13em; border-radius: 50%; display: grid; place-items: center;
-    background: conic-gradient(var(--tc) var(--p), var(--bg2) 0); transition: background .1s; }
-  .tt-ring.tt-urgent { --tc: var(--err); animation: pulse .5s ease-in-out infinite alternate; }
-  .tt-timer { width: 80%; height: 80%; border-radius: 50%; background: var(--bg); display: grid; place-items: center;
-    font-size: 4.5em; font-weight: 900; font-variant-numeric: tabular-nums; }
-  .tt-side { justify-self: start; text-align: left; display: flex; flex-direction: column; gap: 1.2em; min-width: 12em; }
-  .tt-tally { font-size: 1.4em; }
-  .tt-tally b { font-size: 2em; color: var(--tc); }
-  .tt-small { font-size: .7em; color: var(--dim); font-weight: 700; white-space: pre; }
-  .tt-lastcard { font-size: 1.5em; font-weight: 900; border-radius: 18px; padding: .5em .8em; background: var(--card);
-    border: 3px solid var(--line); animation: pop .3s ease-out; }
-  .tt-lastcard.tt-got { border-color: #5df08a; }
-  .tt-lastcard.tt-glitch { border-color: var(--err); animation: pop .3s ease-out, tt-shake .08s linear 6; }
+  .tt-face .tt-bot { width: 11.5em; height: auto; }
+
+  /* Interlocking Gear Timer Ring */
+  .tt-ring {
+    --p: 100%;
+    width: 15em;
+    height: 15em;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    position: relative;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
+  }
+  .tt-timer {
+    width: 72%;
+    height: 72%;
+    border-radius: 50%;
+    background: #09233b;
+    border: 4px solid #d4af37;
+    box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.9);
+    display: grid;
+    place-items: center;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 4.8em;
+    font-weight: 900;
+    color: #faf5eb;
+    z-index: 2;
+    font-variant-numeric: tabular-nums;
+  }
+  .tt-ring.tt-urgent .tt-timer {
+    color: #ff3344;
+    border-color: #ff3344;
+    text-shadow: 0 0 20px #ff3344;
+  }
+
+  .tt-side {
+    justify-self: start;
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    gap: 1.2em;
+    min-width: 14em;
+  }
+
+  /* Rotary Drum Odometer Tally */
+  .tt-tally { font-size: 1.2em; }
+  .tt-odometer-box {
+    background: #061828;
+    border: 3px solid #d4af37;
+    border-radius: 6px;
+    padding: 10px 16px;
+    box-shadow: inset 0 6px 12px rgba(0, 0, 0, 0.9), 0 4px 8px rgba(0, 0, 0, 0.5);
+  }
+  .tt-odometer-label {
+    display: block;
+    font-size: 0.65em;
+    letter-spacing: 0.15em;
+    color: #90caf9;
+  }
+  .tt-odometer b {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 2.2em;
+    color: var(--tc);
+    font-variant-numeric: tabular-nums;
+  }
+  .tt-small {
+    font-size: 0.85em;
+    color: #90caf9;
+    font-weight: 700;
+    margin-top: 6px;
+    white-space: pre;
+  }
+
+  /* Solari Split-Flap Last Card Display */
+  .tt-lastcard {
+    min-width: 12em;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.8);
+  }
+  .tt-solari-sub {
+    font-size: 0.75em;
+    color: #90caf9;
+    text-align: center;
+    padding: 4px;
+    background: #091a2a;
+    border-bottom-left-radius: 6px;
+    border-bottom-right-radius: 6px;
+  }
+  .tt-lastcard.tt-got .tt-solari-flap { color: #5df08a; }
+  .tt-lastcard.tt-glitch .tt-solari-flap { color: #ff3344; }
+
+  /* Scores Row: Rotary Odometers */
   .tt-scores { display: flex; gap: 3vw; justify-content: center; }
-  .tt-score { display: flex; align-items: baseline; gap: .6em; background: var(--card); border: 3px solid var(--tc);
-    border-radius: 99px; padding: .3em 1.2em; font-weight: 900; font-size: 1.3em; }
-  .tt-score span { color: var(--tc); }
-  .tt-score b { font-size: 1.4em; font-variant-numeric: tabular-nums; }
-  .tt-recap h1 { font-size: 3.5em; margin: 0; color: var(--tc); }
+  .tt-score {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: linear-gradient(135deg, #abb5bf 0%, #dbe3eb 50%, #929ea9 100%);
+    border: 3.5px solid #6b7784;
+    border-radius: 8px;
+    padding: 8px 18px;
+    box-shadow: inset 1px 1px 0 #fff, 0 6px 16px rgba(0, 0, 0, 0.6);
+    color: #121e29;
+  }
+  .tt-odometer-name {
+    font-family: 'Oswald', sans-serif;
+    font-size: 1.4em;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: #121e29;
+  }
+  .tt-odometer-drum {
+    background: #061828;
+    border: 2px solid #d4af37;
+    border-radius: 4px;
+    padding: 4px 12px;
+    box-shadow: inset 0 4px 8px rgba(0, 0, 0, 0.9);
+  }
+  .tt-odometer-drum b {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 1.8em;
+    color: var(--tc);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Recap Screen */
+  .tt-recap h1 {
+    font-family: 'Oswald', sans-serif;
+    font-size: 3.8em;
+    margin: 0;
+    color: var(--tc);
+    text-transform: uppercase;
+  }
   .tt-cards { display: flex; flex-wrap: wrap; gap: 14px; justify-content: center; max-width: 1300px; }
-  .tt-rcard { background: var(--card); border: 3px solid var(--line); border-radius: 16px; padding: .5em 1em; min-width: 7em; animation: pop .35s ease-out backwards; }
+  .tt-rcard {
+    background: #121820;
+    border: 2.5px solid #2d3b48;
+    border-radius: 6px;
+    padding: 10px 16px;
+    min-width: 7.5em;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.7);
+    animation: tt-solari-drop 0.4s cubic-bezier(0.2, 0.8, 0.3, 1) backwards;
+    animation-delay: calc(var(--i, 0) * 70ms);
+  }
+  .tt-rword {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 1.4em;
+    font-weight: 900;
+    text-transform: uppercase;
+    color: #faf5eb;
+  }
+  .tt-rcard.tt-got { border-color: #5df08a; }
+  .tt-rcard.tt-got .tt-rword { color: #5df08a; }
+  .tt-rcard.tt-glitch { border-color: #ff3344; }
+  .tt-rcard.tt-glitch .tt-rword { color: #ff3344; }
   .tt-recapbody { display: flex; flex-direction: column; align-items: center; gap: .6em; }
   .tt-cards.tt-dense { gap: 10px; }
   .tt-cards.tt-dense .tt-rcard { padding: .3em .7em; min-width: 5em; }
   .tt-cards.tt-dense .tt-rword { font-size: 1.05em; }
-  .tt-missed { color: var(--dim); font-size: 1em; margin: 0; max-width: 40em; text-align: center; text-transform: capitalize; }
-  .tt-rcard:nth-child(n) { animation-delay: calc(var(--i, 0) * 60ms); }
-  .tt-rword { font-size: 1.3em; font-weight: 900; text-transform: capitalize; }
-  .tt-rcard.tt-got { border-color: #5df08a; }
-  .tt-rcard.tt-glitch { border-color: var(--err); }
-    .tt-final h1 { font-size: 3.6em; margin: 0; }
-  .tt-big { font-size: 3em; font-weight: 900; }
-  .tt-star { font-size: 1.3em; color: var(--dim); margin: 0; }
+  .tt-missed { color: #b8c4d0; font-size: 1em; margin: 0; max-width: 40em; text-align: center; text-transform: uppercase; }
+
+  .tt-final h1 {
+    font-family: 'Oswald', sans-serif;
+    font-size: 4em;
+    margin: 0;
+    color: #faf5eb;
+    text-transform: uppercase;
+  }
+  .tt-big {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 3.2em;
+    font-weight: 900;
+    color: #061828;
+  }
+  .tt-star {
+    font-size: 1.3em;
+    color: #90caf9;
+    margin: 0;
+  }
 `;

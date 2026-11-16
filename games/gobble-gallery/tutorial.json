@@ -1,97 +1,107 @@
 [
- {
-  "title": "No phone? Share one!",
-  "text": "A grown-up can add kids on their phone. The phone shows whose turn it is with their animal, and you pass it along.",
-  "scene": [
-   {
-    "phone": "Who's playing on this phone?",
-    "buttons": [
-     "✓ Mom",
-     "🧒 Leo",
-     "🧒 Ava"
+  {
+    "title": "No phone? Share one!",
+    "text": "A grown-up can add kids on their phone. The phone shows whose turn it is with their animal, and you pass it along.",
+    "scene": [
+      {
+        "phone": "Who's playing on this phone?",
+        "buttons": [
+          "\u2713 Mom",
+          "\ud83e\uddd2 Leo",
+          "\ud83e\uddd2 Ava"
+        ],
+        "tap": 1
+      },
+      {
+        "icon": "\ud83e\udd8a",
+        "label": "Leo's turn!",
+        "fx": "pop"
+      }
     ],
-    "tap": 1
-   },
-   {
-    "icon": "🦊",
-    "label": "Leo's turn!",
-    "fx": "pop"
-   }
-  ],
-  "flow": true
- },
- {
-  "title": "Pick a card",
-  "text": "Everyone gets two picture cards on their phone. Pick the one you want to draw and keep it secret!",
-  "scene": [
-   {
-    "phone": "Pick one to draw!",
-    "buttons": [
-     "🦃 Turkey on roller skates",
-     "🥧 Giant pumpkin pie"
+    "flow": true,
+    "audio": "audio/tut_1.wav",
+    "ms": 10060
+  },
+  {
+    "title": "Pick a card",
+    "text": "Everyone gets two picture cards on their phone. Pick the one you want to draw and keep it secret!",
+    "scene": [
+      {
+        "phone": "Pick one to draw!",
+        "buttons": [
+          "\ud83e\udd83 Turkey on roller skates",
+          "\ud83e\udd67 Giant pumpkin pie"
+        ],
+        "tap": 0
+      }
     ],
-    "tap": 0
-   }
-  ],
-  "flow": true
- },
- {
-  "title": "Draw it",
-  "text": "Draw your card with crayons, a paint bucket and an eraser. Tap 🔊 to hear the card. No letters or numbers!",
-  "scene": [
-   {
-    "card": "🦃 Turkey on roller skates",
-    "color": "#f2c14e"
-   },
-   {
-    "icon": "🖍️",
-    "fx": "shake"
-   },
-   {
-    "card": "🖼️",
-    "color": "#ffffff",
-    "label": "your drawing"
-   }
-  ],
-  "flow": true
- },
- {
-  "title": "Guess the pictures",
-  "text": "Each drawing goes up on the TV. Tap the matching button on your phone. The TV reads the choices out loud.",
-  "scene": [
-   {
-    "tv": "What is it?",
-    "sub": "● ▲ ■ ★"
-   },
-   {
-    "phone": "What is it?",
-    "buttons": [
-     "🌽 Corn wearing a hat",
-     "🦃 Turkey on roller skates",
-     "🍂 Big pile of leaves"
+    "flow": true,
+    "audio": "audio/tut_2.wav",
+    "ms": 6220
+  },
+  {
+    "title": "Draw it",
+    "text": "Draw your card with crayons, a paint bucket and an eraser. Tap \ud83d\udd0a to hear the card. No letters or numbers!",
+    "scene": [
+      {
+        "card": "\ud83e\udd83 Turkey on roller skates",
+        "color": "#f2c14e"
+      },
+      {
+        "icon": "\ud83d\udd8d\ufe0f",
+        "fx": "shake"
+      },
+      {
+        "card": "\ud83d\uddbc\ufe0f",
+        "color": "#ffffff",
+        "label": "your drawing"
+      }
     ],
-    "tap": 1
-   }
-  ]
- },
- {
-  "title": "Win pies!",
-  "text": "A right guess wins 2 pies. Artists win a pie for everyone who guessed theirs. Everybody gets an award at the end!",
-  "scene": [
-   {
-    "score": "+2 🥧",
-    "label": "right guess"
-   },
-   {
-    "score": "+1 🥧",
-    "label": "per guesser",
-    "color": "#f2c14e"
-   },
-   {
-    "icon": "🏆",
-    "label": "most pies wins",
-    "fx": "float"
-   }
-  ]
- }
+    "flow": true,
+    "audio": "audio/tut_3.wav",
+    "ms": 9380
+  },
+  {
+    "title": "Guess the pictures",
+    "text": "Each drawing goes up on the TV. Tap the matching button on your phone. The TV reads the choices out loud.",
+    "scene": [
+      {
+        "tv": "What is it?",
+        "sub": "\u25cf \u25b2 \u25a0 \u2605"
+      },
+      {
+        "phone": "What is it?",
+        "buttons": [
+          "\ud83c\udf3d Corn wearing a hat",
+          "\ud83e\udd83 Turkey on roller skates",
+          "\ud83c\udf42 Big pile of leaves"
+        ],
+        "tap": 1
+      }
+    ],
+    "audio": "audio/tut_4.wav",
+    "ms": 8860
+  },
+  {
+    "title": "Win pies!",
+    "text": "A right guess wins 2 pies. Artists win a pie for everyone who guessed theirs. Everybody gets an award at the end!",
+    "scene": [
+      {
+        "score": "+2 \ud83e\udd67",
+        "label": "right guess"
+      },
+      {
+        "score": "+1 \ud83e\udd67",
+        "label": "per guesser",
+        "color": "#f2c14e"
+      },
+      {
+        "icon": "\ud83c\udfc6",
+        "label": "most pies wins",
+        "fx": "float"
+      }
+    ],
+    "audio": "audio/tut_5.wav",
+    "ms": 8740
+  }
 ]

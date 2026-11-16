@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+- New game: Subspace Intercept, a starship-console word-deduction game, with narrated tutorial steps. Tutorials can now play a voice clip per step.
+- New look and sound for eight games: Glitch Squad (CRT terminal), Gobble Gallery, Hexam Night, Hollowmere, Patch Party, Peak Fever, Saltwind and Tin Tongue get reworked visuals, animations, music and effects, plus new narrated tutorial voices. Tutorial audio now starts reliably on the first tap. The 0.13.0 legibility fixes were carried over to the new looks.
+
 ## 0.13.0
 
 - Readable from the sofa: every game was played through on a 1080p TV and on phones and fixed where text was cut off, too small or low in contrast. Long lists (Tin Tongue's recap, Hire Wire's shredder, Two Faces' log) are capped so screens fit 16:9 without shrinking, Airlock's intro is two columns, and Blanktastic and Hire Wire lay their answer cards out in one row.

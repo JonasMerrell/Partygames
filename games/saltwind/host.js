@@ -12,6 +12,31 @@ export default async function (ctx) {
   const { h } = ctx;
   useStyle(ctx.asset('style.css'));
 
+  // Custom audio & SFX engine
+  ctx.music?.(null);
+  const isMuted = () => {
+    try { return localStorage.getItem('partyhall.muted') === '1'; } catch { return false; }
+  };
+  const bgm = new Audio(ctx.asset('audio/bg_loop.wav'));
+  bgm.loop = true;
+  bgm.volume = 0.35;
+  const playBgm = () => {
+    if (!isMuted() && bgm.paused) bgm.play().catch(() => {});
+  };
+  const syncMute = () => {
+    bgm.muted = isMuted();
+  };
+  window.addEventListener('storage', syncMute);
+  playBgm();
+  const playSfx = (name, vol = 0.55) => {
+    if (isMuted()) return;
+    try {
+      const a = new Audio(ctx.asset(`audio/${name}.wav`));
+      a.volume = vol;
+      a.play().catch(() => {});
+    } catch {}
+  };
+
   const seats = ctx.shuffle(ctx.connected);
   if (seats.length < 2) return ctx.say('Not enough players', 'Saltwind Isles needs at least 2.', 5000);
 
@@ -58,13 +83,32 @@ export default async function (ctx) {
   const pushAll = () => { if (!flushT) flushT = setTimeout(() => { try { flush(); } catch {} }, 150); };
 
   const apply = (pid, m, auto = false) => {
+    playBgm();
     const r = game.act(pid, m);
     if (r.err) return r;
-    if (r.roll) { lastRoll = r.roll; lastGains = r.gains || {}; rollAnim = Date.now(); ctx.sfx?.(r.roll === 7 ? 'glitch' : 'pop'); }
-    if (m.a === 'build' || m.a === 'place') ctx.sfx?.('ding');
-    if (m.a === 'deal' || m.a === 'bank') ctx.sfx?.('whoosh');
+    if (r.roll) {
+      lastRoll = r.roll; lastGains = r.gains || {}; rollAnim = Date.now();
+      ctx.sfx?.(r.roll === 7 ? 'glitch' : 'pop');
+      if (r.roll === 7) playSfx('sfx_squall_wind', 0.65);
+      else playSfx('sfx_wood_block', 0.55);
+    }
+    if (m.a === 'build' || m.a === 'place') {
+      ctx.sfx?.('ding');
+      if (m.k === 'lighthouse') playSfx('sfx_ship_bell', 0.65);
+      else playSfx('sfx_wood_block', 0.5);
+    }
+    if (m.a === 'deal' || m.a === 'bank' || m.a === 'trade' || m.a === 'chart') {
+      ctx.sfx?.('whoosh');
+      playSfx('sfx_paper_rustle', 0.5);
+    }
+    if (m.a === 'squall') {
+      playSfx('sfx_squall_wind', 0.6);
+    }
     if (m.a === 'end') lastGains = {};
-    if (m.a === 'offer') offerAt = Date.now();
+    if (m.a === 'offer') {
+      offerAt = Date.now();
+      playSfx('sfx_paper_rustle', 0.45);
+    }
     if (auto && pid === game.active && game.phase.name !== 'over') game.say(`(played for ${game.name(pid)})`);
     // A quick move by the active player buys them a little more time.
     if (game.phase.name === 'main' && deadline - Date.now() < 30000 && !auto) deadline = Date.now() + 30000;
@@ -210,7 +254,14 @@ export default async function (ctx) {
   stopClock?.();
   render();
   ctx.sfx?.('win');
+  playSfx('sfx_ship_bell', 0.75);
   const w = game.p.get(game.winner);
   ctx.show('all', { title: `${w.name} wins!`, text: `with ${game.points(w.id)} points. Look at the TV for the final scores.`, color: w.color });
-  await ctx.sleep(20000);
+  try {
+    await ctx.sleep(20000);
+  } finally {
+    bgm.pause();
+    bgm.src = '';
+    window.removeEventListener('storage', syncMute);
+  }
 }

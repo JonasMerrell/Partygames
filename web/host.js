@@ -2,7 +2,7 @@
 // host.js and hands it a `ctx` with everything a game needs. See GAMES.md.
 import { h, esc, sleep, shuffle, pick, socket, colorOf, keepAwake } from './common.js';
 import * as audio from './audio.js';
-import { playTutorial } from './tutorial.js';
+import { playTutorial } from './tutorial.js?v=2';
 
 function muteButton(cls = '') {
   const b = h('button.ghost.sm' + cls, { title: 'Sound on/off', onclick: () => { audio.setMuted(!audio.isMuted()); b.textContent = audio.isMuted() ? '🔇' : '🔊'; } }, audio.isMuted() ? '🔇' : '🔊');

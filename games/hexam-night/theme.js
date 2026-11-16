@@ -49,7 +49,26 @@ const CASTLE = `<svg viewBox="0 0 1200 260" preserveAspectRatio="xMidYMax slice"
   </g>
 </svg>`;
 
-/** The castle backdrop for the TV: stars, a moon and the castle skyline. */
+export const SVG_DEFS = `
+<svg style="position:absolute;width:0;height:0;pointer-events:none;" aria-hidden="true">
+  <defs>
+    <filter id="hx-ink-nib" x="-10%" y="-10%" width="120%" height="120%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="3" result="noise" />
+      <feDisplacementMap in="SourceGraphic" in2="noise" scale="3" xChannelSelector="R" yChannelSelector="G" result="rough" />
+    </filter>
+    <pattern id="hx-woodcut" width="10" height="10" patternTransform="rotate(45 0 0)" patternUnits="userSpaceOnUse">
+      <line x1="0" y1="0" x2="0" y2="10" stroke="#121014" stroke-width="1.3" opacity="0.28" />
+    </pattern>
+    <radialGradient id="hx-seal-grad" cx="35%" cy="35%" r="65%">
+      <stop offset="0%" stop-color="#cc2929"/>
+      <stop offset="60%" stop-color="#8a1414"/>
+      <stop offset="100%" stop-color="#4d0808"/>
+    </radialGradient>
+  </defs>
+</svg>
+`;
+
+/** The castle backdrop for the TV: stars, a moon, candle vignette, and the castle skyline. */
 export function backdrop() {
   const d = document.createElement('div');
   d.className = 'hx-sky';
@@ -58,7 +77,7 @@ export function backdrop() {
     const x = (i * 137.5) % 100, y = (i * 61.8) % 62, s = 1 + (i % 3);
     stars += `<i style="left:${x}%;top:${y}%;width:${s}px;height:${s}px;animation-delay:${(i % 7) * .6}s"></i>`;
   }
-  d.innerHTML = `<div class="hx-stars">${stars}</div><div class="hx-moon"></div><div class="hx-castle">${CASTLE}</div>`;
+  d.innerHTML = `${SVG_DEFS}<div class="hx-stars">${stars}</div><div class="hx-moon"></div><div class="hx-castle">${CASTLE}</div><div class="hx-vignette"></div>`;
   return d;
 }
 
@@ -78,6 +97,7 @@ export function tombSvg(name) {
   const n = String(name).replace(/[&<>"']/g, '');
   return `<svg viewBox="0 0 120 150" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
   <path d="M14 146 V58 a46 46 0 0 1 92 0 V146 Z" fill="#6b6a7d" stroke="#3a3950" stroke-width="4"/>
+  <path d="M14 146 V58 a46 46 0 0 1 92 0 V146 Z" fill="url(#hx-woodcut)" opacity=".65"/>
   <path d="M26 140 V60 a34 34 0 0 1 68 0 V140" fill="none" stroke="#8a899c" stroke-width="2"/>
   <text x="60" y="58" text-anchor="middle" font-family="Cinzel, Georgia, serif" font-size="16" fill="#2a2940">R.I.P.</text>
   <text x="60" y="92" text-anchor="middle" font-family="Cinzel, Georgia, serif" font-size="${n.length > 9 ? 11 : 15}" font-weight="700" fill="#1d1c30">${n}</text>
@@ -88,14 +108,37 @@ export function tombSvg(name) {
 export const CSS = `
 @import url('https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Cinzel:wght@600;800&family=Crimson+Pro:wght@500;700&display=swap');
 .hx, body.hx-phone {
-  --fg: #f6eedb; --dim: #b9b0d6; --card: #1d1a3a; --line: #4a4380; --bg2: #16142e;
+  --fg: #f6eedb; --dim: #b9b0d6; --card: #1d1a3a; --line: #5c4424; --bg2: #16142e;
   --accent: ${GOLD}; --err: ${BLOOD};
   font-family: 'Crimson Pro', Georgia, 'Times New Roman', serif; color: var(--fg);
 }
-body.hx-phone { background: radial-gradient(700px 500px at 50% -10%, #3b2f7a 0%, transparent 70%), #0e0c22; background-attachment: fixed; min-height: 100vh; }
+body.hx-phone {
+  background: radial-gradient(700px 500px at 50% -10%, #3b2f7a 0%, transparent 70%), #0e0c22;
+  background-attachment: fixed; min-height: 100vh;
+}
 body.hx-phone h2, .hx h1, .hx h2 { font-family: 'Cinzel', Georgia, serif; letter-spacing: .02em; }
-body.hx-phone .choice { background: #f1e4c3; color: #2a1f12; border-color: #b89a5e; font-family: 'Crimson Pro', Georgia, serif; font-size: 1.2em; }
-body.hx-phone .choice:active, body.hx-phone .choice.on { background: #ffe9a8; border-color: var(--accent); }
+body.hx-phone .choice {
+  background:
+    radial-gradient(ellipse at 50% 30%, #fffbf0 0%, #f5ebd7 65%, #e2d2ae 100%),
+    repeating-radial-gradient(circle at 15% 25%, rgba(120, 85, 40, 0.035) 0px, transparent 6px),
+    #f5ebd7;
+  color: #24160c;
+  border: 3px solid #6b4d24;
+  border-radius: 255px 15px 225px 15px/15px 225px 15px 255px;
+  font-family: 'Crimson Pro', Georgia, serif;
+  font-size: 1.25em;
+  font-weight: 700;
+  box-shadow:
+    inset 0 0 16px rgba(110, 75, 30, 0.2),
+    inset 0 2px 4px rgba(255, 255, 255, 0.6),
+    0 6px 18px rgba(0, 0, 0, 0.4);
+  transition: all .2s;
+}
+body.hx-phone .choice:active, body.hx-phone .choice.on {
+  background: #ffeaa8;
+  border-color: #9c2727;
+  box-shadow: 0 0 0 3px #9c2727, inset 0 0 12px rgba(156, 39, 39, 0.3);
+}
 body.hx-phone .top { border-color: #3a336b; }
 body.hx-phone button.big { font-family: 'Cinzel', Georgia, serif; }
 
@@ -111,6 +154,61 @@ body.hx-phone button.big { font-family: 'Cinzel', Georgia, serif; }
 .hx .hostbar { position: relative; z-index: 2; color: var(--dim); }
 .hx .timer { font-family: 'Cinzel', Georgia, serif; color: var(--accent); }
 
+/* Candlelight Vignette & Flicker */
+.hx-vignette {
+  position: fixed; inset: 0; pointer-events: none; z-index: 1;
+  background: radial-gradient(ellipse at 50% 45%, rgba(255, 215, 120, 0.12) 0%, rgba(35, 20, 10, 0.35) 60%, rgba(8, 6, 16, 0.88) 100%);
+  mix-blend-mode: multiply;
+  animation: hx-candle-ambient 4.2s ease-in-out infinite alternate;
+}
+@keyframes hx-candle-ambient {
+  0%   { opacity: 0.82; transform: scale(1); filter: brightness(0.96); }
+  22%  { opacity: 0.95; transform: scale(1.02); filter: brightness(1.04); }
+  45%  { opacity: 0.88; transform: scale(0.99); filter: brightness(0.98); }
+  70%  { opacity: 1.00; transform: scale(1.03); filter: brightness(1.06); }
+  88%  { opacity: 0.90; transform: scale(1.01); filter: brightness(0.99); }
+  100% { opacity: 0.82; transform: scale(1); filter: brightness(0.96); }
+}
+
+/* Wax Seal Badges */
+.hx-seal {
+  background: radial-gradient(circle at 35% 35%, #b52222 0%, #851212 65%, #540808 100%);
+  border: 2px solid #580a0a;
+  border-radius: 47% 53% 51% 49% / 52% 48% 52% 48%;
+  box-shadow:
+    inset 2px 2px 3px rgba(255, 180, 180, 0.45),
+    inset -3px -3px 5px rgba(0, 0, 0, 0.65),
+    0 4px 10px rgba(0, 0, 0, 0.7);
+  color: #f7d58b;
+  text-shadow: 0 -1px 1px rgba(0,0,0,0.8), 0 1px 1px rgba(255,255,255,0.3);
+  display: grid;
+  place-items: center;
+  font-family: 'Cinzel', Georgia, serif;
+  font-weight: 800;
+}
+
+/* Dynamic Ink-Splatter Reveal Animation */
+@keyframes hx-ink-bleed {
+  0% {
+    clip-path: circle(0% at 50% 50%);
+    filter: contrast(280%) blur(6px);
+    opacity: 0;
+  }
+  45% {
+    clip-path: polygon(50% 0%, 82% 12%, 100% 38%, 88% 72%, 100% 100%, 52% 92%, 0% 100%, 12% 62%, 0% 28%, 18% 8%);
+    filter: contrast(180%) blur(2px);
+    opacity: 0.85;
+  }
+  100% {
+    clip-path: circle(100% at 50% 50%);
+    filter: contrast(100%) blur(0);
+    opacity: 1;
+  }
+}
+.hx-bleed, .hx-q, .hx-bubble {
+  animation: hx-ink-bleed 0.65s cubic-bezier(0.2, 0.8, 0.3, 1);
+}
+
 .hx-title { font-family: 'Cinzel Decorative', 'Cinzel', Georgia, serif; font-weight: 900; font-size: 4.6em; line-height: 1;
   color: var(--accent); text-shadow: 0 0 30px rgba(243,201,105,.45), 0 4px 0 #6b4c12; margin: 0; }
 .hx-tag { font-size: 1.5em; color: var(--dim); font-style: italic; margin: 0; }
@@ -119,42 +217,132 @@ body.hx-phone button.big { font-family: 'Cinzel', Georgia, serif; }
 .hx-proc { width: 13vw; min-width: 120px; flex: none; animation: hxfloat 3.2s ease-in-out infinite; filter: drop-shadow(0 0 22px rgba(159,232,255,.45)); }
 .hx-proc.small { width: 8vw; min-width: 80px; }
 @keyframes hxfloat { 50% { transform: translateY(-14px) rotate(-2deg); } }
-.hx-bubble { background: #f1e4c3; color: #2a1f12; border-radius: 26px; padding: .8em 1.2em; font-size: 1.6em; line-height: 1.25;
-  position: relative; max-width: 60vw; text-align: left; box-shadow: 0 10px 30px rgba(0,0,0,.4); animation: hxin .35s ease-out; }
-.hx-bubble::before { content: ''; position: absolute; left: -22px; top: 40%; border: 14px solid transparent; border-right: 22px solid #f1e4c3; border-left: 0; }
-.hx-bubble b { color: #7a1f1f; }
-.hx-bubble small { display: block; font-size: .65em; color: #6b5a3f; margin-top: .4em; }
-@keyframes hxin { from { transform: scale(.85); opacity: 0; } }
+
+/* Aged Vellum & Hand-Inked Nib Bubble */
+.hx-bubble {
+  background:
+    radial-gradient(ellipse at 50% 30%, #fffbf0 0%, #f5ebd7 65%, #e2d2ae 100%),
+    repeating-radial-gradient(circle at 15% 25%, rgba(120, 85, 40, 0.035) 0px, transparent 6px),
+    #f5ebd7;
+  color: #24160c;
+  border: 3px solid #6b4d24;
+  border-radius: 255px 15px 225px 15px/15px 225px 15px 255px;
+  padding: .85em 1.3em;
+  font-size: 1.6em;
+  line-height: 1.25;
+  position: relative;
+  max-width: 60vw;
+  text-align: left;
+  box-shadow:
+    inset 0 0 24px rgba(110, 75, 30, 0.22),
+    inset 0 2px 4px rgba(255, 255, 255, 0.65),
+    0 10px 30px rgba(0,0,0,.45);
+}
+.hx-bubble::before { content: ''; position: absolute; left: -22px; top: 40%; border: 14px solid transparent; border-right: 22px solid #e2d2ae; border-left: 0; }
+.hx-bubble b { color: #851212; }
+.hx-bubble small { display: block; font-size: .65em; color: #5a4224; margin-top: .4em; }
 
 .hx-kicker { font-family: 'Cinzel', Georgia, serif; color: var(--accent); letter-spacing: .2em; text-transform: uppercase; font-size: 1em; margin: 0; }
 .hx-q { font-family: 'Crimson Pro', Georgia, serif !important; letter-spacing: 0 !important; font-size: 2.6em; font-weight: 700; max-width: 1400px; line-height: 1.15; margin: 0; text-shadow: 0 2px 8px rgba(0,0,0,.6); }
 .hx-opts { display: grid; grid-template-columns: 1fr 1fr; gap: 1.1em 1.6vw; width: min(1400px, 92vw); }
-.hx-opt { background: #f1e4c3; color: #2a1f12; border: 3px solid #b89a5e; border-radius: 18px; padding: .6em .9em; font-size: 1.45em; font-weight: 700;
-  text-align: left; display: flex; gap: .6em; align-items: center; min-height: 3.2em; position: relative; transition: all .4s; }
-.hx-opt .l { font-family: 'Cinzel', Georgia, serif; font-weight: 800; background: #2b2350; color: var(--accent); border-radius: 50%;
-  width: 1.8em; height: 1.8em; display: grid; place-items: center; flex: none; font-size: .85em; }
+
+/* Aged Vellum & Woodcut Option Cards with Hand-Inked Borders */
+.hx-opt {
+  background:
+    radial-gradient(ellipse at 50% 30%, #fffbf0 0%, #f5ebd7 65%, #e2d2ae 100%),
+    repeating-radial-gradient(circle at 15% 25%, rgba(120, 85, 40, 0.035) 0px, transparent 6px),
+    #f5ebd7;
+  color: #24160c;
+  border: 3px solid #6b4d24;
+  border-radius: 255px 15px 225px 15px/15px 225px 15px 255px;
+  padding: .6em .9em;
+  font-size: 1.45em;
+  font-weight: 700;
+  text-align: left;
+  display: flex;
+  gap: .6em;
+  align-items: center;
+  min-height: 3.2em;
+  position: relative;
+  transition: all .4s;
+  box-shadow:
+    inset 0 0 20px rgba(110, 75, 30, 0.18),
+    inset 0 2px 4px rgba(255, 255, 255, 0.6),
+    0 6px 18px rgba(0,0,0,0.5);
+}
+.hx-opt .l {
+  font-family: 'Cinzel', Georgia, serif;
+  font-weight: 800;
+  background: radial-gradient(circle at 35% 35%, #b52222 0%, #851212 65%, #540808 100%);
+  border: 2px solid #580a0a;
+  border-radius: 47% 53% 51% 49% / 52% 48% 52% 48%;
+  box-shadow:
+    inset 2px 2px 3px rgba(255, 180, 180, 0.45),
+    inset -3px -3px 5px rgba(0, 0, 0, 0.65),
+    0 3px 8px rgba(0, 0, 0, 0.6);
+  color: #f7d58b;
+  text-shadow: 0 -1px 1px rgba(0,0,0,0.8), 0 1px 1px rgba(255,255,255,0.3);
+  width: 1.8em;
+  height: 1.8em;
+  display: grid;
+  place-items: center;
+  flex: none;
+  font-size: .85em;
+}
 .hx-opt .who { position: absolute; z-index: 2; right: .5em; bottom: -.9em; display: flex; gap: 4px; flex-wrap: wrap; justify-content: flex-end; }
-.hx-opt.dim { opacity: .5; transform: scale(.97); }
-.hx-opt.right { background: #ffe9a8; border-color: #5df08a; box-shadow: 0 0 0 5px #5df08a, 0 0 40px rgba(93,240,138,.5); }
+.hx-opt.dim { opacity: .5; transform: scale(.97); filter: grayscale(50%); }
+.hx-opt.right {
+  background:
+    radial-gradient(ellipse at 50% 30%, #fffde8 0%, #faebb8 65%, #ebd494 100%),
+    #faebb8;
+  border-color: #5df08a;
+  box-shadow: 0 0 0 5px #5df08a, 0 0 40px rgba(93,240,138,.5), inset 0 0 20px rgba(93,240,138,.2);
+}
 .hx-pip { font-size: .6em; font-weight: 800; padding: 2px 8px; border-radius: 99px; background: var(--c); color: #120f1d; white-space: nowrap; }
 .hx-pip.ghost { background: #241d45; color: ${GHOST}; border: 2px dashed ${GHOST}; }
 
 .hx-roster { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; max-width: 1400px; }
-.hx-chip { border: 3px solid var(--c); background: color-mix(in srgb, var(--c) 18%, #14122c); border-radius: 99px; padding: 6px 16px;
-  font-weight: 700; font-size: 1.05em; transition: all .3s; }
-.hx-chip.ghost { border-style: dashed; border-color: ${GHOST}; color: ${GHOST}; background: rgba(159,232,255,.08); opacity: .8; }
+.hx-chip {
+  border: 3px solid var(--c);
+  background: color-mix(in srgb, var(--c) 18%, #14122c);
+  border-radius: 99px;
+  padding: 6px 16px;
+  font-weight: 700;
+  font-size: 1.05em;
+  transition: all .3s;
+}
+.hx-chip.ghost {
+  border-style: dashed;
+  border-color: ${GHOST};
+  color: ${GHOST};
+  background: rgba(159,232,255,.08);
+  opacity: .8;
+  position: relative;
+}
 .hx-chip.done { box-shadow: 0 0 0 3px var(--accent); }
 .hx-chip.done::after { content: ' ✓'; color: var(--accent); }
 
+/* Scoreboard with Woodcut Crosshatch Accents */
 .hx-board { display: flex; flex-direction: column; gap: 10px; width: min(900px, 90vw); }
-.hx-row { display: flex; align-items: center; gap: 16px; background: rgba(29,26,58,.85); border: 2px solid var(--line); border-radius: 16px; padding: 10px 18px; font-size: 1.3em; animation: hxin .3s ease-out backwards; }
+.hx-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: rgba(29,26,58,.9);
+  border: 2px solid #6b4d24;
+  border-radius: 16px;
+  padding: 10px 18px;
+  font-size: 1.3em;
+  animation: hxin .3s ease-out backwards;
+  box-shadow: inset 0 0 16px rgba(0,0,0,0.5), 0 4px 12px rgba(0,0,0,0.3);
+}
 .hx-row .n { flex: 1; text-align: left; font-weight: 700; }
 .hx-row .s { font-family: 'Cinzel', Georgia, serif; font-weight: 800; color: var(--accent); }
 .hx-row.ghost { border-style: dashed; border-color: ${GHOST}; }
 .hx-row.ghost .n { color: ${GHOST}; }
 
 .hx-tombs { display: flex; gap: 3vw; justify-content: center; flex-wrap: wrap; }
-.hx-tomb { width: 11vw; min-width: 110px; animation: hxrise .8s cubic-bezier(.2,1.4,.4,1) backwards; }
+.hx-tomb { width: 11vw; min-width: 110px; animation: hxrise .8s cubic-bezier(.2,1.4,.4,1) backwards; filter: drop-shadow(0 8px 16px rgba(0,0,0,0.6)); }
 @keyframes hxrise { from { transform: translateY(60px); opacity: 0; } }
 .hx-ghostup { font-size: 1.3em; color: ${GHOST}; }
 
@@ -162,7 +350,14 @@ body.hx-phone button.big { font-family: 'Cinzel', Georgia, serif; }
 .hx-stairs { display: flex; gap: 2vw; align-items: flex-end; justify-content: center; width: min(1400px, 94vw); }
 .hx-stair { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 8px; transition: transform 1.2s ease-in, opacity 1.2s; }
 .hx-steps { width: 100%; display: flex; flex-direction: column; gap: 4px; }
-.hx-steps i { display: block; height: 2.2vh; background: linear-gradient(#8f86b8, #5d5588); border-radius: 4px; box-shadow: 0 3px 0 #2e2950; }
+.hx-steps i {
+  display: block;
+  height: 2.2vh;
+  background: linear-gradient(#8f86b8, #5d5588);
+  border: 1px solid #3c3560;
+  border-radius: 4px;
+  box-shadow: 0 3px 0 #2e2950;
+}
 .hx-steps i:nth-child(odd) { margin-left: 12%; } .hx-steps i:nth-child(even) { margin-right: 12%; }
 .hx-stair .nm { font-family: 'Cinzel', Georgia, serif; color: var(--accent); font-size: 1em; }
 .hx-stair .on { display: flex; flex-wrap: wrap; gap: 4px; justify-content: center; min-height: 1.6em; }
@@ -175,10 +370,15 @@ body.hx-phone button.big { font-family: 'Cinzel', Georgia, serif; }
 .hx-candle { position: absolute; width: 1.1vw; min-width: 10px; height: 5vh; background: linear-gradient(90deg, #efe5c8, #fffaf0, #d8ccaa); border-radius: 3px;
   animation: hxbob 2.6s ease-in-out infinite; }
 .hx-candle::before { content: ''; position: absolute; left: 50%; top: -2.2vh; width: .9vw; min-width: 8px; height: 2.2vh; transform: translateX(-50%);
-  background: radial-gradient(ellipse at 50% 70%, #fff6c0, #ffb02e 55%, transparent 70%); border-radius: 50% 50% 40% 40%; animation: hxflick .15s infinite alternate; }
+  background: radial-gradient(ellipse at 50% 70%, #fff6c0, #ffb02e 55%, transparent 70%); border-radius: 50% 50% 40% 40%; animation: hxflick .18s infinite alternate; }
 .hx-candles.out .hx-candle { opacity: 0; transition: opacity .25s; }
 @keyframes hxbob { 50% { transform: translateY(-1.2vh); } }
-@keyframes hxflick { to { transform: translateX(-50%) scaleY(.85); } }
+@keyframes hxflick {
+  0%, 100% { transform: translateX(-50%) scale(1, 1) rotate(0deg); }
+  25%      { transform: translateX(-48%) scale(0.93, 1.12) rotate(2deg); }
+  50%      { transform: translateX(-53%) scale(1.08, 0.88) rotate(-2deg); }
+  75%      { transform: translateX(-49%) scale(0.98, 1.05) rotate(1deg); }
+}
 .hx-brew { display: flex; gap: 1.4vw; justify-content: center; min-height: 14vh; align-items: center; }
 .hx-drop { font-size: 6em; animation: hxin .3s ease-out; }
 .hx-cauldron { width: 14vw; min-width: 140px; }
@@ -193,5 +393,23 @@ body.hx-phone button.big { font-family: 'Cinzel', Georgia, serif; }
 .hx-path::after { content: '🚪'; position: absolute; right: -1.6em; top: 50%; transform: translateY(-50%); font-size: 1.2em; }
 .hx-token { position: absolute; top: 50%; width: 1.8em; height: 1.8em; margin-left: -.9em; transform: translateY(-50%); border-radius: 50%; background: var(--c);
   border: 3px solid #fff; transition: left .9s cubic-bezier(.3,1.4,.5,1); display: grid; place-items: center; font-size: .9em; }
-.hx-lane.ghost .hx-token { background: rgba(159,232,255,.25); border: 3px dashed ${GHOST}; }
+
+/* Rising Smoky Ink Trails for Ghost Tokens */
+.hx-lane.ghost .hx-token {
+  background: rgba(159,232,255,.25);
+  border: 3px dashed ${GHOST};
+  position: relative;
+}
+.hx-lane.ghost .hx-token::before {
+  content: ''; position: absolute; bottom: 70%; left: 50%; width: 18px; height: 36px;
+  transform: translateX(-50%);
+  background: radial-gradient(ellipse at 50% 80%, rgba(159, 232, 255, 0.75) 0%, rgba(20, 15, 35, 0.6) 50%, transparent 85%);
+  border-radius: 50% 50% 20% 20%; filter: blur(2px);
+  animation: hx-smoke-wisp 2.2s infinite ease-out; pointer-events: none;
+}
+@keyframes hx-smoke-wisp {
+  0%   { transform: translateX(-50%) translateY(0) scale(0.8) skewX(0deg); opacity: 0.85; }
+  50%  { transform: translateX(-65%) translateY(-18px) scale(1.3) skewX(10deg); opacity: 0.5; }
+  100% { transform: translateX(-35%) translateY(-38px) scale(2.0) skewX(-12deg); opacity: 0; }
+}
 `;

@@ -1,68 +1,76 @@
 [
- {
-  "title": "A will, twelve heirs",
-  "text": "Lord Hollowmere is dead and the will is read at midnight. Secretly back a few of the twelve heirs.",
-  "scene": [
-   {
-    "phone": "Your heirs (secret)",
-    "buttons": [
-     "Lady Vane",
-     "Dr. Moss",
-     "Cousin Pip"
-    ]
-   },
-   {
-    "icon": "📜",
-    "label": "the will"
-   }
-  ]
- },
- {
-  "title": "Move ANY heir",
-  "text": "On your turn, roll two dice and move any heirs around the mansion, not just yours.",
-  "scene": [
-   {
-    "dice": [
-     3,
-     5
-    ]
-   },
-   {
-    "icon": "🏚️"
-   }
-  ],
-  "flow": true
- },
- {
-  "title": "Spring the traps",
-  "text": "Play trap cards on whoever is standing in a trap. Get rid of rivals' heirs without giving away your own.",
-  "scene": [
-   {
-    "card": "TRAPDOOR",
-    "color": "#e8553d",
-    "fx": "shake"
-   },
-   {
-    "icon": "💀"
-   }
-  ]
- },
- {
-  "title": "Who inherits",
-  "text": "The heir named in the will wins by walking out the front door. Otherwise the will decides at midnight, or the last player with an heir standing wins.",
-  "scene": [
-   {
-    "icon": "🚪",
-    "label": "front door"
-   },
-   {
-    "icon": "🕛",
-    "label": "midnight"
-   },
-   {
-    "icon": "👑",
-    "fx": "float"
-   }
-  ]
- }
+  {
+    "title": "A will, twelve heirs",
+    "text": "Lord Hollowmere is dead and the will is read at midnight. Secretly back a few of the twelve heirs.",
+    "scene": [
+      {
+        "phone": "Your heirs (secret)",
+        "buttons": [
+          "Lady Vane",
+          "Dr. Moss",
+          "Cousin Pip"
+        ]
+      },
+      {
+        "icon": "\ud83d\udcdc",
+        "label": "the will"
+      }
+    ],
+    "audio": "audio/tut_1.wav",
+    "ms": 8660
+  },
+  {
+    "title": "Move ANY heir",
+    "text": "On your turn, roll two dice and move any heirs around the mansion, not just yours.",
+    "scene": [
+      {
+        "dice": [
+          3,
+          5
+        ]
+      },
+      {
+        "icon": "\ud83c\udfda\ufe0f"
+      }
+    ],
+    "flow": true,
+    "audio": "audio/tut_2.wav",
+    "ms": 7900
+  },
+  {
+    "title": "Spring the traps",
+    "text": "Play trap cards on whoever is standing in a trap. Get rid of rivals' heirs without giving away your own.",
+    "scene": [
+      {
+        "card": "TRAPDOOR",
+        "color": "#e8553d",
+        "fx": "shake"
+      },
+      {
+        "icon": "\ud83d\udc80"
+      }
+    ],
+    "audio": "audio/tut_3.wav",
+    "ms": 9460
+  },
+  {
+    "title": "Who inherits",
+    "text": "The heir named in the will wins by walking out the front door. Otherwise the will decides at midnight, or the last player with an heir standing wins.",
+    "scene": [
+      {
+        "icon": "\ud83d\udeaa",
+        "label": "front door"
+      },
+      {
+        "icon": "\ud83d\udd5b",
+        "label": "midnight"
+      },
+      {
+        "icon": "\ud83d\udc51",
+        "fx": "float"
+      }
+    ],
+    "audio": "audio/tut_4.wav",
+    "ms": 10900
+  }
 ]

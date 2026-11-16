@@ -57,6 +57,8 @@ function actor(a, i, accent) {
  * or is skipped; resolves false if the game has none.
  */
 export async function playTutorial(host, game, { loop = false, controls = true } = {}) {
+  const clip = new Audio();
+  clip.play().catch(() => {});
   let steps;
   try {
     const r = await fetch(`/games/${game.id}/tutorial.json?v=${game.version}`);
@@ -70,9 +72,10 @@ export async function playTutorial(host, game, { loop = false, controls = true }
   const caption = h('div.t-caption');
   const titleEl = h('div.t-title');
   const dots = h('div.t-dots', steps.map(() => h('span')));
-  let i = 0, stopped = false, wake = null, clip = null;
+  let i = 0, stopped = false, wake = null;
   const stopAudio = () => {
-    if (clip) { clip.pause(); clip.currentTime = 0; clip = null; }
+    clip.pause();
+    clip.removeAttribute('src');
     if ('speechSynthesis' in window) speechSynthesis.cancel();
   };
   const go = (n) => { i = Math.max(0, Math.min(steps.length, n)); wake?.(); };
@@ -106,7 +109,7 @@ export async function playTutorial(host, game, { loop = false, controls = true }
       const words = (s.text || '').split(/\s+/).length;
       const ms = s.ms || Math.max(4500, 1800 + words * 340);
       if (s.audio && !audio.isMuted()) {
-        clip = new Audio(`/games/${game.id}/${s.audio}?v=${game.version}`);
+        clip.src = `/games/${game.id}/${s.audio}?v=${game.version}`;
         clip.play().catch(() => {});
       } else if (speechOk() && s.text) {
         const u = new SpeechSynthesisUtterance(`${s.title || ''}. ${s.text}`);

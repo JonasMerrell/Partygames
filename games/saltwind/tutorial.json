@@ -1,106 +1,118 @@
 [
- {
-  "title": "Settle the islands",
-  "text": "Place huts on the corners of the islands and join them up with bridges.",
-  "scene": [
-   {
-    "icon": "🏝️"
-   },
-   {
-    "icon": "🛖",
-    "label": "hut"
-   },
-   {
-    "icon": "🌉",
-    "label": "bridge"
-   }
-  ]
- },
- {
-  "title": "Roll for cargo",
-  "text": "Each turn, roll the dice. Every island showing that number pays its cargo to the huts beside it.",
-  "scene": [
-   {
-    "dice": [
-     4,
-     2
-    ]
-   },
-   {
-    "icon": "🏝️",
-    "label": "island 6"
-   },
-   {
-    "card": "🪵 🐟",
-    "color": "#f2c14e"
-   }
-  ],
-  "flow": true
- },
- {
-  "title": "Trade",
-  "text": "Offer swaps to everyone from your phone, or trade with the bank and harbours.",
-  "scene": [
-   {
-    "phone": "Offer a trade",
-    "buttons": [
-     "🪵🪵 for 🧂",
-     "🐟 for 🪨"
+  {
+    "title": "Settle the islands",
+    "text": "Place huts on the corners of the islands and join them up with bridges.",
+    "scene": [
+      {
+        "icon": "\ud83c\udfdd\ufe0f"
+      },
+      {
+        "icon": "\ud83d\uded6",
+        "label": "hut"
+      },
+      {
+        "icon": "\ud83c\udf09",
+        "label": "bridge"
+      }
     ],
-    "tap": 0
-   },
-   {
-    "icon": "🤝"
-   }
-  ]
- },
- {
-  "title": "Build",
-  "text": "Spend cargo on bridges, huts, lighthouses and charts. Huts are worth 1 point and lighthouses 2.",
-  "scene": [
-   {
-    "card": "Hut  🪵🪸🐟🧂",
-    "color": "#8cc084"
-   },
-   {
-    "card": "Lighthouse  🐟🐟🪨🪨🪨",
-    "color": "#5fa8d3"
-   },
-   {
-    "card": "Chart  🐟🧂🪨",
-    "color": "#b8a1e3"
-   }
-  ]
- },
- {
-  "title": "Watch the squall",
-  "text": "A roll of 7 brings the squall. Big hands drop half, and the roller steals a card.",
-  "scene": [
-   {
-    "dice": [
-     3,
-     4
-    ]
-   },
-   {
-    "icon": "🌩️",
-    "label": "squall",
-    "fx": "shake"
-   }
-  ]
- },
- {
-  "title": "Win",
-  "text": "First to the target score on their own turn wins: 7 in a quick game, 10 in a full one.",
-  "scene": [
-   {
-    "icon": "🏆",
-    "fx": "float"
-   },
-   {
-    "score": "10",
-    "label": "points"
-   }
-  ]
- }
+    "audio": "audio/tut_1.wav",
+    "ms": 5580
+  },
+  {
+    "title": "Roll for cargo",
+    "text": "Each turn, roll the dice. Every island showing that number pays its cargo to the huts beside it.",
+    "scene": [
+      {
+        "dice": [
+          4,
+          2
+        ]
+      },
+      {
+        "icon": "\ud83c\udfdd\ufe0f",
+        "label": "island 6"
+      },
+      {
+        "card": "\ud83e\udeb5 \ud83d\udc1f",
+        "color": "#f2c14e"
+      }
+    ],
+    "flow": true,
+    "audio": "audio/tut_2.wav",
+    "ms": 7740
+  },
+  {
+    "title": "Trade",
+    "text": "Offer swaps to everyone from your phone, or trade with the bank and harbours.",
+    "scene": [
+      {
+        "phone": "Offer a trade",
+        "buttons": [
+          "\ud83e\udeb5\ud83e\udeb5 for \ud83e\uddc2",
+          "\ud83d\udc1f for \ud83e\udea8"
+        ],
+        "tap": 0
+      },
+      {
+        "icon": "\ud83e\udd1d"
+      }
+    ],
+    "audio": "audio/tut_3.wav",
+    "ms": 6180
+  },
+  {
+    "title": "Build",
+    "text": "Spend cargo on bridges, huts, lighthouses and charts. Huts are worth 1 point and lighthouses 2.",
+    "scene": [
+      {
+        "card": "Hut  \ud83e\udeb5\ud83e\udeb8\ud83d\udc1f\ud83e\uddc2",
+        "color": "#8cc084"
+      },
+      {
+        "card": "Lighthouse  \ud83d\udc1f\ud83d\udc1f\ud83e\udea8\ud83e\udea8\ud83e\udea8",
+        "color": "#5fa8d3"
+      },
+      {
+        "card": "Chart  \ud83d\udc1f\ud83e\uddc2\ud83e\udea8",
+        "color": "#b8a1e3"
+      }
+    ],
+    "audio": "audio/tut_4.wav",
+    "ms": 9580
+  },
+  {
+    "title": "Watch the squall",
+    "text": "A roll of 7 brings the squall. Big hands drop half, and the roller steals a card.",
+    "scene": [
+      {
+        "dice": [
+          3,
+          4
+        ]
+      },
+      {
+        "icon": "\ud83c\udf29\ufe0f",
+        "label": "squall",
+        "fx": "shake"
+      }
+    ],
+    "audio": "audio/tut_5.wav",
+    "ms": 7740
+  },
+  {
+    "title": "Win",
+    "text": "First to the target score on their own turn wins: 7 in a quick game, 10 in a full one.",
+    "scene": [
+      {
+        "icon": "\ud83c\udfc6",
+        "fx": "float"
+      },
+      {
+        "score": "10",
+        "label": "points"
+      }
+    ],
+    "audio": "audio/tut_6.wav",
+    "ms": 7140
+  }
 ]
