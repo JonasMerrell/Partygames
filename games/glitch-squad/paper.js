@@ -65,8 +65,8 @@ export const CSS = `
   transform: translateX(-50%) rotate(-4deg); background: rgba(255,248,220,.75); box-shadow: 0 1px 2px rgba(0,0,0,.15); }
 .gs-card-big { font-size: 1.5em; font-weight: 700; overflow-wrap: anywhere; }
 .gs-card.gs-big .gs-card-big { font-size: 2em; font-family: 'Special Elite', monospace; }
-.gs-card-small { color: rgba(43,33,24,.7); font-size: 1em; }
-.gs-card.gs-dim { filter: saturate(.35) brightness(1.05); opacity: .75; }
+.gs-card-small { color: rgba(43,33,24,.88); font-size: 1em; font-weight: 700; }
+.gs-card.gs-dim { filter: saturate(.35) brightness(.97); }
 .gs-card.gs-accused { outline: 5px dashed var(--fg); outline-offset: 6px; }
 @keyframes gs-pin { from { transform: scale(1.6) rotate(12deg); opacity: 0; } }
 

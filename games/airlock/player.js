@@ -171,8 +171,8 @@ function injectCss() {
   .al-rows { display: flex; flex-direction: column; gap: 8px; }
   .al-row { display: grid; grid-template-columns: 1fr auto auto; gap: 8px; align-items: center; background: var(--card);
     border-radius: 14px; padding: 8px 8px 8px 14px; }
-  .al-name { font-weight: 900; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .al-name small { color: var(--dim); font-weight: 700; }
+  .al-name { font-weight: 900; overflow-wrap: anywhere; min-width: 0; }
+  .al-name small { display: block; color: var(--dim); font-weight: 700; }
   .al-btn { background: var(--accent); color: #120f1d; border: 0; border-radius: 10px; padding: 10px 14px; font-weight: 800; cursor: pointer; }
   .al-btn.done { background: var(--bg2); color: var(--dim); }
   .al-btn.vote { background: var(--bg2); color: var(--fg); border: 2px solid #ffd34d55; }

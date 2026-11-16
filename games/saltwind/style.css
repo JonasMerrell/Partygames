@@ -75,7 +75,7 @@
   text-align: center; padding: 4px 0 3px; }
 .sw-cicon { font-size: 1.5em; line-height: 1.1; }
 .sw-cnum { font-size: 1.5em; font-weight: 900; line-height: 1; }
-.sw-cname { font-size: .6em; color: var(--dim); font-weight: 800; text-transform: uppercase; letter-spacing: .03em; }
+.sw-cname { font-size: .75em; color: var(--fg); font-weight: 800; letter-spacing: -.01em; overflow-wrap: anywhere; line-height: 1.1; }
 .sw-handinfo { color: var(--dim); font-size: .8em; text-align: center; margin-top: -4px; }
 .sw-warn { color: #ffb84d; }
 .sw-mapbox { position: relative; }
@@ -110,7 +110,7 @@
 .sw-pickrow { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
 .sw-rbtn { background: var(--bg2); border: 2px solid var(--line); border-radius: 12px; padding: 8px 0; font-size: 1.4em;
   display: flex; flex-direction: column; align-items: center; }
-.sw-rbtn small { font-size: .5em; color: var(--dim); font-weight: 800; min-height: 1em; }
+.sw-rbtn small { font-size: .6em; color: var(--dim); font-weight: 800; min-height: 1em; }
 .sw-rbtn.on { border-color: #3fd6c0; background: #1d3b45; }
 .sw-rbtn:disabled { opacity: .35; }
 .sw-offer { --c: #4fd1d9; }

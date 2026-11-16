@@ -49,7 +49,7 @@ export default async function (ctx) {
     const cats = Object.keys(CATEGORIES).filter((c) => decks[c]?.length);
     const chooser = players[chooserIdx++ % players.length];
     ctx.el.replaceChildren(h('div.cw-pick',
-      h('p.cw-dim', h('span', { style: { color: chooser.color } }, chooser.name), ' is picking a category…'),
+      h('p.cw-dim', h('span.pname', { style: { '--pc': chooser.color } }, chooser.name), ' is picking a category…'),
       h('div.cw-cats', cats.map((c) => h('div.cw-cat', h('span.cw-caticon', CATEGORIES[c].icon), CATEGORIES[c].name)))));
     ctx.show(players.filter((p) => p.id !== chooser.id), { wait: `${chooser.name} is picking a category…` });
     const picked = await ctx.ask(chooser, {
@@ -178,7 +178,7 @@ export default async function (ctx) {
       card.classList.add('lie');
       sfx('buzz');
       card.append(h('div.cw-stamp', 'LIE'), h('div.cw-by', 'Written by ',
-        o.authors.map((a, n) => h('span', { style: { color: ctx.player(a)?.color } }, (n ? ' & ' : '') + (ctx.player(a)?.name || '?'))),
+        o.authors.flatMap((a, n) => [n ? ' & ' : '', h('span.pname', { style: { '--pc': ctx.player(a)?.color } }, ctx.player(a)?.name || '?')]),
         h('b', `  +${pts}`)));
       await ctx.sleep(3200);
     }

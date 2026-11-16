@@ -102,11 +102,12 @@ ${FONTS}
 .pf-flags span.got { background: var(--pc); }
 .pf-odds { font-size: .95em; color: var(--dim); font-weight: 800; text-align: center; }
 
-.pf-cheers { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
-.pf-cheer { position: absolute; bottom: 4%; padding: 8px 16px; border-radius: 999px; font-weight: 900; font-size: 1.2em;
+.pf-cheers { position: absolute; inset: 0; pointer-events: none; overflow: hidden; display: flex; flex-direction: column;
+  justify-content: flex-end; align-items: flex-start; gap: 10px; padding: 0 0 6em 1.5em; }
+.pf-cheer { padding: 8px 16px; border-radius: 999px; font-weight: 900; font-size: 1.2em;
   background: var(--pc); color: #1b1530; box-shadow: 0 6px 18px rgba(0,0,0,.35); animation: pf-rise 2.6s ease-out forwards; white-space: nowrap; }
-@keyframes pf-rise { 0% { transform: translateY(20px) scale(.6); opacity: 0; } 15% { transform: translateY(0) scale(1); opacity: 1; }
-  100% { transform: translateY(-46vh); opacity: 0; } }
+@keyframes pf-rise { 0% { transform: translateX(-20px) scale(.6); opacity: 0; } 12% { transform: none; opacity: 1; }
+  85% { opacity: 1; } 100% { opacity: 0; } }
 
 .pf-snow { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
 .pf-snow b { position: absolute; top: -6%; border-radius: 50%; background: #fff; opacity: .9; animation: pf-fall linear forwards; }

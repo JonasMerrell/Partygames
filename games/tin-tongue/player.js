@@ -75,7 +75,7 @@ const CSS = `
   .ttp-got { background: #5df08a; box-shadow: 0 6px 0 #2a8a49; padding: 30px; }
   .ttp-skip { background: var(--card); color: var(--fg); border: 2px solid var(--line); }
   .ttp-glitch { background: var(--err); box-shadow: 0 8px 0 #8a2a3a; padding: 46px 22px; font-size: 2em; }
-  .ttp-flash { background: var(--err); color: #fff; font-weight: 900; border-radius: 14px; padding: 12px; text-align: center;
+  .ttp-flash { background: var(--err); color: #120f1d; font-weight: 900; border-radius: 14px; padding: 12px; text-align: center;
     animation: tt-shake .08s linear 8; }
   .ttp-guess { align-items: center; text-align: center; padding-top: 3vh; }
   .ttp-guess h2 { font-size: 2em; margin: 0; }

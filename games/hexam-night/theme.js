@@ -128,16 +128,16 @@ body.hx-phone button.big { font-family: 'Cinzel', Georgia, serif; }
 
 .hx-kicker { font-family: 'Cinzel', Georgia, serif; color: var(--accent); letter-spacing: .2em; text-transform: uppercase; font-size: 1em; margin: 0; }
 .hx-q { font-family: 'Crimson Pro', Georgia, serif !important; letter-spacing: 0 !important; font-size: 2.6em; font-weight: 700; max-width: 1400px; line-height: 1.15; margin: 0; text-shadow: 0 2px 8px rgba(0,0,0,.6); }
-.hx-opts { display: grid; grid-template-columns: 1fr 1fr; gap: 1.6vh 1.6vw; width: min(1400px, 92vw); }
+.hx-opts { display: grid; grid-template-columns: 1fr 1fr; gap: 1.1em 1.6vw; width: min(1400px, 92vw); }
 .hx-opt { background: #f1e4c3; color: #2a1f12; border: 3px solid #b89a5e; border-radius: 18px; padding: .6em .9em; font-size: 1.45em; font-weight: 700;
   text-align: left; display: flex; gap: .6em; align-items: center; min-height: 3.2em; position: relative; transition: all .4s; }
 .hx-opt .l { font-family: 'Cinzel', Georgia, serif; font-weight: 800; background: #2b2350; color: var(--accent); border-radius: 50%;
   width: 1.8em; height: 1.8em; display: grid; place-items: center; flex: none; font-size: .85em; }
-.hx-opt .who { position: absolute; right: .5em; bottom: -.9em; display: flex; gap: 4px; flex-wrap: wrap; justify-content: flex-end; }
-.hx-opt.dim { opacity: .3; transform: scale(.97); }
+.hx-opt .who { position: absolute; z-index: 2; right: .5em; bottom: -.9em; display: flex; gap: 4px; flex-wrap: wrap; justify-content: flex-end; }
+.hx-opt.dim { opacity: .5; transform: scale(.97); }
 .hx-opt.right { background: #ffe9a8; border-color: #5df08a; box-shadow: 0 0 0 5px #5df08a, 0 0 40px rgba(93,240,138,.5); }
-.hx-pip { font-size: .55em; font-weight: 800; padding: 2px 8px; border-radius: 99px; background: var(--c); color: #120f1d; white-space: nowrap; }
-.hx-pip.ghost { background: transparent; color: ${GHOST}; border: 2px dashed ${GHOST}; }
+.hx-pip { font-size: .6em; font-weight: 800; padding: 2px 8px; border-radius: 99px; background: var(--c); color: #120f1d; white-space: nowrap; }
+.hx-pip.ghost { background: #241d45; color: ${GHOST}; border: 2px dashed ${GHOST}; }
 
 .hx-roster { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; max-width: 1400px; }
 .hx-chip { border: 3px solid var(--c); background: color-mix(in srgb, var(--c) 18%, #14122c); border-radius: 99px; padding: 6px 16px;

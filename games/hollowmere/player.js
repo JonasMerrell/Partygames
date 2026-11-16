@@ -68,21 +68,21 @@ function injectCss() {
   .hmp-pick { background: var(--card); border: 2px solid var(--line); border-radius: 14px; padding: 8px 4px; display: flex;
     flex-direction: column; align-items: center; gap: 4px; font-weight: 800; font-size: .8em; cursor: pointer; }
   .hmp-pick.mine { border-color: #d4ac0d; }
-  .hmp-pick b { color: #d4ac0d; font-size: .9em; }
+  .hmp-pick b { color: #d4ac0d; font-size: 1em; }
   .hmp-pick:disabled, .hmp-skip:disabled { opacity: .4; }
   .hmp-skip { grid-column: 1 / -1; text-align: center; }
   .hmp-hand { margin-top: 22px; padding-top: 14px; border-top: 1px solid var(--line); display: flex; flex-direction: column; gap: 10px; }
-  .hmp-k { color: var(--dim); font-weight: 800; text-transform: uppercase; letter-spacing: .08em; font-size: .75em; }
+  .hmp-k { color: var(--dim); font-weight: 800; text-transform: uppercase; letter-spacing: .08em; font-size: .8em; }
   .hmp-heirs { display: flex; flex-wrap: wrap; gap: 10px; }
   .hmp-heir { display: flex; flex-direction: column; align-items: center; width: 6.2em; text-align: center; font-weight: 800; font-size: .8em; }
-  .hmp-heir b { color: #d4ac0d; font-size: .85em; }
+  .hmp-heir b { color: #d4ac0d; font-size: 1em; }
   .hmp-heir i { color: var(--dim); }
   .hmp-heir.out span { text-decoration: line-through; opacity: .5; }
   .hmp-cards { display: flex; flex-wrap: wrap; gap: 8px; }
   .hmp-card { background: #3a1f28; border: 2px solid #ff5d73; border-radius: 12px; padding: 6px 10px; display: flex; flex-direction: column;
     align-items: center; font-weight: 800; font-size: .8em; min-width: 6em; }
   .hmp-card.cod { background: #3a2f1a; border-color: #d4ac0d; }
-  .hmp-card small { color: var(--dim); font-weight: 600; }
+  .hmp-card small { color: var(--dim); font-weight: 600; font-size: 1em; }
   .hmp-ci { font-size: 1.6em; }
   `;
   document.head.append(css);

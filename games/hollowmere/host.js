@@ -389,9 +389,9 @@ function injectCss() {
   .hm-boardwrap { position: relative; }
   .hm-map { width: 100%; height: auto; max-height: 86vh; display: block; border-radius: 18px;
     box-shadow: 0 20px 60px #0008; background: #1d1729; }
-  .hm-room { fill: #fff; opacity: .4; font: 900 15px var(--font); letter-spacing: .14em; }
-  .hm-room.hm-out { opacity: .75; fill: #d8cfee; font-size: 17px; }
-  .hm-exitlbl { opacity: 1; fill: #2ecc71; font-size: 17px; }
+  .hm-room { fill: #fff; opacity: .55; font: 900 18px var(--font); letter-spacing: .12em; }
+  .hm-room.hm-out { opacity: .85; fill: #d8cfee; font-size: 19px; }
+  .hm-exitlbl { opacity: 1; fill: #2ecc71; font-size: 19px; }
   .hm-exit { filter: drop-shadow(0 0 8px #2ecc71); }
   .hm-trap { fill: #ff3b3b; fill-opacity: .2; stroke: #ff5d73; stroke-width: 2; stroke-dasharray: 6 4; }
   .hm-tok { transition: transform .28s ease-out, opacity .6s; }
@@ -406,8 +406,8 @@ function injectCss() {
   @keyframes hmpulse { to { opacity: .45; } }
   .hm-side { display: flex; flex-direction: column; gap: 10px; font-size: .85em; }
   .hm-side > div { background: var(--card); border: 2px solid var(--line); border-radius: 16px; padding: 10px 14px; }
-  .hm-k { color: var(--dim); font-weight: 800; text-transform: uppercase; letter-spacing: .08em; font-size: .75em; }
-  .hm-small { color: var(--dim); font-size: .75em; }
+  .hm-k { color: var(--dim); font-weight: 800; text-transform: uppercase; letter-spacing: .08em; font-size: .8em; }
+  .hm-small { color: var(--dim); font-size: .8em; }
   .hm-will { text-align: center; border-color: #d4ac0d !important; background: linear-gradient(#3a2f1a, var(--card)) !important; }
   .hm-will .portrait { margin: 6px auto 0; display: block; }
   .hm-wname { font-size: 1.5em; font-weight: 900; }
