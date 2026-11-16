@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- New game: Long Shot, a guess-and-bet trivia game for 2–12 players. Everyone guesses a number on a phone keypad, the guesses line up on a felt betting board with payout odds, and players bet free chips (and later their own points) on the guess closest without going over. 124 original questions; the final question pays double.
+
 ## 0.4.0
 
 - New game: Hard Sell, for 3–10 players. One player is the customer and picks a persona card; everyone else glues two word cards into a product, pitches it out loud, and the customer buys one. Sellers also vote a crowd favourite.

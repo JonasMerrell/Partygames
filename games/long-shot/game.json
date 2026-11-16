@@ -1,0 +1,10 @@
+{
+  "name": "Long Shot",
+  "description": "Guess the number, then bet chips on whose guess is closest without going over. Long shots pay big.",
+  "icon": "🎯",
+  "color": "#ffc94d",
+  "minPlayers": 2,
+  "maxPlayers": 12,
+  "lateJoin": true,
+  "music": "party"
+}
