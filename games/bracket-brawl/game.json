@@ -1,5 +1,6 @@
 {
   "name": "Bracket Brawl",
+  "inspiredBy": "Bracketeering",
   "description": "Everyone's answers fight through a knockout bracket. Vote each match and bet on the champion.",
   "icon": "🏆",
   "color": "#ffd23d",

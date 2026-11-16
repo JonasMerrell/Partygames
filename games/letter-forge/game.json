@@ -1,5 +1,6 @@
 {
   "name": "Letter Forge",
+  "inspiredBy": "Boggle",
   "description": "Everyone gets the same nine tiles. Forge words fast; words nobody else found score double.",
   "icon": "🔤",
   "color": "#ff9a3d",

@@ -27,7 +27,7 @@ async function picker(err) {
     h('div.grid', games.map((g) => h('button.gcard', {
       onclick: () => { audio.unlock(); create(g); },
       style: { '--accent': g.color || '#7d8cff' },
-    }, h('div.gicon', g.icon || '🎲'), h('h3', g.name || g.id), h('p', g.description || ''),
+    }, h('div.gicon', g.icon || '🎲'), h('h3', g.name || g.id, g.inspiredBy && h('span.inspired', ` (${g.inspiredBy})`)), h('p', g.description || ''),
       h('span.tag', `${g.minPlayers || 1}–${g.maxPlayers || 16} players`)))),
     !games.length && h('p', 'No games found. Add a folder to the games directory.'),
   ));
@@ -94,7 +94,7 @@ function lobby() {
         h('p.sub', 'Scan to join')),
       h('div', h('p.sub', 'Join on your phone at'), h('div.url', joinUrl())),
       h('div', h('p.sub', 'Room code'), h('div.roomcode', room.code))),
-    h('h2', `${game?.icon || ''} ${game?.name || ''}`),
+    h('h2', `${game?.icon || ''} ${game?.name || ''}`, game?.inspiredBy && h('span.inspired', ` (${game.inspiredBy})`)),
     h('div.chips', list.length ? list.map((p) => h('div.chip' + (p.connected ? '' : '.away') + (shown.has(p.id) ? '' : '.new'), { style: { '--c': p.color } },
       p.name, h('button.x', { title: 'Remove', onclick: () => sock.send({ t: 'kick', id: p.id }) }, '×')))
       : h('p.sub', 'Waiting for players…')),

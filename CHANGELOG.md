@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.9.0
+
+- The game picker and lobby show the well-known game each one plays like, in brackets (`inspiredBy` in game.json).
+
 ## 0.8.0
 
 - Lobby screen shows a QR code that opens the join page with the room code filled in.

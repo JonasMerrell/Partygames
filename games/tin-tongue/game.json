@@ -1,5 +1,6 @@
 {
   "name": "Tin Tongue",
+  "inspiredBy": "Poetry for Neanderthals",
   "description": "Your robot voice chip only does one-syllable words. Get your team to guess the card before the clock runs out, while the other team listens for a slip.",
   "icon": "🤖",
   "color": "#ffb84d",

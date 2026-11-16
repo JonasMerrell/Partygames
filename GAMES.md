@@ -19,6 +19,7 @@ The folder name is the game's id: lowercase letters, digits and `-`.
 ```json
 {
   "name": "Face-Off",
+  "inspiredBy": "Quiplash",
   "description": "One line for the game picker.",
   "icon": "🥊",
   "color": "#ff7d5d",
@@ -29,7 +30,7 @@ The folder name is the game's id: lowercase letters, digits and `-`.
 }
 ```
 
-`lateJoin: true` lets people join after the game starts. `hidden: true` keeps a
+`inspiredBy` names the well-known game it plays like, shown in brackets on the picker. `lateJoin: true` lets people join after the game starts. `hidden: true` keeps a
 work-in-progress game off the picker.
 
 ## host.js

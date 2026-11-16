@@ -1,5 +1,6 @@
 {
   "name": "Saltwind Isles",
+  "inspiredBy": "Catan",
   "description": "Settle a windswept island chain: roll for cargo, trade with friends, build bridges, huts and lighthouses. First to the target score wins.",
   "icon": "🏝️",
   "color": "#3fd6c0",

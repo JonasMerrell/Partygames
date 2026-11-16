@@ -1,5 +1,6 @@
 {
   "name": "Sketchy Rumours",
+  "inspiredBy": "Telestrations",
   "description": "Write something silly, the next person draws it, the next guesses the drawing, and on it goes. Then watch every rumour fall apart on the big screen.",
   "icon": "✏️",
   "color": "#ffb84d",
