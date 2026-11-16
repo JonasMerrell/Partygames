@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.7.0
 
 - New game: Bracket Brawl, for 3–12 players. Everyone writes an entry for a silly topic, the entries are seeded into a knockout bracket (house entries fill gaps), and everyone bets on the champion before voting through each match.
 - New game: Patch Party, for 3–10 players. Draw two jacket-patch designs and write three mottos, then get dealt other people's art and words and stitch the best patch. Everyone votes for two favourites; the stitcher, artist and motto writer all score. Phones pick designs from a picture grid (the game's own player.js).
