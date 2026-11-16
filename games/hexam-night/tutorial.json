@@ -1,78 +1,86 @@
 [
- {
-  "title": "A deadly exam",
-  "text": "Answer wizarding-world trivia on your phone. Everyone answers every question.",
-  "scene": [
-   {
-    "tv": "Which plant screams when pulled up?"
-   },
-   {
-    "phone": "Your answer",
-    "buttons": [
-     "Mandrake",
-     "Gillyweed",
-     "Devil's Snare"
+  {
+    "title": "A deadly exam",
+    "text": "Answer wizarding-world trivia on your phone. Everyone answers every question.",
+    "scene": [
+      {
+        "tv": "Which plant screams when pulled up?"
+      },
+      {
+        "phone": "Your answer",
+        "buttons": [
+          "Mandrake",
+          "Gillyweed",
+          "Devil's Snare"
+        ],
+        "tap": 0
+      }
     ],
-    "tap": 0
-   }
-  ],
-  "flow": true
- },
- {
-  "title": "Wrong? Detention!",
-  "text": "Living students who answer wrong go to detention, a deadly mini-game. Fail it and you become a ghost.",
-  "scene": [
-   {
-    "icon": "📕",
-    "label": "detention",
-    "fx": "shake"
-   },
-   {
-    "icon": "➜"
-   },
-   {
-    "icon": "👻",
-    "label": "ghost"
-   }
-  ]
- },
- {
-  "title": "Ghosts keep playing",
-  "text": "Ghosts still answer questions, so nobody sits out.",
-  "scene": [
-   {
-    "icon": "👻",
-    "fx": "float"
-   },
-   {
-    "phone": "Ghosts answer too",
-    "buttons": [
-     "Owl",
-     "Toad",
-     "Cat"
+    "flow": true,
+    "audio": "audio/tut_1.wav",
+    "ms": 7460
+  },
+  {
+    "title": "Wrong? Detention!",
+    "text": "Living students who answer wrong go to detention, a deadly mini-game. Fail it and you become a ghost.",
+    "scene": [
+      {
+        "icon": "\ud83d\udcd5",
+        "label": "detention",
+        "fx": "shake"
+      },
+      {
+        "icon": "\u279c"
+      },
+      {
+        "icon": "\ud83d\udc7b",
+        "label": "ghost"
+      }
     ],
-    "tap": 0
-   }
-  ]
- },
- {
-  "title": "The Midnight Escape",
-  "text": "After the exam, everyone races to the castle gate. Ghosts start behind but can catch up and come back to life!",
-  "scene": [
-   {
-    "icon": "🏰",
-    "label": "the gate"
-   },
-   {
-    "icon": "🏃",
-    "label": "the living"
-   },
-   {
-    "icon": "👻",
-    "label": "ghosts chase",
-    "fx": "float"
-   }
-  ],
-  "flow": true
- }
+    "audio": "audio/tut_2.wav",
+    "ms": 8100
+  },
+  {
+    "title": "Ghosts keep playing",
+    "text": "Ghosts still answer questions, so nobody sits out.",
+    "scene": [
+      {
+        "icon": "\ud83d\udc7b",
+        "fx": "float"
+      },
+      {
+        "phone": "Ghosts answer too",
+        "buttons": [
+          "Owl",
+          "Toad",
+          "Cat"
+        ],
+        "tap": 0
+      }
+    ],
+    "audio": "audio/tut_3.wav",
+    "ms": 5620
+  },
+  {
+    "title": "The Midnight Escape",
+    "text": "After the exam, everyone races to the castle gate. Ghosts start behind but can catch up and come back to life!",
+    "scene": [
+      {
+        "icon": "\ud83c\udff0",
+        "label": "the gate"
+      },
+      {
+        "icon": "\ud83c\udfc3",
+        "label": "the living"
+      },
+      {
+        "icon": "\ud83d\udc7b",
+        "label": "ghosts chase",
+        "fx": "float"
+      }
+    ],
+    "flow": true,
+    "audio": "audio/tut_4.wav",
+    "ms": 8260
+  }
 ]

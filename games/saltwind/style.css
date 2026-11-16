@@ -1,47 +1,118 @@
-/* Saltwind Isles. Everything is prefixed sw- so it can't clash with Party Hall or other games. */
+/* Saltwind Isles — Papercraft & Cut-Paper Diorama styling. Everything is prefixed sw- */
 :root {
   --sw-wood: #3fae5a; --sw-coral: #ff8f7a; --sw-fish: #4fd1d9; --sw-salt: #e9dfc4; --sw-basalt: #8d81a1;
   --sw-sea: #0f3b4f; --sw-sea2: #082733;
+  --sw-parchment: #faf6ed;
+  --sw-cardstock: #f4ebd0;
+  --sw-deckle-border: #d8c7a2;
+  --sw-shadow-card: 0 4px 12px rgba(12, 24, 36, 0.22), 0 1px 3px rgba(12, 24, 36, 0.14);
+  --sw-shadow-lift: 0 8px 24px rgba(12, 24, 36, 0.32), 0 2px 6px rgba(12, 24, 36, 0.18);
 }
 .sw-logo { font-size: 5em; }
 
-/* ---------- TV ---------- */
+/* ---------- TV Presentation ---------- */
 .sw-tv { width: 100%; height: calc(100vh - 70px); display: grid; grid-template-columns: 1fr minmax(320px, 26vw); gap: 18px; text-align: left; }
-.sw-boardwrap { min-height: 0; border-radius: 28px; overflow: hidden; display: flex;
+.sw-boardwrap {
+  min-height: 0; border-radius: 28px; overflow: hidden; display: flex;
   background: radial-gradient(ellipse at 50% 40%, #17607a 0%, var(--sw-sea) 55%, var(--sw-sea2) 100%);
-  box-shadow: inset 0 0 80px rgba(0,0,0,.45); }
+  box-shadow: inset 0 0 90px rgba(4, 18, 26, 0.75), 0 10px 30px rgba(0,0,0,0.4);
+  border: 4px solid #233e4a;
+}
 .sw-board { width: 100%; height: 100%; display: block; }
 .sw-side { display: flex; flex-direction: column; gap: 12px; min-height: 0; overflow: hidden; }
-.sw-turn { background: color-mix(in srgb, var(--c) 18%, var(--card)); border: 3px solid var(--c); border-radius: 20px; padding: 14px 18px;
-  display: flex; flex-direction: column; gap: 4px; }
+
+/* 3D Fold Open Turn Cardstock Placard */
+.sw-turn {
+  background: color-mix(in srgb, var(--c) 18%, var(--sw-parchment));
+  border: 3px solid var(--c);
+  border-radius: 20px;
+  padding: 14px 18px;
+  display: flex; flex-direction: column; gap: 4px;
+  box-shadow: var(--sw-shadow-lift);
+  animation: sw-fold-open 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transform-origin: top center;
+}
 .sw-who { font-size: 1.9em; font-weight: 900; color: var(--c); }
 .sw-phase { color: var(--dim); font-weight: 700; }
 .sw-dice { display: flex; align-items: center; gap: 10px; min-height: 56px; margin-top: 4px; }
-.sw-die { width: 52px; height: 52px; background: #fff8e7; border-radius: 12px; padding: 7px; display: grid;
-  grid-template-columns: repeat(3, 1fr); gap: 3px; box-shadow: 0 4px 0 #b9a77e; }
+.sw-die {
+  width: 52px; height: 52px; background: #fff8e7; border-radius: 12px; padding: 7px; display: grid;
+  grid-template-columns: repeat(3, 1fr); gap: 3px;
+  box-shadow: 0 4px 0 #b9a77e, 0 6px 12px rgba(0,0,0,0.18);
+  border: 1px solid #d4c49d;
+}
 .sw-die i { border-radius: 50%; }
 .sw-die i.on { background: #2b2233; }
 .sw-dsum { font-size: 2.2em; font-weight: 900; margin-left: 6px; }
 .sw-seven { color: #ff5d73; }
-.sw-roll .sw-die { animation: sw-tumble .5s ease-out 2; }
-@keyframes sw-tumble { 0% { transform: rotate(-200deg) scale(.4); } 100% { transform: none; } }
+.sw-roll .sw-die { animation: sw-tumble-3d .5s ease-out 2; }
+@keyframes sw-tumble-3d {
+  0% { transform: perspective(400px) rotateX(-200deg) rotateY(120deg) scale(.4); }
+  100% { transform: none; }
+}
 .sw-target { color: var(--dim); font-weight: 800; text-align: center; }
 .sw-players { display: flex; flex-direction: column; gap: 8px; flex-shrink: 0; }
 .sw-turn, .sw-offer { flex-shrink: 0; }
-.sw-prow { position: relative; background: var(--card); border-left: 8px solid var(--c); border-radius: 14px; padding: 8px 12px;
-  display: grid; grid-template-columns: 1fr auto; gap: 0 10px; }
-.sw-prow.sw-act { background: color-mix(in srgb, var(--c) 20%, var(--card)); box-shadow: 0 0 0 2px var(--c); }
+
+/* Shipping Tag Player Rows with Deckle Edges */
+.sw-prow {
+  position: relative;
+  background: var(--card);
+  border-left: 8px solid var(--c);
+  border-radius: 14px;
+  padding: 8px 12px;
+  display: grid; grid-template-columns: 1fr auto; gap: 0 10px;
+  box-shadow: var(--sw-shadow-card);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-left-width: 8px;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.sw-prow.sw-act {
+  background: color-mix(in srgb, var(--c) 22%, var(--card));
+  box-shadow: 0 0 0 2px var(--c), var(--sw-shadow-lift);
+  transform: translateX(-3px);
+}
 .sw-prow.sw-away { opacity: .55; }
 .sw-pname { font-weight: 900; font-size: 1.15em; color: var(--c); }
 .sw-pts { grid-row: 1 / span 3; grid-column: 2; font-size: 2em; font-weight: 900; align-self: center; }
 .sw-pts small { font-size: .55em; color: #ffd84d; margin-left: 2px; }
 .sw-pstats { display: flex; gap: 12px; color: var(--dim); font-size: .9em; font-weight: 700; }
 .sw-awards { display: flex; gap: 6px; flex-wrap: wrap; }
-.sw-award { background: #ffd84d; color: #2b2233; border-radius: 99px; padding: 0 8px; font-size: .75em; font-weight: 900; }
+.sw-award {
+  background: #ffd84d; color: #2b2233; border-radius: 99px; padding: 0 8px; font-size: .75em; font-weight: 900;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+}
 .sw-tag { background: var(--line); color: var(--dim); border-radius: 99px; padding: 0 6px; font-size: .65em; margin-left: 6px; vertical-align: middle; }
 .sw-gain { background: #5df08a; color: #10301a; border-radius: 99px; padding: 0 8px; font-weight: 900; }
 @keyframes sw-pop { from { transform: scale(.3) translateY(10px); opacity: 0; } }
-.sw-offer { background: #1d3b45; border: 2px solid #4fd1d9; border-radius: 16px; padding: 10px 14px; }
+
+/* Dynamic Animation Keyframes */
+@keyframes sw-fold-open {
+  0% { transform: perspective(800px) rotateX(-75deg); opacity: 0; }
+  70% { transform: perspective(800px) rotateX(10deg); opacity: 1; }
+  100% { transform: perspective(800px) rotateX(0deg); opacity: 1; }
+}
+
+@keyframes sw-paper-bob {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-4px) rotate(0.4deg); }
+}
+
+@keyframes sw-popup-hinge {
+  0% { transform: scale(0.2) translateY(20px); opacity: 0; }
+  70% { transform: scale(1.15) translateY(-3px); }
+  100% { transform: scale(1) translateY(0); opacity: 1; }
+}
+
+@keyframes sw-confetti-flutter {
+  0% { transform: translateY(0) rotate(0deg) scale(1); opacity: 1; }
+  100% { transform: translateY(80px) rotate(360deg) scale(0.7); opacity: 0; }
+}
+
+.sw-offer {
+  background: #1d3b45; border: 2px solid #4fd1d9; border-radius: 16px; padding: 10px 14px;
+  box-shadow: var(--sw-shadow-card);
+}
 .sw-trade { font-size: 1.4em; font-weight: 900; display: flex; gap: 12px; align-items: center; }
 .sw-arrow { color: #4fd1d9; }
 .sw-replies { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
@@ -55,15 +126,18 @@
 .sw-legend small { color: var(--dim); text-align: right; }
 .sw-win { font-size: 2.6em; text-align: center; }
 
-/* board bits */
+/* Board bits with papercraft animations */
 .sw-hl { animation: sw-glow 1.1s ease-in-out infinite alternate; }
 @keyframes sw-glow { from { opacity: .55; } to { opacity: 1; } }
 .sw-sel .sw-hl, .sw-tile.sw-sel .sw-hl { animation: none; opacity: 1; }
 .sw-pick { cursor: pointer; }
 .sw-squall { animation: sw-drift 3s ease-in-out infinite alternate; }
-@keyframes sw-drift { to { transform: translateY(-3px); } }
+@keyframes sw-drift { to { transform: translateY(-4px) rotate(1deg); } }
+.sw-shorelines { animation: sw-paper-bob 6s ease-in-out infinite alternate; }
+.sw-harbours { animation: sw-paper-bob 4.5s ease-in-out infinite alternate; }
+.sw-placed-piece { animation: sw-popup-hinge 0.4s ease-out; transform-origin: center bottom; }
 
-/* ---------- phone ---------- */
+/* ---------- Phone Controller (Papercraft & Deckle Cardstock) ---------- */
 .sw-phone { display: flex; flex-direction: column; gap: 10px; }
 .sw-head { display: flex; align-items: center; gap: 10px; }
 .sw-status { flex: 1; font-weight: 900; font-size: 1.25em; color: var(--c); display: flex; gap: 10px; align-items: baseline; }
@@ -71,27 +145,52 @@
 .sw-mypts { font-size: 1.6em; font-weight: 900; }
 .sw-mypts small { font-size: .55em; color: #ffd84d; }
 .sw-hand { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
-.sw-card { background: color-mix(in srgb, var(--rc) 28%, var(--card)); border: 2px solid var(--rc); border-radius: 12px;
-  text-align: center; padding: 4px 0 3px; }
+
+/* Deckle-Edge Resource Cards */
+.sw-card {
+  background: color-mix(in srgb, var(--rc) 28%, var(--card));
+  border: 2px solid var(--rc);
+  border-radius: 12px;
+  text-align: center;
+  padding: 4px 0 3px;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.7), 0 3px 6px rgba(0,0,0,0.15);
+  transition: transform 0.1s;
+}
+.sw-card:active { transform: scale(0.96); }
 .sw-cicon { font-size: 1.5em; line-height: 1.1; }
 .sw-cnum { font-size: 1.5em; font-weight: 900; line-height: 1; }
 .sw-cname { font-size: .6em; color: var(--dim); font-weight: 800; text-transform: uppercase; letter-spacing: .03em; }
 .sw-handinfo { color: var(--dim); font-size: .8em; text-align: center; margin-top: -4px; }
 .sw-warn { color: #ffb84d; }
 .sw-mapbox { position: relative; }
-.sw-mapwrap { border-radius: 16px; overflow: auto; max-height: 46vh; -webkit-overflow-scrolling: touch;
-  background: radial-gradient(ellipse at 50% 40%, #17607a 0%, var(--sw-sea) 60%, var(--sw-sea2) 100%); }
+.sw-mapwrap {
+  border-radius: 16px; overflow: auto; max-height: 46vh; -webkit-overflow-scrolling: touch;
+  background: radial-gradient(ellipse at 50% 40%, #17607a 0%, var(--sw-sea) 60%, var(--sw-sea2) 100%);
+  box-shadow: inset 0 0 30px rgba(0,0,0,0.5);
+  border: 2px solid #233e4a;
+}
 .sw-zoomed { max-height: 55vh; }
 .sw-map svg { width: 100%; height: auto; display: block; }
-.sw-zoom { position: absolute; right: 8px; top: 8px; width: 40px; height: 40px; border-radius: 12px; border: 0;
-  background: rgba(0,0,0,.5); color: #fff; font-size: 1.3em; font-weight: 900; }
+.sw-zoom {
+  position: absolute; right: 8px; top: 8px; width: 40px; height: 40px; border-radius: 12px; border: 0;
+  background: rgba(0,0,0,.65); color: #fff; font-size: 1.3em; font-weight: 900;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+}
 .sw-panel { display: flex; flex-direction: column; gap: 10px; }
 .sw-panel h3 { margin: 4px 0 0; }
-.sw-btn { background: var(--card); border: 2px solid var(--line); border-radius: 14px; padding: 12px 10px; font-weight: 800; cursor: pointer;
-  display: flex; align-items: center; justify-content: center; text-align: center; min-height: 52px; }
+
+/* Pressed Cardstock Buttons with Physical Depth */
+.sw-btn {
+  background: var(--card); border: 2px solid var(--line); border-radius: 14px; padding: 12px 10px; font-weight: 800; cursor: pointer;
+  display: flex; align-items: center; justify-content: center; text-align: center; min-height: 52px;
+  box-shadow: 0 4px 0 #2b2233, var(--sw-shadow-card);
+  transition: transform 0.1s, box-shadow 0.1s;
+}
+.sw-btn:active { transform: translateY(3px); box-shadow: 0 1px 0 #2b2233; }
 .sw-btn > span { display: flex; flex-direction: column; align-items: center; gap: 2px; }
-.sw-btn:disabled { opacity: .4; }
+.sw-btn:disabled { opacity: .4; transform: none; box-shadow: none; }
 .sw-btn.go { background: #3fd6c0; border-color: #3fd6c0; color: #0b2622; box-shadow: 0 4px 0 #1f8a7a; }
+.sw-btn.go:active { transform: translateY(3px); box-shadow: 0 1px 0 #1f8a7a; }
 .sw-btn.go:disabled { box-shadow: none; }
 .sw-btn.big { font-size: 1.4em; min-height: 80px; }
 .sw-btn.end { background: transparent; border-style: dashed; }
@@ -104,12 +203,19 @@
 .sw-rl { font-size: 1.5em; width: 1.6em; }
 .sw-mini { display: flex; align-items: center; gap: 6px; color: var(--dim); font-size: .8em; font-weight: 800; }
 .sw-step { display: flex; align-items: center; gap: 4px; }
-.sw-step button { width: 40px; height: 40px; border-radius: 10px; border: 2px solid var(--line); background: var(--bg2); font-weight: 900; font-size: 1.2em; }
+.sw-step button {
+  width: 40px; height: 40px; border-radius: 10px; border: 2px solid var(--line); background: var(--bg2); font-weight: 900; font-size: 1.2em;
+  box-shadow: 0 2px 0 rgba(0,0,0,0.2);
+}
+.sw-step button:active { transform: translateY(1px); }
 .sw-step button:disabled { opacity: .35; }
 .sw-step span { min-width: 1.6em; text-align: center; font-weight: 900; font-size: 1.2em; color: var(--fg); }
 .sw-pickrow { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
-.sw-rbtn { background: var(--bg2); border: 2px solid var(--line); border-radius: 12px; padding: 8px 0; font-size: 1.4em;
-  display: flex; flex-direction: column; align-items: center; }
+.sw-rbtn {
+  background: var(--bg2); border: 2px solid var(--line); border-radius: 12px; padding: 8px 0; font-size: 1.4em;
+  display: flex; flex-direction: column; align-items: center;
+  box-shadow: 0 3px 0 rgba(0,0,0,0.2);
+}
 .sw-rbtn small { font-size: .5em; color: var(--dim); font-weight: 800; min-height: 1em; }
 .sw-rbtn.on { border-color: #3fd6c0; background: #1d3b45; }
 .sw-rbtn:disabled { opacity: .35; }
@@ -119,7 +225,10 @@
 .sw-tradeline > div { background: rgba(0,0,0,.25); border-radius: 10px; padding: 6px 10px; display: flex; flex-direction: column; }
 .sw-tradeline small { color: var(--dim); font-weight: 800; }
 .sw-tradeline b { font-size: 1.3em; }
-.sw-chart { display: grid; grid-template-columns: auto 1fr auto; gap: 10px; align-items: center; background: var(--card); border-radius: 14px; padding: 8px 10px; }
+.sw-chart {
+  display: grid; grid-template-columns: auto 1fr auto; gap: 10px; align-items: center; background: var(--card); border-radius: 14px; padding: 8px 10px;
+  box-shadow: var(--sw-shadow-card);
+}
 .sw-chart p { margin: 0; font-size: .85em; }
 .sw-chart small { color: #ffb84d; }
 .sw-chicon { font-size: 2em; }
@@ -128,7 +237,11 @@
 .sw-tabs .sw-btn { min-height: 40px; padding: 6px 14px; }
 .sw-gap { margin-top: 10px !important; }
 .sw-wait { text-align: center; }
-.sw-toast { background: #1d3b45; border: 2px solid #4fd1d9; border-radius: 12px; padding: 8px 12px; text-align: center; font-weight: 800; animation: sw-pop .25s ease-out; }
+.sw-toast {
+  background: #1d3b45; border: 2px solid #4fd1d9; border-radius: 12px; padding: 8px 12px; text-align: center; font-weight: 800;
+  box-shadow: var(--sw-shadow-lift);
+  animation: sw-pop .25s ease-out;
+}
 .sw-toast.sw-bad { background: #4a1d27; border-color: #ff5d73; }
 
 .sw-many { gap: 5px; }

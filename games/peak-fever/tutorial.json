@@ -1,100 +1,110 @@
 [
- {
-  "title": "Roll four dice",
-  "text": "On your turn, roll four dice and split them into two pairs.",
-  "scene": [
-   {
-    "dice": [
-     2,
-     5,
-     3,
-     6
-    ]
-   },
-   {
-    "icon": "➜"
-   },
-   {
-    "card": "2+5 = 7",
-    "color": "#f2c14e"
-   },
-   {
-    "card": "3+6 = 9",
-    "color": "#5fa8d3"
-   }
-  ]
- },
- {
-  "title": "Climb the peaks",
-  "text": "Each pair's sum moves a climber up that peak. Eleven peaks, numbered 2 to 12. You have three climbers per turn.",
-  "scene": [
-   {
-    "icon": "🏔️",
-    "label": "peak 7"
-   },
-   {
-    "icon": "🧗",
-    "fx": "float"
-   },
-   {
-    "icon": "🏔️",
-    "label": "peak 9"
-   }
-  ]
- },
- {
-  "title": "Push your luck",
-  "text": "Keep rolling to climb higher, or make camp to bank your progress.",
-  "scene": [
-   {
-    "phone": "Keep going?",
-    "buttons": [
-     "Roll again",
-     "Make camp"
+  {
+    "title": "Roll four dice",
+    "text": "On your turn, roll four dice and split them into two pairs.",
+    "scene": [
+      {
+        "dice": [
+          2,
+          5,
+          3,
+          6
+        ]
+      },
+      {
+        "icon": "\u279c"
+      },
+      {
+        "card": "2+5 = 7",
+        "color": "#f2c14e"
+      },
+      {
+        "card": "3+6 = 9",
+        "color": "#5fa8d3"
+      }
     ],
-    "tap": 1
-   },
-   {
-    "icon": "⛺"
-   }
-  ]
- },
- {
-  "title": "Avalanche!",
-  "text": "If a roll can't move any of your climbers, it's an avalanche: you lose this turn's climbing.",
-  "scene": [
-   {
-    "dice": [
-     1,
-     1,
-     6,
-     6
-    ]
-   },
-   {
-    "icon": "🌨️",
-    "label": "avalanche",
-    "fx": "shake"
-   }
-  ]
- },
- {
-  "title": "Plant three flags",
-  "text": "Reach a summit and make camp to plant your flag. That peak closes for everyone. First to three flags wins.",
-  "scene": [
-   {
-    "icon": "🚩"
-   },
-   {
-    "icon": "🚩"
-   },
-   {
-    "icon": "🚩",
-    "fx": "pulse"
-   },
-   {
-    "icon": "🏆"
-   }
-  ]
- }
+    "audio": "audio/tut_1.wav",
+    "ms": 7020
+  },
+  {
+    "title": "Climb the peaks",
+    "text": "Each pair's sum moves a climber up that peak. Eleven peaks, numbered 2 to 12. You have three climbers per turn.",
+    "scene": [
+      {
+        "icon": "\ud83c\udfd4\ufe0f",
+        "label": "peak 7"
+      },
+      {
+        "icon": "\ud83e\uddd7",
+        "fx": "float"
+      },
+      {
+        "icon": "\ud83c\udfd4\ufe0f",
+        "label": "peak 9"
+      }
+    ],
+    "audio": "audio/tut_2.wav",
+    "ms": 8940
+  },
+  {
+    "title": "Push your luck",
+    "text": "Keep rolling to climb higher, or make camp to bank your progress.",
+    "scene": [
+      {
+        "phone": "Keep going?",
+        "buttons": [
+          "Roll again",
+          "Make camp"
+        ],
+        "tap": 1
+      },
+      {
+        "icon": "\u26fa"
+      }
+    ],
+    "audio": "audio/tut_3.wav",
+    "ms": 5580
+  },
+  {
+    "title": "Avalanche!",
+    "text": "If a roll can't move any of your climbers, it's an avalanche: you lose this turn's climbing.",
+    "scene": [
+      {
+        "dice": [
+          1,
+          1,
+          6,
+          6
+        ]
+      },
+      {
+        "icon": "\ud83c\udf28\ufe0f",
+        "label": "avalanche",
+        "fx": "shake"
+      }
+    ],
+    "audio": "audio/tut_4.wav",
+    "ms": 6980
+  },
+  {
+    "title": "Plant three flags",
+    "text": "Reach a summit and make camp to plant your flag. That peak closes for everyone. First to three flags wins.",
+    "scene": [
+      {
+        "icon": "\ud83d\udea9"
+      },
+      {
+        "icon": "\ud83d\udea9"
+      },
+      {
+        "icon": "\ud83d\udea9",
+        "fx": "pulse"
+      },
+      {
+        "icon": "\ud83c\udfc6"
+      }
+    ],
+    "audio": "audio/tut_5.wav",
+    "ms": 9060
+  }
 ]

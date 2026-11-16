@@ -47,6 +47,31 @@ export default async function (ctx) {
   const { h } = ctx;
   const sfx = (n) => { try { ctx.sfx?.(n); } catch {} };
   addStyles();
+
+  // Custom audio & BGM engine
+  ctx.music?.(null);
+  const muted = () => { try { return localStorage.getItem('partyhall.muted') === '1'; } catch { return false; } };
+  const bgm = new Audio(ctx.asset('audio/bg_loop.wav'));
+  bgm.loop = true;
+  bgm.volume = 0.35;
+  const playBgm = () => {
+    if (!muted() && bgm.paused) bgm.play().catch(() => {});
+  };
+  const syncMute = () => {
+    bgm.muted = muted();
+  };
+  window.addEventListener('storage', syncMute);
+  playBgm();
+
+  const playSfx = (file, vol = 0.6) => {
+    if (muted()) return;
+    try {
+      const a = new Audio(ctx.asset(`audio/${file}`));
+      a.volume = vol;
+      a.play().catch(() => {});
+    } catch {}
+  };
+
   const root = h('div.gg');
   const leaves = h('div.gg-leaves', Array.from({ length: 14 }, (_, i) => h('span', {
     style: { left: `${(i * 7.3 + 3) % 100}%`, animationDelay: `${-(i * 1.7) % 12}s`, animationDuration: `${10 + (i % 5) * 2}s` },
@@ -57,7 +82,6 @@ export default async function (ctx) {
   };
 
   // ---- talking: the TV reads things out (skipped when the TV is muted) ----
-  const muted = () => { try { return localStorage.getItem('partyhall.muted') === '1'; } catch { return false; } };
   const say = (text) => {
     try {
       if (muted() || !window.speechSynthesis) return;
@@ -218,7 +242,7 @@ export default async function (ctx) {
     const picks = await collect(here.map((s) => ({ seat: s, view: { gg: 'pick', cards: hands.get(s.id) } })), PICK_TIME, {
       grace: 1,
       after: { gg: 'wait', emoji: '🖍️', text: 'Got it! Get your crayons ready…' },
-      onAnswer: (s) => { picked.add(s.id); sfx('pop'); pickBoard(); },
+      onAnswer: (s) => { picked.add(s.id); sfx('pop'); playSfx('sfx_clay_smack.wav', 0.55); pickBoard(); },
     });
     const cardOf = new Map(here.map((s) => [s.id, hands.get(s.id)[picks.get(s.id) === 1 ? 1 : 0]]));
     for (const s of here) deck.unshift(hands.get(s.id)[picks.get(s.id) === 1 ? 0 : 1]);
@@ -234,7 +258,7 @@ export default async function (ctx) {
     say('Everybody draw!');
     const got = await collect(here.map((s) => ({ seat: s, view: { gg: 'draw', card: cardOf.get(s.id) } })), pace.draw, {
       after: { gg: 'wait', emoji: '🖼️', text: 'Beautiful! Waiting for the other artists…' },
-      onAnswer: (s) => { drawn.add(s.id); sfx('ding'); drawBoard(); },
+      onAnswer: (s) => { drawn.add(s.id); sfx('ding'); playSfx('sfx_clay_smack.wav', 0.55); drawBoard(); },
     });
     const art = [];
     for (const s of here) {
@@ -275,6 +299,9 @@ export default async function (ctx) {
   show('all', { gg: 'wait', emoji: '🦃', text: 'Happy Thanksgiving! Back to the lobby soon…' });
   await ctx.sleep(1500);
   hush();
+  bgm.pause();
+  bgm.src = '';
+  window.removeEventListener('storage', syncMute);
 
   // ===================================================================
 
@@ -357,6 +384,7 @@ export default async function (ctx) {
       h('div.gg-guess-body', frame, h('div.gg-tiles', tiles)),
       h('div.gg-q', q, status)));
     sfx('pop');
+    playSfx('sfx_spring_boing.wav', 0.55);
     hush();
     say(`What is it? Is it ${opts.map((o) => o.t).join('? ... ')}?`);
 
@@ -371,7 +399,7 @@ export default async function (ctx) {
       } })), GUESS_TIME, {
         grace: 0, handoff: false,
         after: { gg: 'wait', emoji: '🤔', text: 'Got it! Watch the TV…' },
-        onAnswer: (s, k) => { if (Number.isInteger(k) && opts[k]) picks.set(s.id, k); sfx('pop'); setStatus(); },
+        onAnswer: (s, k) => { if (Number.isInteger(k) && opts[k]) picks.set(s.id, k); sfx('pop'); playSfx('sfx_clay_smack.wav', 0.5); setStatus(); },
       });
     }
 
@@ -402,6 +430,9 @@ export default async function (ctx) {
     status.replaceChildren(line);
     q.replaceChildren(`It's ${a.card.e} ${a.card.t}!`);
     sfx(right.length ? 'win' : 'ding');
+    if (everyone) playSfx('sfx_party_horn.wav', 0.65);
+    else if (right.length) playSfx('sfx_pie_splat.wav', 0.65);
+    else playSfx('sfx_clay_smack.wav', 0.45);
     say(`It's ${a.card.t}! Drawn by ${a.by.name}. ${line}`);
 
     // One result screen per phone, with a line for each of its players.
@@ -446,6 +477,7 @@ export default async function (ctx) {
         h('div.gg-sbar', h('div', { style: { width: `${Math.max(3, (n / top) * 100)}%`, background: s.color } })),
         h('span.gg-snum', `${n} 🥧`))))));
     sfx(final ? 'win' : 'ding');
+    playSfx(final ? 'sfx_party_horn.wav' : 'sfx_pie_splat.wav', 0.6);
     await ctx.sleep(final ? 6500 : 5000);
   }
 
@@ -481,6 +513,7 @@ export default async function (ctx) {
         h('div.gg-aname', s.avatar, ' ', s.name), h('div.gg-atitle', given.get(s.id).t), h('small', given.get(s.id).why)))),
       h('p.gg-sub', 'Happy Thanksgiving! 🍂')));
     sfx('win');
+    playSfx('sfx_party_horn.wav', 0.7);
     say(best === 0 ? 'What a team! Happy Thanksgiving, everybody!' : `${winners.map((s) => s.name).join(' and ')} ${winners.length > 1 ? 'win' : 'wins'}! Happy Thanksgiving, everybody!`);
     await ctx.sleep(Math.min(18000, 8000 + all.length * 700));
   }
@@ -488,6 +521,7 @@ export default async function (ctx) {
   async function banner(title, sub, ms) {
     paint(h('div.gg-page.gg-center', turkey('gg-mascot.small'), h('h1.gg-title.pop', title), sub && h('p.gg-sub', sub)));
     sfx('whoosh');
+    playSfx('sfx_spring_boing.wav', 0.55);
     say(title.replace(/[^\p{L}\p{N}\s'!?.,]/gu, ''));
     await ctx.sleep(ms);
   }

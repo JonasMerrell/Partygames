@@ -1,71 +1,79 @@
 [
- {
-  "title": "Two robot teams",
-  "text": "Split into two teams and take turns. One player on the team gives clues.",
-  "scene": [
-   {
-    "icon": "🤖",
-    "label": "Team 1"
-   },
-   {
-    "icon": "🤖",
-    "label": "Team 2"
-   }
-  ]
- },
- {
-  "title": "One-syllable words only",
-  "text": "The clue-giver's voice chip only does one-syllable words. Their team guesses out loud.",
-  "scene": [
-   {
-    "phone": "ELEPHANT",
-    "title": "Your card",
-    "buttons": [
-     "Got it",
-     "Skip"
-    ]
-   },
-   {
-    "icon": "🗣️",
-    "label": "\"Big. Grey. Long nose.\""
-   }
-  ],
-  "flow": true
- },
- {
-  "title": "BZZT!",
-  "text": "The other team sees the word too. If the clue-giver slips into a longer word, they hit BZZT and the clue team loses a point.",
-  "scene": [
-   {
-    "phone": "BZZT on a slip",
-    "buttons": [
-     "BZZT!"
+  {
+    "title": "Two robot teams",
+    "text": "Split into two teams and take turns. One player on the team gives clues.",
+    "scene": [
+      {
+        "icon": "\ud83e\udd16",
+        "label": "Team 1"
+      },
+      {
+        "icon": "\ud83e\udd16",
+        "label": "Team 2"
+      }
     ],
-    "tap": 0,
-    "accent": "#e8553d"
-   },
-   {
-    "icon": "💥",
-    "fx": "shake"
-   }
-  ]
- },
- {
-  "title": "Scoring",
-  "text": "A card scores one point per syllable, up to 3. Beat the clock and score as many as you can.",
-  "scene": [
-   {
-    "card": "CAT  +1",
-    "color": "#f2c14e"
-   },
-   {
-    "card": "ROBOT  +2",
-    "color": "#5fa8d3"
-   },
-   {
-    "card": "ELEPHANT  +3",
-    "color": "#8cc084"
-   }
-  ]
- }
+    "audio": "audio/tut_1.wav",
+    "ms": 6780
+  },
+  {
+    "title": "One-syllable words only",
+    "text": "The clue-giver's voice chip only does one-syllable words. Their team guesses out loud.",
+    "scene": [
+      {
+        "phone": "ELEPHANT",
+        "title": "Your card",
+        "buttons": [
+          "Got it",
+          "Skip"
+        ]
+      },
+      {
+        "icon": "\ud83d\udde3\ufe0f",
+        "label": "\"Big. Grey. Long nose.\""
+      }
+    ],
+    "flow": true,
+    "audio": "audio/tut_2.wav",
+    "ms": 9300
+  },
+  {
+    "title": "BZZT!",
+    "text": "The other team sees the word too. If the clue-giver slips into a longer word, they hit BZZT and the clue team loses a point.",
+    "scene": [
+      {
+        "phone": "BZZT on a slip",
+        "buttons": [
+          "BZZT!"
+        ],
+        "tap": 0,
+        "accent": "#e8553d"
+      },
+      {
+        "icon": "\ud83d\udca5",
+        "fx": "shake"
+      }
+    ],
+    "audio": "audio/tut_3.wav",
+    "ms": 9740
+  },
+  {
+    "title": "Scoring",
+    "text": "A card scores one point per syllable, up to 3. Beat the clock and score as many as you can.",
+    "scene": [
+      {
+        "card": "CAT  +1",
+        "color": "#f2c14e"
+      },
+      {
+        "card": "ROBOT  +2",
+        "color": "#5fa8d3"
+      },
+      {
+        "card": "ELEPHANT  +3",
+        "color": "#8cc084"
+      }
+    ],
+    "audio": "audio/tut_4.wav",
+    "ms": 7500
+  }
 ]

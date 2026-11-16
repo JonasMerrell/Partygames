@@ -18,6 +18,36 @@ const NS = 'http://www.w3.org/2000/svg';
 export default async function (ctx) {
   const { h } = ctx;
   injectCss();
+
+  // ---- Custom Audio Lifecycle & Bespoke SFX ----
+  ctx.music(null);
+  ctx.music = () => {}; // Supersede built-in platform synth
+  const isMuted = () => {
+    try { return localStorage.getItem('partyhall.muted') === '1'; } catch { return false; }
+  };
+  let bgm = null;
+  const startBgm = () => {
+    if (bgm) return;
+    try {
+      bgm = new Audio(ctx.asset('audio/bg_loop.wav'));
+      bgm.loop = true;
+      bgm.volume = isMuted() ? 0 : 0.35;
+      bgm.play().catch(() => {});
+      setInterval(() => {
+        if (bgm) bgm.muted = isMuted();
+      }, 250);
+    } catch {}
+  };
+  const playClip = (name, vol = 0.7) => {
+    if (isMuted()) return;
+    try {
+      const a = new Audio(ctx.asset(`audio/${name}.wav`));
+      a.volume = vol;
+      a.play().catch(() => {});
+    } catch {}
+  };
+  startBgm();
+
   const players = ctx.shuffle(ctx.connected).slice(0, 6);
   const n = players.length;
   if (n < 2) return ctx.say('Not enough players', 'Hollowmere needs 2 to 6 people.', 5000);
@@ -35,7 +65,10 @@ export default async function (ctx) {
   const hands = new Map(players.map((p) => [p.id, []]));
   const draw = (p) => {
     if (!deck.length) { deck = ctx.shuffle(discard); discard = []; }
-    if (deck.length && hands.get(p.id).length < HAND_MAX) hands.get(p.id).push(deck.pop());
+    if (deck.length && hands.get(p.id).length < HAND_MAX) {
+      hands.get(p.id).push(deck.pop());
+      playClip('sfx_brush_sweep', 0.35);
+    }
   };
   for (let i = 0; i < HAND_START; i++) players.forEach(draw);
 
@@ -92,8 +125,16 @@ export default async function (ctx) {
     tok[x.id] = g; tokens.append(g);
   }
   const boom = h('div.hm-boom');
-  const side = h('div.hm-side');
-  ctx.el.replaceChildren(h('div.hm', h('div.hm-boardwrap', board, boom), side));
+  const bloom = h('div.hm-bloom');
+  ctx.el.replaceChildren(h('div.hm', h('div.hm-boardwrap', board, boom, bloom), side));
+
+  const triggerBloom = (color = 'rgba(212, 172, 13, 0.85)') => {
+    bloom.style.setProperty('--bloom-color', color);
+    bloom.classList.remove('active');
+    void bloom.offsetWidth;
+    bloom.classList.add('active');
+    setTimeout(() => bloom.classList.remove('active'), 1400);
+  };
 
   const place = (x) => { tok[x.id].style.transform = `translate(${x.x * T}px, ${x.y * T}px)`; };
   function render() {
@@ -138,6 +179,7 @@ export default async function (ctx) {
 
   const sfx = (n) => { try { ctx.sfx?.(n); } catch {} };
   async function flash(icon, title, sub, ms = 3200) {
+    playClip('sfx_brush_sweep', 0.45);
     sfx('whoosh');
     boom.replaceChildren(h('div.hm-boomin', h('div.hm-bicon', icon), h('h2', title), sub && h('p', sub)));
     boom.classList.add('on');
@@ -174,6 +216,8 @@ export default async function (ctx) {
     S.named = nextWill();
     if (byId[old].alive) willDeck.push(old);
     log(`📜 ${p.name} added a codicil: ${byId[S.named].name} is now named.`);
+    triggerBloom('rgba(212, 172, 13, 0.85)');
+    playClip('sfx_brush_sweep', 0.65);
     render();
     await flash('📜', 'A codicil!', `${p.name} rewrote the will. It now names ${byId[S.named].name}.`);
   }
@@ -185,6 +229,8 @@ export default async function (ctx) {
     S.glow = TRAP_TILES[t]; render();
     await ctx.sleep(600);
     hr.alive = false; S.glow = [];
+    triggerBloom('rgba(192, 57, 43, 0.85)');
+    playClip('sfx_latch', 0.85);
     sfx('buzz');
     log(`${CARDS[t].icon} ${hr.name} ${CARDS[t].verb}.`);
     render();
@@ -209,6 +255,7 @@ export default async function (ctx) {
     const a = await ask(p, { title: 'Your turn!', buzz: true, choices: first }, { timeout: 40 });
     if (a === 'codicil') await rewrite(p);
 
+    playClip('sfx_chime', 0.45);
     const final = [roll(), roll()];
     for (let k = 0; k < 7; k++) { sfx('tick'); S.dice = final.map(() => ({ v: roll(), rolling: true })); render(); await ctx.sleep(110); }
     S.dice = final.map((v) => ({ v }));
@@ -239,6 +286,7 @@ export default async function (ctx) {
         }, { timeout: 25, clock: false });
         if (!dirs.includes(mv)) break;
         hr.x += DIRS[mv][0]; hr.y += DIRS[mv][1];
+        playClip('sfx_creaking_floor', 0.55);
         sfx('pop');
         render();
         if (cell(hr.x, hr.y) === 'E') {
@@ -281,6 +329,8 @@ export default async function (ctx) {
   if (!S.over) {
     const hr = byId[S.named];
     S.over = { winner: players.find((q) => q.id === hr.owner), why: `The clock strikes midnight. The will names ${hr.name}.`, heir: hr };
+    triggerBloom('rgba(44, 36, 66, 0.9)');
+    playClip('sfx_chime', 0.95);
     await flash('🕛', 'Midnight', 'The solicitor opens the will…', 3500);
   }
   const win = S.over.winner;
@@ -301,6 +351,38 @@ export default async function (ctx) {
 // ---------- the mansion, drawn once ----------
 function drawMansion() {
   const out = [];
+  out.push(`<defs>
+    <filter id="hm-paper-grain" x="0%" y="0%" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.045 0.055" numOctaves="4" result="noise"/>
+      <feDiffuseLighting in="noise" lighting-color="#fff8ed" surfaceScale="1.4" result="paperLight">
+        <feDistantLight azimuth="55" elevation="65"/>
+      </feDiffuseLighting>
+      <feBlend mode="multiply" in="SourceGraphic" in2="paperLight"/>
+    </filter>
+    <filter id="hm-watercolor-wash" x="-8%" y="-8%" width="116%" height="116%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.038" numOctaves="3" result="roughNoise"/>
+      <feDisplacementMap in="SourceGraphic" in2="roughNoise" scale="5" xChannelSelector="R" yChannelSelector="G" result="displaced"/>
+      <feMorphology operator="dilate" radius="1.4" in="displaced" result="dilated"/>
+      <feComposite operator="out" in="dilated" in2="displaced" result="edge"/>
+      <feColorMatrix type="matrix" in="edge" values="
+        0 0 0 0 0.12
+        0 0 0 0 0.08
+        0 0 0 0 0.18
+        0 0 0 0 0.55 0" result="wetRim"/>
+      <feMerge>
+        <feMergeNode in="displaced"/>
+        <feMergeNode in="wetRim"/>
+      </feMerge>
+    </filter>
+    <filter id="hm-gouache">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="0.8" result="blur"/>
+      <feSpecularLighting in="blur" surfaceScale="2" specularConstant="0.6" specularExponent="16" lighting-color="#fffbee" result="spec">
+        <fePointLight x="-20" y="-30" z="80"/>
+      </feSpecularLighting>
+      <feComposite in="SourceGraphic" in2="spec" operator="arithmetic" k1="0" k2="1" k3="0.3" k4="0"/>
+    </filter>
+  </defs>`);
+
   const FLOOR = {
     L: ['#4a3326', '#533a2c'], B: ['#d8c7a4', '#c4b28e'], C: ['#2f5d3a', '#376a43'], H: ['#7a2433', '#7a2433'],
     S: ['#433a5c', '#4b4168'], K: ['#e6e0cf', '#9a9488'], F: ['#9aa0b4', '#8a90a4'], '.': ['#6b5440', '#6b5440'],
@@ -334,9 +416,10 @@ function drawMansion() {
     const cols = ['#c0392b', '#2e86de', '#27ae60', '#d4ac0d', '#8e44ad', '#e67e22'];
     out.push(`<rect x="${px(2) + 5 + i * 8.3}" y="${px(0) + 14 + (i % 3) * 3}" width="6.5" height="${28 - (i % 3) * 3}" fill="${cols[i % 6]}"/>`);
   }
-  // chandelier over the ballroom
+  // chandelier over the ballroom with swaying shadow
   const cx = px(11.5), cy = px(3);
-  out.push(`<g opacity=".92"><path d="M${cx} ${px(0)} V${cy - 30}" stroke="#b7950b" stroke-width="3"/>
+  out.push(`<ellipse class="hm-chandelier-shadow" cx="${cx}" cy="${cy + 34}" rx="68" ry="24" fill="#08060f" opacity=".38" filter="blur(3px)"/>`);
+  out.push(`<g class="hm-chandelier-body" opacity=".95"><path d="M${cx} ${px(0)} V${cy - 30}" stroke="#b7950b" stroke-width="3"/>
     <ellipse cx="${cx}" cy="${cy}" rx="62" ry="22" fill="none" stroke="#f5d76e" stroke-width="6"/>
     <ellipse cx="${cx}" cy="${cy}" rx="34" ry="12" fill="none" stroke="#f5d76e" stroke-width="4"/>
     ${[-56, -28, 0, 28, 56].map((d) => `<rect x="${cx + d - 4}" y="${cy - 26 + Math.abs(d) / 4}" width="8" height="16" fill="#fff8e7"/><ellipse cx="${cx + d}" cy="${cy - 30 + Math.abs(d) / 4}" rx="4" ry="7" fill="#ffb84d"/>`).join('')}
@@ -378,6 +461,20 @@ function drawMansion() {
     out.push(`<text x="${r.at[0] * T}" y="${r.at[1] * T}" class="hm-room${r.inside ? '' : ' hm-out'}" text-anchor="middle">${r.name.toUpperCase()}</text>`);
   }
   out.push(`<text x="${EXIT[0] * T + 24}" y="${H * T + 22}" class="hm-room hm-exitlbl" text-anchor="middle">▲ FRONT DOOR ▲</text>`);
+
+  // Floating atmospheric dust motes
+  out.push(`<g class="hm-dust-motes">`);
+  const motes = [
+    [320, 310, 1.8, 7.5, 0], [380, 290, 1.4, 9.0, 1.2], [460, 340, 2.0, 8.0, 2.5],
+    [520, 300, 1.5, 6.5, 0.8], [580, 360, 2.2, 8.5, 3.1], [640, 320, 1.6, 7.0, 1.8],
+    [410, 420, 1.9, 8.2, 2.0], [490, 450, 1.3, 9.5, 0.5], [560, 430, 2.1, 7.8, 3.7],
+    [620, 470, 1.7, 6.8, 1.4], [350, 480, 1.5, 8.8, 2.8], [510, 500, 2.0, 7.2, 0.2]
+  ];
+  for (const [mx, my, mr, md, mdel] of motes) {
+    out.push(`<circle class="hm-mote" cx="${mx}" cy="${my}" r="${mr}" fill="#fff8e7" opacity=".65" style="--d:${md}s;--del:${mdel}s;"/>`);
+  }
+  out.push(`</g>`);
+
   return out.join('');
 }
 
@@ -385,15 +482,26 @@ function injectCss() {
   document.getElementById('hollowmere-css')?.remove();
   const css = Object.assign(document.createElement('style'), { id: 'hollowmere-css' });
   css.textContent = `
-  .hm { display: grid; grid-template-columns: minmax(0, 1fr) 19em; gap: 2vw; width: 100%; align-items: start; text-align: left; }
+  @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@600;900&family=Crimson+Pro:ital,wght@0,400;0,700;1,400&display=swap');
+  .hm {
+    display: grid; grid-template-columns: minmax(0, 1fr) 19em; gap: 2vw; width: 100%; align-items: start; text-align: left;
+    font-family: 'Crimson Pro', Georgia, serif;
+  }
   .hm-boardwrap { position: relative; }
-  .hm-map { width: 100%; height: auto; max-height: 86vh; display: block; border-radius: 18px;
-    box-shadow: 0 20px 60px #0008; background: #1d1729; }
-  .hm-room { fill: #fff; opacity: .4; font: 900 15px var(--font); letter-spacing: .14em; }
-  .hm-room.hm-out { opacity: .75; fill: #d8cfee; font-size: 17px; }
+  .hm-map {
+    width: 100%; height: auto; max-height: 86vh; display: block; border-radius: 18px;
+    background: #1d1729;
+    border: 4px solid #3d2a1c; outline: 2px solid #b7950b;
+    box-shadow: 0 20px 60px #000a, inset 0 0 80px rgba(0,0,0,0.5);
+  }
+  .hm-room { fill: #fff; opacity: .45; font-family: 'Cinzel', serif; font-weight: 900; font-size: 15px; letter-spacing: .14em; }
+  .hm-room.hm-out { opacity: .85; fill: #d8cfee; font-size: 17px; }
   .hm-exitlbl { opacity: 1; fill: #2ecc71; font-size: 17px; }
   .hm-exit { filter: drop-shadow(0 0 8px #2ecc71); }
-  .hm-trap { fill: #ff3b3b; fill-opacity: .2; stroke: #ff5d73; stroke-width: 2; stroke-dasharray: 6 4; }
+  .hm-trap {
+    fill: #8b0000; fill-opacity: .32; stroke: #c0392b; stroke-width: 2.5; stroke-dasharray: 6 3;
+    filter: url(#hm-watercolor-wash);
+  }
   .hm-tok { transition: transform .28s ease-out, opacity .6s; }
   .hm-tok .hm-ring { fill: none; stroke: transparent; stroke-width: 4; }
   .hm-tok.named .hm-ring { stroke: #f5d76e; stroke-width: 5; filter: drop-shadow(0 0 6px #f5d76e); }
@@ -404,19 +512,69 @@ function injectCss() {
   .hm-pend { transform-origin: ${8 * T + 24}px ${9 * T + 40}px; animation: hmswing 2s ease-in-out infinite alternate; }
   @keyframes hmswing { from { transform: rotate(-12deg); } to { transform: rotate(12deg); } }
   @keyframes hmpulse { to { opacity: .45; } }
+
+  /* Swaying Chandelier & Shadows */
+  .hm-chandelier-body {
+    transform-origin: ${11.5 * T}px 0px;
+    animation: hm-chandelier-sway 4.5s ease-in-out infinite alternate;
+  }
+  .hm-chandelier-shadow {
+    transform-origin: ${11.5 * T}px ${3 * T + 34}px;
+    animation: hm-shadow-drift 4.5s ease-in-out infinite alternate;
+  }
+  @keyframes hm-chandelier-sway {
+    0%   { transform: rotate(-3deg); }
+    100% { transform: rotate(3deg); }
+  }
+  @keyframes hm-shadow-drift {
+    0%   { transform: translate(-16px, 0) scale(0.95, 1.03); opacity: 0.35; }
+    100% { transform: translate(16px, 0) scale(1.05, 0.97); opacity: 0.45; }
+  }
+
+  /* Floating Dust Motes */
+  .hm-mote {
+    animation: hm-mote-drift var(--d, 8s) ease-in-out infinite;
+    animation-delay: var(--del, 0s);
+  }
+  @keyframes hm-mote-drift {
+    0%   { transform: translate(0, 0); opacity: 0.05; }
+    30%  { opacity: 0.75; }
+    60%  { transform: translate(24px, -32px); opacity: 0.85; }
+    85%  { opacity: 0.3; }
+    100% { transform: translate(48px, -65px); opacity: 0; }
+  }
+
+  /* Radial Watercolor Bloom Dissolve Wipes */
+  .hm-bloom {
+    position: absolute; inset: 0; display: grid; place-items: center; pointer-events: none; z-index: 10;
+  }
+  .hm-bloom.active::before {
+    content: ''; width: 140px; height: 140px; border-radius: 50%;
+    background: radial-gradient(circle, var(--bloom-color, rgba(212, 172, 13, 0.85)) 0%, rgba(139, 0, 0, 0.6) 50%, transparent 75%);
+    animation: hm-bloom-expand 1.4s cubic-bezier(0.1, 0.8, 0.2, 1) forwards;
+  }
+  @keyframes hm-bloom-expand {
+    0%   { transform: scale(0.1); opacity: 0.95; filter: url(#hm-watercolor-wash) blur(1px); }
+    40%  { transform: scale(1.6); opacity: 0.85; filter: url(#hm-watercolor-wash) blur(3px); }
+    80%  { transform: scale(3.2); opacity: 0.35; filter: url(#hm-watercolor-wash) blur(6px); }
+    100% { transform: scale(4.8); opacity: 0; filter: blur(12px); }
+  }
+
   .hm-side { display: flex; flex-direction: column; gap: 10px; font-size: .85em; }
   .hm-side > div { background: var(--card); border: 2px solid var(--line); border-radius: 16px; padding: 10px 14px; }
-  .hm-k { color: var(--dim); font-weight: 800; text-transform: uppercase; letter-spacing: .08em; font-size: .75em; }
+  .hm-k { color: var(--dim); font-family: 'Cinzel', serif; font-weight: 800; text-transform: uppercase; letter-spacing: .08em; font-size: .75em; }
   .hm-small { color: var(--dim); font-size: .75em; }
   .hm-will { text-align: center; border-color: #d4ac0d !important; background: linear-gradient(#3a2f1a, var(--card)) !important; }
   .hm-will .portrait { margin: 6px auto 0; display: block; }
-  .hm-wname { font-size: 1.5em; font-weight: 900; }
+  .hm-wname { font-family: 'Cinzel', serif; font-size: 1.5em; font-weight: 900; }
   .hm-bar { height: 10px; border-radius: 99px; background: var(--bg2); overflow: hidden; margin: 6px 0; }
   .hm-bar div { height: 100%; background: #d4ac0d; transition: width .8s; }
-  .hm-turn { font-weight: 900; font-size: 1.2em; }
+  .hm-turn { font-family: 'Cinzel', serif; font-weight: 900; font-size: 1.2em; }
   .hm-dice { display: flex; gap: 12px; margin-top: 8px; }
-  .hm-die { width: 2.2em; height: 2.2em; border-radius: 10px; background: #fff8e7; color: #1a1426; display: grid; place-items: center;
-    font-size: 1.3em; font-weight: 900; box-shadow: 0 4px 0 #b9ab8c; }
+  .hm-die {
+    width: 2.2em; height: 2.2em; border-radius: 10px; background: #fff8e7; color: #1a1426; display: grid; place-items: center;
+    font-family: 'Cinzel', serif; font-size: 1.3em; font-weight: 900; box-shadow: 0 4px 0 #b9ab8c;
+  }
   .hm-die.used { opacity: .3; }
   .hm-die.rolling { animation: hmroll .2s linear infinite; }
   @keyframes hmroll { 50% { transform: rotate(20deg) translateY(-4px); } }
@@ -434,7 +592,7 @@ function injectCss() {
   .hm-boom.on { opacity: 1; }
   .hm-boomin { background: var(--card); border: 3px solid #d4ac0d; border-radius: 24px; padding: 3vh 3vw; text-align: center;
     max-width: 90%; animation: pop .35s ease-out; }
-  .hm-boomin h2 { font-size: 2.4em; margin: .1em 0; }
+  .hm-boomin h2 { font-family: 'Cinzel', serif; font-size: 2.4em; margin: .1em 0; }
   .hm-boomin p { color: var(--dim); font-size: 1.2em; margin: 0; }
   .hm-bicon { font-size: 4em; }
   .hm-boomin.rules { text-align: left; }

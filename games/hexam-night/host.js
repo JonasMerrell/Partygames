@@ -23,6 +23,35 @@ export default async function (ctx) {
   frame.classList.add('hx');
   frame.prepend(backdrop());
 
+  // ---- Custom Audio Lifecycle & Bespoke SFX ----
+  ctx.music(null);
+  ctx.music = () => {}; // Supersede built-in platform synth
+  const isMuted = () => {
+    try { return localStorage.getItem('partyhall.muted') === '1'; } catch { return false; }
+  };
+  let bgm = null;
+  const startBgm = () => {
+    if (bgm) return;
+    try {
+      bgm = new Audio(ctx.asset('audio/bg_loop.wav'));
+      bgm.loop = true;
+      bgm.volume = isMuted() ? 0 : 0.35;
+      bgm.play().catch(() => {});
+      setInterval(() => {
+        if (bgm) bgm.muted = isMuted();
+      }, 250);
+    } catch {}
+  };
+  const playClip = (name, vol = 0.7) => {
+    if (isMuted()) return;
+    try {
+      const a = new Audio(ctx.asset(`audio/${name}.wav`));
+      a.volume = vol;
+      a.play().catch(() => {});
+    } catch {}
+  };
+  startBgm();
+
   const state = new Map();
   const st = (p) => {
     const id = typeof p === 'object' ? p.id : p;
@@ -43,7 +72,7 @@ export default async function (ctx) {
     return d;
   };
   const talk = async (line, ms, { mood = 'smug', below, sub } = {}) => {
-    const b = h('div.hx-bubble');
+    const b = h('div.hx-bubble.hx-bleed');
     b.innerHTML = line; // lines are written in this file; player names go through esc()
     if (sub) b.append(h('small', sub));
     ctx.el.replaceChildren(...[h('div.hx-host', proc(mood), b), below].filter(Boolean));
@@ -70,6 +99,7 @@ export default async function (ctx) {
     h('p.hx-tag', 'A wizarding trivia exam. Not everyone graduates.'),
     proc('smug'));
   ctx.sfx('start');
+  playClip('sfx_bell', 0.85);
   await ctx.sleep(4500);
   await talk('Good evening, students. I am <b>Proctor Hollowell</b>, and I have invigilated this exam for four hundred years. Mostly because I died during one.', 6500);
   await talk('Answer on your phones. A right answer earns points, and quick answers earn more. <b>Get one wrong</b> and you go straight to detention.', 6500);
@@ -112,7 +142,7 @@ export default async function (ctx) {
     drawRoster();
     const optEls = opts.map((o, i) => h('div.hx-opt', h('span.l', 'ABCD'[i]), h('span', o), h('div.who')));
     ctx.music('think');
-    ctx.el.replaceChildren(h('p.hx-kicker', kicker), h('h2.hx-q', q.q), h('div.hx-opts', optEls), roster);
+    ctx.el.replaceChildren(h('p.hx-kicker', kicker), h('h2.hx-q.hx-bleed', q.q), h('div.hx-opts', optEls), roster);
     ctx.sfx('ding');
     const t0 = Date.now();
     const view = (ghost) => ({
@@ -121,7 +151,12 @@ export default async function (ctx) {
       color: ghost ? GHOST : GOLD,
       choices: opts.map((o, i) => ({ label: `${'ABCD'[i]}.  ${o}`, value: i })),
     });
-    const onAnswer = (p) => { done.add(p.id); times.set(p.id, (Date.now() - t0) / 1000); drawRoster(); };
+    const onAnswer = (p) => {
+      done.add(p.id);
+      times.set(p.id, (Date.now() - t0) / 1000);
+      drawRoster();
+      playClip('sfx_quill_scratch', 0.6);
+    };
     const after = { title: 'Answer sealed', wait: 'Eyes on the big screen…' };
     const stop = ctx.clock(time);
     const live = players.filter((p) => !isGhost(p)), dead = players.filter(isGhost);
@@ -139,6 +174,7 @@ export default async function (ctx) {
     ctx.music(null);
     await ctx.sleep(1200);
     optEls.forEach((el, i) => el.classList.add(i === rightSlot ? 'right' : 'dim'));
+    playClip('sfx_wax_stamp', 0.75);
     ctx.sfx('win');
     const right = new Set([...answers].filter(([, s]) => s === rightSlot).map(([id]) => id));
     for (const p of players) {
@@ -182,6 +218,7 @@ export default async function (ctx) {
     for (const [i, g] of pool.entries()) { if ((r -= weights[i]) < 0) { game = g; break; } }
     lastGame = game;
     ctx.music('tense');
+    playClip('sfx_thunder', 0.85);
     ctx.show(condemned, { title: 'DETENTION', text: 'You got it wrong. Report to the dungeon.', wait: 'Look at the big screen…', color: BLOOD, buzz: true });
     ghosts().forEach((p) => ctx.show(p, { title: '👻 Detention', wait: 'Someone is in trouble…', color: GHOST }));
     await talk(`${names(condemned)}, you answered poorly. To <b>detention</b> with you!`, 3800, { mood: 'grim' });
@@ -216,6 +253,7 @@ export default async function (ctx) {
     await talk('The castle groans… the stairs begin to move…', 0, { below: h('div.hx-stairs', cols) });
     await ctx.sleep(2500);
     cols[crumble].classList.add('shake');
+    playClip('sfx_thunder', 0.75);
     ctx.sfx('buzz');
     await ctx.sleep(1800);
     cols[crumble].classList.remove('shake');
@@ -243,6 +281,7 @@ export default async function (ctx) {
       ctx.ask(cond, view(false), { timeout: 20, after: { wait: 'Spell cast…' } }),
       ctx.ask(spirits, view(true), { timeout: 20, clock: false, after: { wait: 'Spell cast…' } }),
     ]);
+    playClip('sfx_quill_scratch', 0.6);
     const ok = (v) => lev(String(v || '').toLowerCase().replace(/[^a-z]/g, ''), target) <= 1;
     for (const [id, v] of b) if (ok(v)) { const g = ctx.player(id); if (g) st(g).score += 200; }
     const dead = cond.filter((p) => !ok(a.get(p.id)));
@@ -360,6 +399,7 @@ export default async function (ctx) {
     for (const p of dead) st(p).alive = false;
     for (const p of dead) ctx.show(p, { title: '💀 You died', text: 'You are a ghost now. Keep answering for points. In the Midnight Escape, catch a living player to come back to life!', color: GHOST, buzz: true, wait: 'Haunting…' });
     ctx.music(null);
+    playClip('sfx_wax_stamp', 0.8);
     ctx.sfx('lose');
     const tombs = h('div.hx-tombs', dead.map((p, i) => {
       const t = h('div.hx-tomb', { style: { animationDelay: `${i * 300}ms` } });
@@ -388,6 +428,7 @@ export default async function (ctx) {
     const top = Math.max(...racers.map((p) => st(p).score));
     for (const p of racers) st(p).pos = (isGhost(p) ? 0 : 2) + (st(p).score === top && top > 0 ? 1 : 0);
     ctx.music('tense');
+    playClip('sfx_bell', 0.9);
     await talk('The clock strikes midnight. Time for <b>the Midnight Escape</b>! First one through the gate wins the whole thing.', 5500);
     await talk(`Right answers move you: living students <b>2 steps</b>, ghosts <b>1</b>, plus a bonus step for the fastest right answer. Ghosts who catch a living student <b>come back to life</b>. Top scorer gets a head start.`, 8000);
     const lanes = new Map();
@@ -444,6 +485,7 @@ export default async function (ctx) {
     }
     if (!winner) {
       winner = racers.slice().sort((a, b) => st(b).pos - st(a).pos || st(b).score - st(a).score)[0];
+      playClip('sfx_bell', 0.8);
       await talk('The bell has stopped tolling. The gate swings shut on all of you… except the one closest.', 5000, { mood: 'grim' });
     }
     // finish

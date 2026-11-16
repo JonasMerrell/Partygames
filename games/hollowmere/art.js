@@ -82,6 +82,8 @@ export function portrait(heir, size = 64, out = false) {
   if (hat) p.push(hat);
   p.push('</g>');
   p.push(`<circle cx="50" cy="50" r="47" fill="none" stroke="#1a1426" stroke-width="4"/>`);
+  p.push(`<circle cx="50" cy="50" r="45" fill="none" stroke="#d4ac0d" stroke-width="1.5" opacity=".7"/>`);
+  p.push(`<path d="M22 28 Q50 14 78 28 Q50 20 22 28 Z" fill="#fff" opacity=".22"/>`);
   if (out) p.push(`<circle cx="50" cy="50" r="47" fill="#14111f" opacity=".55"/><path d="M24 24 L76 76 M76 24 L24 76" stroke="#ff5d73" stroke-width="7" stroke-linecap="round"/>`);
   return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="${size}" height="${size}" class="portrait">${p.join('')}</svg>`;
 }
