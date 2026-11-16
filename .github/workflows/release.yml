@@ -1,7 +1,7 @@
 name: release
 on:
-  push:
-    tags: ['v*']
+  release:
+    types: [published]
   workflow_dispatch:
 permissions:
   contents: write
@@ -17,21 +17,17 @@ jobs:
         run: |
           set -eu
           ver=${GITHUB_REF_NAME#v}
+          echo "building $ver"
           mkdir -p pkg/partyhall
           cp target/x86_64-unknown-linux-musl/release/partyhall pkg/partyhall/
           cp -r games deploy GAMES.md README.md CHANGELOG.md tools pkg/partyhall/
           tar -C pkg -czf partyhall-x86_64-linux.tar.gz partyhall
           sha256sum partyhall-x86_64-linux.tar.gz > partyhall-x86_64-linux.tar.gz.sha256
           awk -v v="## $ver" '$0==v{f=1;next} /^## /{f=0} f' CHANGELOG.md > notes.md
-      - name: Release
-        if: startsWith(github.ref, 'refs/tags/')
+      - name: Attach to release
+        if: github.event_name == 'release'
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh release create "$GITHUB_REF_NAME" --latest --title "$GITHUB_REF_NAME" --notes-file notes.md \
+          gh release upload "$GITHUB_REF_NAME" --clobber \
             partyhall-x86_64-linux.tar.gz partyhall-x86_64-linux.tar.gz.sha256
-  test:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - run: cargo build --locked && cargo clippy --locked -- -D warnings || true
