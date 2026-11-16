@@ -1,0 +1,995 @@
+import { OVERRIDE_CODES, TRANSMISSIONS } from './words.js';
+
+const VOICE_GROUPS = {
+  sf_start: ['sf_start_1.wav', 'sf_start_2.wav', 'sf_start_3.wav', 'sf_start_4.wav', 'sf_start_5.wav'],
+  sf_transmit: ['sf_transmit_1.wav', 'sf_transmit_2.wav', 'sf_transmit_3.wav', 'sf_transmit_4.wav', 'sf_transmit_5.wav'],
+  sf_decode: ['sf_decode_1.wav', 'sf_decode_2.wav', 'sf_decode_3.wav', 'sf_decode_4.wav', 'sf_decode_5.wav'],
+  sf_correct: ['sf_correct_1.wav', 'sf_correct_2.wav', 'sf_correct_3.wav', 'sf_correct_4.wav', 'sf_correct_5.wav'],
+  sf_wrong: ['sf_wrong_1.wav', 'sf_wrong_2.wav', 'sf_wrong_3.wav', 'sf_wrong_4.wav', 'sf_wrong_5.wav'],
+  sf_attempt: ['sf_attempt_1.wav', 'sf_attempt_2.wav'],
+  sf_win: ['sf_attempt_win.wav', 'sf_attempt_win_2.wav', 'sf_attempt_win_3.wav'],
+  borg_assimilate: [
+    'borg_assimilate_1.wav',
+    'borg_assimilate_2.wav',
+    'borg_assimilate_3.wav',
+    'borg_assimilate_4.wav',
+    'borg_assimilate_5.wav',
+    'borg_assimilate_6.wav',
+    'borg_assimilate_7.wav',
+    'borg_assimilate_8.wav',
+  ],
+  borg_round: ['borg_win_round_1.wav', 'borg_win_round_2.wav', 'borg_win_round_3.wav', 'borg_win_round_4.wav'],
+  borg_win: ['borg_victory.wav'],
+};
+
+function injectStyles() {
+  if (document.getElementById('lcars-host-css')) return;
+  const s = document.createElement('style');
+  s.id = 'lcars-host-css';
+  s.textContent = `
+    .lcars-root {
+      width: 100%;
+      height: 100%;
+      background: #000;
+      color: #ffcf87;
+      font-family: 'Arial Narrow', 'Helvetica Neue', Arial, sans-serif;
+      display: grid;
+      grid-template-rows: auto auto 1fr auto;
+      gap: 0.7em;
+      padding: 1.1em 1.4em;
+      box-sizing: border-box;
+      position: relative;
+      overflow: hidden;
+    }
+    .lcars-root.borg-alert {
+      box-shadow: inset 0 0 60px rgba(57, 255, 20, 0.35);
+    }
+    .lcars-top {
+      display: grid;
+      grid-template-columns: 7em 1fr auto;
+      align-items: center;
+      gap: 0.6em;
+    }
+    .lcars-elbow-tl {
+      height: 2.3em;
+      background: #ff9900;
+      border-radius: 1.4em 0 0 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #000;
+      font-weight: 900;
+      font-size: 0.95em;
+      letter-spacing: 0.08em;
+    }
+    .lcars-bar {
+      height: 2.3em;
+      background: linear-gradient(90deg, #ffaa66 0%, #ffaa66 58%, #cc99cc 58%, #cc99cc 100%);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 1em;
+      color: #000;
+      font-weight: 800;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      font-size: 0.95em;
+      position: relative;
+      overflow: hidden;
+    }
+    .lcars-bar::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 5em;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.45), transparent);
+      animation: barSweep 3.2s linear infinite;
+    }
+    @keyframes barSweep {
+      0% { left: -6em; }
+      100% { left: 105%; }
+    }
+    .lcars-pill-status {
+      height: 2.3em;
+      padding: 0 1.1em;
+      border-radius: 0 1.4em 1.4em 0;
+      background: #99ccff;
+      color: #000;
+      font-weight: 900;
+      display: flex;
+      align-items: center;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-size: 0.9em;
+      transition: background 0.3s, color 0.3s;
+    }
+    .lcars-pill-status.borg {
+      background: #39ff14;
+      color: #021402;
+      animation: borgPulse 0.7s infinite alternate;
+    }
+    @keyframes borgPulse {
+      from { box-shadow: 0 0 6px #39ff14; }
+      to { box-shadow: 0 0 24px #39ff14; }
+    }
+
+    .lcars-teams {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1em;
+    }
+    .team-panel {
+      background: #0a0c14;
+      border: 2px solid #ff9900;
+      border-left: 1.1em solid #ff9900;
+      border-radius: 0.9em;
+      padding: 0.65em 1em;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.8em;
+      transition: transform 0.25s, box-shadow 0.25s, border-color 0.25s;
+    }
+    .team-panel.beta {
+      border-color: #cc99cc;
+      border-left-color: #cc99cc;
+    }
+    .team-panel.active {
+      box-shadow: 0 0 22px rgba(255, 153, 0, 0.35);
+      transform: translateY(-2px);
+    }
+    .team-panel.beta.active {
+      box-shadow: 0 0 22px rgba(204, 153, 204, 0.35);
+    }
+    .team-meta {
+      display: flex;
+      flex-direction: column;
+      gap: 0.2em;
+    }
+    .team-name {
+      font-size: 1.15em;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    .team-roster {
+      font-size: 0.8em;
+      color: #99ccff;
+      opacity: 0.9;
+    }
+    .cipher-row {
+      display: flex;
+      gap: 0.35em;
+    }
+    .cipher-cell {
+      width: 2.0em;
+      height: 2.3em;
+      border-radius: 0.35em;
+      border: 2px solid #334155;
+      background: #05070e;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2em;
+      font-weight: 900;
+      color: #475569;
+      letter-spacing: 0;
+      position: relative;
+      overflow: hidden;
+      animation: cipherIdle 2.4s ease-in-out infinite;
+    }
+    .cipher-cell:nth-child(2) { animation-delay: 0.25s; }
+    .cipher-cell:nth-child(3) { animation-delay: 0.5s; }
+    .cipher-cell:nth-child(4) { animation-delay: 0.75s; }
+    .cipher-cell:nth-child(5) { animation-delay: 1.0s; }
+    @keyframes cipherIdle {
+      0%, 100% { border-color: #334155; }
+      50% { border-color: #475569; color: #64748b; }
+    }
+    .cipher-cell.unlocked {
+      border-color: #ff9900;
+      background: rgba(255, 153, 0, 0.16);
+      color: #fff3d6;
+      animation: cellPop 0.45s cubic-bezier(0.2, 1.4, 0.4, 1);
+    }
+    .team-panel.beta .cipher-cell.unlocked {
+      border-color: #cc99cc;
+      background: rgba(204, 153, 204, 0.18);
+    }
+    @keyframes cellPop {
+      0% { transform: scale(0.5); }
+      70% { transform: scale(1.18); }
+      100% { transform: scale(1); }
+    }
+
+    .lcars-stage {
+      background: #070910;
+      border: 2px solid #334155;
+      border-radius: 1.2em;
+      padding: 1.2em 1.6em;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 1em;
+      position: relative;
+      overflow: hidden;
+    }
+    .stage-kicker {
+      font-size: 0.95em;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: #99ccff;
+      font-weight: 700;
+    }
+    .stage-title {
+      font-size: 2.1em;
+      font-weight: 900;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: #ff9900;
+      text-align: center;
+    }
+    .stage-sub {
+      font-size: 1.15em;
+      color: #ffcf87;
+      text-align: center;
+      max-width: 44em;
+      line-height: 1.35;
+    }
+
+    .clue-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(11em, 1fr));
+      gap: 1.1em;
+      width: 100%;
+      max-width: 44em;
+    }
+    .clue-card {
+      background: #0d1220;
+      border: 2px solid #ff9900;
+      border-top: 0.6em solid #ff9900;
+      border-radius: 0.8em;
+      padding: 1.2em 0.8em;
+      text-align: center;
+      position: relative;
+      animation: cardSlideIn 0.4s ease-out both;
+    }
+    .clue-card:nth-child(2) { animation-delay: 0.1s; }
+    .clue-card:nth-child(3) { animation-delay: 0.2s; }
+    @keyframes cardSlideIn {
+      from { opacity: 0; transform: translateY(14px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .clue-label {
+      font-size: 0.75em;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: #99ccff;
+      margin-bottom: 0.35em;
+    }
+    .clue-word {
+      font-size: 1.7em;
+      font-weight: 900;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: #fff;
+      word-break: break-word;
+    }
+    .clue-card.encrypted .clue-word {
+      color: #ffaa66;
+      letter-spacing: 0.2em;
+    }
+    .clue-card.assimilated {
+      border-color: #39ff14;
+      border-top-color: #39ff14;
+      background: #051607;
+      box-shadow: 0 0 26px rgba(57, 255, 20, 0.35);
+      animation: borgGlitch 0.5s ease-in-out;
+    }
+    .clue-card.assimilated .clue-word {
+      color: #39ff14;
+    }
+    .clue-orig {
+      margin-top: 0.45em;
+      font-size: 0.8em;
+      color: #94a3b8;
+      text-decoration: line-through;
+    }
+    .borg-tag {
+      display: inline-block;
+      margin-top: 0.35em;
+      padding: 0.15em 0.55em;
+      border-radius: 999px;
+      background: #39ff14;
+      color: #021402;
+      font-size: 0.7em;
+      font-weight: 900;
+      letter-spacing: 0.1em;
+    }
+    @keyframes borgGlitch {
+      0%, 100% { transform: translate(0); }
+      20% { transform: translate(-4px, 2px) skewX(-4deg); }
+      40% { transform: translate(4px, -2px) skewX(4deg); }
+      60% { transform: translate(-3px, 0); }
+      80% { transform: translate(3px, 1px); }
+    }
+
+    .scanline-overlay {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background: linear-gradient(
+        180deg,
+        transparent 0%,
+        rgba(57, 255, 20, 0.18) 50%,
+        transparent 100%
+      );
+      height: 35%;
+      animation: borgSweep 1.1s linear infinite;
+    }
+    @keyframes borgSweep {
+      0% { transform: translateY(-100%); }
+      100% { transform: translateY(320%); }
+    }
+
+    .subspace-wave {
+      display: flex;
+      align-items: center;
+      gap: 0.35em;
+      height: 2.2em;
+    }
+    .subspace-wave span {
+      width: 0.35em;
+      height: 0.6em;
+      border-radius: 999px;
+      background: #99ccff;
+      animation: waveBar 0.9s ease-in-out infinite;
+    }
+    .subspace-wave span:nth-child(2) { animation-delay: 0.12s; background: #ff9900; }
+    .subspace-wave span:nth-child(3) { animation-delay: 0.24s; }
+    .subspace-wave span:nth-child(4) { animation-delay: 0.36s; background: #cc99cc; }
+    .subspace-wave span:nth-child(5) { animation-delay: 0.48s; background: #ff9900; }
+    .subspace-wave span:nth-child(6) { animation-delay: 0.60s; }
+    .subspace-wave span:nth-child(7) { animation-delay: 0.72s; background: #cc99cc; }
+    @keyframes waveBar {
+      0%, 100% { height: 0.5em; opacity: 0.45; }
+      50% { height: 2.1em; opacity: 1; }
+    }
+
+    .borg-reticle {
+      width: 4.2em;
+      height: 4.2em;
+      border: 3px dashed #39ff14;
+      border-radius: 0.6em;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #39ff14;
+      font-weight: 900;
+      font-size: 0.9em;
+      letter-spacing: 0.1em;
+      box-shadow: 0 0 22px rgba(57, 255, 20, 0.35);
+      animation: reticleSpin 3.5s linear infinite;
+    }
+    @keyframes reticleSpin {
+      0% { transform: rotate(0deg) scale(0.95); }
+      50% { transform: rotate(180deg) scale(1.06); }
+      100% { transform: rotate(360deg) scale(0.95); }
+    }
+
+    .lcars-telemetry-dots {
+      display: flex;
+      gap: 0.35em;
+      margin-left: auto;
+    }
+    .lcars-telemetry-dots span {
+      width: 1.4em;
+      height: 0.75em;
+      border-radius: 999px;
+      background: rgba(0, 0, 0, 0.45);
+      animation: dotBlink 1.6s infinite;
+    }
+    .lcars-telemetry-dots span:nth-child(2) { animation-delay: 0.35s; }
+    .lcars-telemetry-dots span:nth-child(3) { animation-delay: 0.7s; }
+    @keyframes dotBlink {
+      0%, 100% { background: rgba(0, 0, 0, 0.3); }
+      50% { background: #fff; }
+    }
+
+    .lcars-bottom {
+      display: grid;
+      grid-template-columns: auto 1fr 7em;
+      gap: 0.6em;
+      align-items: center;
+    }
+    .lcars-bottom-pill {
+      height: 1.8em;
+      padding: 0 1em;
+      border-radius: 1em 0 0 1em;
+      background: #cc99cc;
+      color: #000;
+      font-weight: 900;
+      font-size: 0.85em;
+      display: flex;
+      align-items: center;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    .lcars-bottom-bar {
+      height: 1.8em;
+      background: #ff9900;
+      display: flex;
+      align-items: center;
+      padding: 0 1em;
+      color: #000;
+      font-weight: 800;
+      font-size: 0.85em;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    .lcars-elbow-br {
+      height: 1.8em;
+      background: #99ccff;
+      border-radius: 0 0 1.2em 0;
+    }
+  `;
+  document.head.appendChild(s);
+}
+
+function parseClues(raw) {
+  const parts = String(raw || '')
+    .split(/[\s,;/]+/)
+    .map((w) => w.trim())
+    .filter(Boolean);
+  const out = parts.slice(0, 3);
+  while (out.length < 3) out.push('REDACTED');
+  return out;
+}
+
+export default async function (ctx) {
+  injectStyles();
+  const h = ctx.h;
+
+  const lastVoice = new Map();
+  let currentAudio = null;
+  function playVoice(group) {
+    const list = VOICE_GROUPS[group];
+    if (!list || !list.length) return;
+    let pick = list[Math.floor(Math.random() * list.length)];
+    if (list.length > 1 && lastVoice.get(group) === pick) {
+      pick = list[(list.indexOf(pick) + 1) % list.length];
+    }
+    lastVoice.set(group, pick);
+    try {
+      if (currentAudio) {
+        currentAudio.pause();
+        currentAudio.currentTime = 0;
+      }
+      currentAudio = new Audio(ctx.asset(`audio/${pick}`));
+      currentAudio.volume = 0.95;
+      currentAudio.play().catch(() => {});
+    } catch {}
+  }
+
+  const players = ctx.shuffle([...ctx.players]);
+  const mid = Math.ceil(players.length / 2);
+  const codes = ctx.shuffle([...OVERRIDE_CODES]);
+  const teams = [
+    {
+      id: 'alpha',
+      name: 'Team Alpha',
+      color: '#ff9900',
+      members: players.slice(0, mid),
+      code: codes[0],
+      revealed: [false, false, false, false, false],
+      senderIdx: 0,
+      borgIdx: 0,
+    },
+    {
+      id: 'beta',
+      name: 'Team Beta',
+      color: '#cc99cc',
+      members: players.slice(mid),
+      code: codes[1],
+      revealed: [false, false, false, false, false],
+      senderIdx: 0,
+      borgIdx: 0,
+    },
+  ];
+
+  const deck = ctx.shuffle([...TRANSMISSIONS]);
+  let deckIdx = 0;
+  function nextWord() {
+    if (deckIdx >= deck.length) deckIdx = 0;
+    return deck[deckIdx++];
+  }
+
+  function revealNextLetter(team) {
+    const locked = [];
+    team.revealed.forEach((r, i) => {
+      if (!r) locked.push(i);
+    });
+    if (!locked.length) return -1;
+    const pick = locked[Math.floor(Math.random() * locked.length)];
+    team.revealed[pick] = true;
+    return pick;
+  }
+
+  function isCodeCracked(team) {
+    return team.revealed.every(Boolean);
+  }
+
+  function formatCode(team) {
+    return team.code
+      .split('')
+      .map((ch, i) => (team.revealed[i] ? ch : '_'))
+      .join(' ');
+  }
+
+  let round = 0;
+  let activeTeamIdx = 0;
+  let borgAlert = false;
+  let statusText = 'SUBSPACE LINK ACTIVE';
+  let footerText = 'LCARS TELEMETRY ONLINE';
+
+  function renderScreen(stageChildren) {
+    ctx.el.innerHTML = '';
+    const root = h('div', { class: `lcars-root${borgAlert ? ' borg-alert' : ''}` },
+      h('div.lcars-top', {},
+        h('div.lcars-elbow-tl', {}, 'LCARS 47'),
+        h('div.lcars-bar', {},
+          h('span', {}, 'SUBSPACE INTERCEPT // STARFLEET COMMAND'),
+          h('span', {}, `CYCLE ${round || 1}`)
+        ),
+        h('div', { class: `lcars-pill-status${borgAlert ? ' borg' : ''}` }, statusText)
+      ),
+      h('div.lcars-teams', {},
+        ...teams.map((t, idx) =>
+          h('div', { class: `team-panel ${t.id}${idx === activeTeamIdx ? ' active' : ''}` },
+            h('div.team-meta', {},
+              h('div.team-name', { style: `color:${t.color}` }, t.name),
+              h('div.team-roster', {}, t.members.map((m) => m.name).join(' • '))
+            ),
+            h('div.cipher-row', {},
+              ...t.code.split('').map((ch, ci) =>
+                h('div', { class: `cipher-cell${t.revealed[ci] ? ' unlocked' : ''}` },
+                  t.revealed[ci] ? ch : '?'
+                )
+              )
+            )
+          )
+        )
+      ),
+      h('div.lcars-stage', {}, ...stageChildren),
+      h('div.lcars-bottom', {},
+        h('div.lcars-bottom-pill', {}, 'OVERRIDE'),
+        h('div.lcars-bottom-bar', {},
+          h('span', {}, footerText),
+          h('div.lcars-telemetry-dots', {}, h('span', {}), h('span', {}), h('span', {}))
+        ),
+        h('div.lcars-elbow-br', {})
+      )
+    );
+    ctx.el.appendChild(root);
+  }
+
+  // Optional Main Computer Briefing
+  const captain = players[0];
+  statusText = 'BRIEFING STANDBY';
+  footerText = 'LCARS TRAINING MODULE READY';
+  renderScreen([
+    h('div.stage-kicker', {}, 'STARFLEET COMPUTER // TRAINING MODULE'),
+    h('div.stage-title', {}, 'SUBSPACE INTERCEPT'),
+    h('div.subspace-wave', {},
+      h('span', {}), h('span', {}), h('span', {}), h('span', {}), h('span', {}), h('span', {}), h('span', {})
+    ),
+    h('div.stage-sub', {}, `${captain.name}: Choose on your phone whether to run the Main Computer Briefing or jump straight to Red Alert.`),
+  ]);
+  ctx.show(players.slice(1), {
+    title: 'Stand By',
+    text: `${captain.name} is choosing whether to play the Main Computer Briefing.`,
+    wait: 'Preparing subspace link...',
+    color: '#ff9900',
+  });
+  const tutChoice = await ctx.ask(captain, {
+    title: 'Main Computer Briefing',
+    text: 'Do you want the Ship Computer to explain how to play with voice narration?',
+    color: '#ff9900',
+    choices: [
+      { label: '▶ Run Computer Briefing', value: 'yes' },
+      { label: '⚡ Skip to Red Alert', value: 'no' },
+    ],
+  }, { timeout: 15 });
+
+  if (tutChoice.get(captain.id) === 'yes') {
+    const steps = [
+      {
+        file: 'tut_1.wav',
+        kicker: 'STEP 1 OF 5 // TEAMS & OVERRIDE CODES',
+        title: 'TWO STARFLEET TEAMS',
+        sub: 'You are divided into Team Alpha and Team Beta. Each team must crack a 5-letter Starfleet override code.',
+        borg: false,
+        ms: 9200,
+      },
+      {
+        file: 'tut_2.wav',
+        kicker: 'STEP 2 OF 5 // ENCRYPTED TRANSMISSION',
+        title: 'SEND THREE ONE-WORD CLUES',
+        sub: 'Each cycle, one Sender gets a secret word and types three one-word clues on their phone for their crewmates.',
+        borg: false,
+        ms: 7500,
+      },
+      {
+        file: 'tut_3.wav',
+        kicker: 'STEP 3 OF 5 // BORG INTERFERENCE',
+        title: 'ONE CLUE GETS ASSIMILATED',
+        sub: 'An opposing Borg operative picks ONE clue and replaces it with a decoy word!',
+        borg: true,
+        ms: 7500,
+      },
+      {
+        file: 'tut_4.wav',
+        kicker: 'STEP 4 OF 5 // IN-PERSON DECODE',
+        title: 'CALL IT OUT & CRACK THE CODE',
+        sub: 'Crewmates say their guess out loud! If right, reveal 1 letter—or risk your turn to guess all 5 letters at once.',
+        borg: false,
+        ms: 9500,
+      },
+      {
+        file: 'tut_5.wav',
+        kicker: 'STEP 5 OF 5 // VICTORY',
+        title: 'FIRST TO 5 LETTERS WINS',
+        sub: 'If you miss, the opposing team unlocks a letter instead. First team to complete their override code wins!',
+        borg: false,
+        ms: 7500,
+      },
+    ];
+
+    ctx.show(players, {
+      title: 'Main Computer Briefing',
+      text: 'Watch and listen to the main screen!',
+      wait: 'Briefing in progress...',
+      color: '#99ccff',
+    });
+
+    for (const st of steps) {
+      borgAlert = st.borg;
+      statusText = st.borg ? 'BORG EXAMPLE' : 'COMPUTER BRIEFING';
+      footerText = 'MAIN COMPUTER // AUDIO BRIEFING ACTIVE';
+      try {
+        if (currentAudio) { currentAudio.pause(); currentAudio.currentTime = 0; }
+        currentAudio = new Audio(ctx.asset(`audio/${st.file}`));
+        currentAudio.volume = 0.95;
+        currentAudio.play().catch(() => {});
+      } catch {}
+      renderScreen([
+        ...(st.borg ? [h('div.scanline-overlay', {}), h('div.borg-reticle', {}, 'BORG')] : [
+          h('div.subspace-wave', {}, h('span', {}), h('span', {}), h('span', {}), h('span', {}), h('span', {}), h('span', {}), h('span', {}))
+        ]),
+        h('div.stage-kicker', { style: st.borg ? 'color:#39ff14' : '' }, st.kicker),
+        h('div.stage-title', { style: st.borg ? 'color:#39ff14' : '' }, st.title),
+        h('div.stage-sub', {}, st.sub),
+      ]);
+      await ctx.sleep(st.ms);
+    }
+    borgAlert = false;
+  }
+
+  // Intro
+  ctx.sfx('start');
+  playVoice('sf_start');
+  renderScreen([
+    h('div.stage-kicker', {}, 'INCOMING STARFLEET BRIEFING'),
+    h('div.stage-title', {}, 'SUBSPACE INTERCEPT'),
+    h('div.stage-sub', {}, 'Send 3 one-word clues to your crewmate. The Borg will assimilate one. Crack your 5-letter override code first to neutralize the cube!'),
+  ]);
+  await ctx.sleep(4500);
+
+  let winner = null;
+  let winReason = '';
+
+  while (!winner) {
+    round += 1;
+    const team = teams[activeTeamIdx];
+    const opp = teams[1 - activeTeamIdx];
+
+    const sender = team.members[team.senderIdx % team.members.length];
+    team.senderIdx += 1;
+    const guessers = team.members.filter((m) => m.id !== sender.id);
+    const borgPlayer = opp.members[opp.borgIdx % opp.members.length];
+    opp.borgIdx += 1;
+
+    const target = nextWord();
+
+    // 1. TRANSMIT PHASE
+    borgAlert = false;
+    statusText = 'TRANSMITTING';
+    footerText = `${team.name.toUpperCase()} • SENDER: ${sender.name.toUpperCase()}`;
+    playVoice('sf_transmit');
+    renderScreen([
+      h('div.stage-kicker', {}, `${team.name} • ENCRYPTED TRANSMISSION`),
+      h('div.stage-title', {}, `${sender.name} IS ENCODING`),
+      h('div.subspace-wave', {},
+        h('span', {}), h('span', {}), h('span', {}), h('span', {}), h('span', {}), h('span', {}), h('span', {})
+      ),
+      h('div.stage-sub', {}, `Category: ${target.cat} — Sending 3 one-word clues to ${guessers.map((g) => g.name).join(' & ')}.`),
+      h('div.clue-grid', {},
+        h('div.clue-card.encrypted', {}, h('div.clue-label', {}, 'MARKER 01'), h('div.clue-word', {}, '•••')),
+        h('div.clue-card.encrypted', {}, h('div.clue-label', {}, 'MARKER 02'), h('div.clue-word', {}, '•••')),
+        h('div.clue-card.encrypted', {}, h('div.clue-label', {}, 'MARKER 03'), h('div.clue-word', {}, '•••'))
+      ),
+    ]);
+
+    ctx.show(guessers, {
+      title: 'Stand By',
+      text: `${sender.name} is encoding 3 clues for you (${target.cat}). Watch out for ${borgPlayer.name} (Borg)!`,
+      wait: 'Awaiting subspace transmission...',
+      color: team.color,
+    });
+    ctx.show(borgPlayer, {
+      title: 'Borg Intercept Ready',
+      text: `${sender.name} is writing 3 clues. Get ready to assimilate one!`,
+      wait: 'Scanning subspace...',
+      color: '#39ff14',
+    });
+    const idleOpp = opp.members.filter((m) => m.id !== borgPlayer.id);
+    if (idleOpp.length) {
+      ctx.show(idleOpp, {
+        title: `${team.name} Turn`,
+        text: `${borgPlayer.name} is your Borg operative this round.`,
+        wait: 'Monitoring subspace...',
+        color: opp.color,
+      });
+    }
+
+    const clueAns = await ctx.ask(sender, {
+      title: `Secret Word: ${target.word}`,
+      text: `Category: ${target.cat}\nEnter 3 one-word clues separated by spaces:`,
+      color: team.color,
+      buzz: true,
+      input: { placeholder: 'word1 word2 word3', max: 60, submit: 'Transmit Clues' },
+    }, {
+      timeout: 65,
+      after: { title: 'Transmitted', text: 'Routing through main deflector...', wait: 'Borg interference detected!' },
+    });
+
+    const clues = parseClues(clueAns.get(sender.id));
+
+    // 2. BORG ASSIMILATION PHASE
+    borgAlert = true;
+    statusText = 'BORG INTERCEPT';
+    footerText = `BORG OPERATIVE: ${borgPlayer.name.toUpperCase()} • ASSIMILATING`;
+    ctx.sfx('glitch');
+    renderScreen([
+      h('div.scanline-overlay', {}),
+      h('div.stage-kicker', { style: 'color:#39ff14' }, 'WARNING // SUBSPACE INTRUSION'),
+      h('div.stage-title', { style: 'color:#39ff14' }, `${borgPlayer.name} IS ASSIMILATING A CLUE`),
+      h('div.stage-sub', {}, 'The Borg Collective is overwriting one telemetry marker with disinformation.'),
+      h('div.clue-grid', {},
+        ...clues.map((_, i) =>
+          h('div.clue-card.encrypted', { style: 'border-color:#39ff14; border-top-color:#39ff14;' },
+            h('div.clue-label', { style: 'color:#39ff14' }, `MARKER 0${i + 1}`),
+            h('div.clue-word', { style: 'color:#39ff14' }, 'SCANNING')
+          )
+        )
+      ),
+    ]);
+
+    ctx.show(sender, {
+      title: 'Borg Interference!',
+      text: `${borgPlayer.name} is assimilating one of your clues...`,
+      wait: 'Hold for decode...',
+      color: '#39ff14',
+    });
+
+    const pickAns = await ctx.ask(borgPlayer, {
+      title: 'BORG INTERCEPT',
+      text: `Target category: ${target.cat}\nPick ONE clue to assimilate:`,
+      color: '#39ff14',
+      buzz: true,
+      choices: clues.map((c, i) => ({ label: `${i + 1}. ${c}`, value: i })),
+    }, { timeout: 35 });
+
+    const chosenIdx = Number.isInteger(pickAns.get(borgPlayer.id)) ? pickAns.get(borgPlayer.id) : 0;
+    const originalWord = clues[chosenIdx];
+
+    const replaceAns = await ctx.ask(borgPlayer, {
+      title: 'ASSIMILATE CLUE',
+      text: `Replacing "${originalWord}" — enter 1 misleading word:`,
+      color: '#39ff14',
+      input: { placeholder: 'Misleading word...', max: 24, submit: 'Assimilate' },
+    }, {
+      timeout: 35,
+      after: { title: 'Assimilated', text: 'Disinformation injected into subspace.', wait: 'Watch the main screen!' },
+    });
+
+    const fakeWord = (replaceAns.get(borgPlayer.id) || 'CUBE').trim().split(/\s+/)[0] || 'CUBE';
+    const finalClues = [...clues];
+    finalClues[chosenIdx] = fakeWord;
+
+    // Dramatic assimilation sweep on TV (without spoiling which slot!)
+    ctx.sfx('glitch');
+    playVoice('borg_assimilate');
+    renderScreen([
+      h('div.scanline-overlay', {}),
+      h('div.borg-reticle', {}, 'BORG'),
+      h('div.stage-kicker', { style: 'color:#39ff14' }, 'RESISTANCE IS FUTILE'),
+      h('div.stage-title', { style: 'color:#39ff14' }, 'CLUE ASSIMILATED'),
+      h('div.stage-sub', {}, 'One of the three markers below now serves the Borg Collective.'),
+    ]);
+    await ctx.sleep(3200);
+
+    // 3. DECODE PHASE (IN-PERSON)
+    borgAlert = false;
+    statusText = 'DECODE SIGNAL';
+    footerText = `${team.name.toUpperCase()} • CALL OUT YOUR GUESS IN PERSON`;
+    playVoice('sf_decode');
+    renderScreen([
+      h('div.stage-kicker', {}, `CATEGORY: ${target.cat.toUpperCase()}`),
+      h('div.stage-title', {}, `${guessers.map((g) => g.name).join(' & ')}: DECODE THE WORD`),
+      h('div.stage-sub', {}, 'Say your guess out loud! One of these three clues was overwritten by the Borg.'),
+      h('div.clue-grid', {},
+        ...finalClues.map((c, i) =>
+          h('div.clue-card', {},
+            h('div.clue-label', {}, `MARKER 0${i + 1}`),
+            h('div.clue-word', {}, c)
+          )
+        )
+      ),
+    ]);
+
+    ctx.show(guessers, {
+      title: `Category: ${target.cat}`,
+      text: `Clues: ${finalClues.join('  •  ')}\n\nSay your guess out loud to ${sender.name}!`,
+      color: team.color,
+      buzz: true,
+    });
+    ctx.show(borgPlayer, {
+      title: 'Disinformation Active',
+      text: `You replaced "${originalWord}" with "${fakeWord}".`,
+      wait: `Waiting for ${team.name}'s guess...`,
+      color: '#39ff14',
+    });
+
+    const judgeAns = await ctx.ask(sender, {
+      title: `Answer: ${target.word}`,
+      text: `Clues shown: ${finalClues.join(' • ')}\nDid your crewmate say "${target.word}" out loud?`,
+      color: team.color,
+      choices: [
+        { label: '✓ Confirmed (Correct!)', value: 'hit' },
+        { label: '✕ Signal Lost (Wrong)', value: 'miss' },
+      ],
+    }, { timeout: 90, clock: false });
+
+    const isHit = judgeAns.get(sender.id) === 'hit';
+
+    // Reveal which clue was assimilated
+    const revealedCards = finalClues.map((c, i) =>
+      h('div', { class: `clue-card${i === chosenIdx ? ' assimilated' : ''}` },
+        h('div.clue-label', {}, `MARKER 0${i + 1}`),
+        h('div.clue-word', {}, c),
+        ...(i === chosenIdx
+          ? [
+              h('div.clue-orig', {}, `Original: ${originalWord}`),
+              h('div.borg-tag', {}, 'ASSIMILATED'),
+            ]
+          : [])
+      )
+    );
+
+    if (isHit) {
+      ctx.sfx('ding');
+      playVoice('sf_correct');
+      statusText = 'CONFIRMED';
+      renderScreen([
+        h('div.stage-kicker', { style: 'color:#99ccff' }, `TARGET IDENTIFIED: ${target.word.toUpperCase()}`),
+        h('div.stage-title', {}, 'TRANSMISSION CONFIRMED!'),
+        h('div.stage-sub', {}, `${team.name} may reveal 1 override letter—or risk it all to guess the full 5-letter code!`),
+        h('div.clue-grid', {}, ...revealedCards),
+      ]);
+
+      const choiceAns = await ctx.ask(sender, {
+        title: `Override Code: ${formatCode(team)}`,
+        text: 'Reveal 1 letter, or skip the letter to attempt the whole 5-letter override code?',
+        color: team.color,
+        choices: [
+          { label: '🔓 Reveal 1 Letter', value: 'letter' },
+          { label: '⚡ Attempt Full 5-Letter Code', value: 'full' },
+        ],
+      }, { timeout: 45 });
+
+      const choice = choiceAns.get(sender.id) || 'letter';
+
+      if (choice === 'full') {
+        playVoice('sf_attempt');
+        const fullAns = await ctx.ask(sender, {
+          title: `Attempt Full Code (${formatCode(team)})`,
+          text: 'Enter the exact 5-letter Starfleet override code:',
+          color: team.color,
+          input: { placeholder: '5-LETTER CODE', max: 12, submit: 'Execute Override' },
+        }, { timeout: 45 });
+
+        const attempt = (fullAns.get(sender.id) || '').trim().toUpperCase();
+        if (attempt === team.code) {
+          team.revealed = [true, true, true, true, true];
+          winner = team;
+          winReason = `${team.name} cracked the full override code "${team.code}"!`;
+        } else {
+          ctx.sfx('buzz');
+          renderScreen([
+            h('div.stage-kicker', { style: 'color:#cc4444' }, 'OVERRIDE REJECTED'),
+            h('div.stage-title', { style: 'color:#cc4444' }, `INVALID CODE: "${attempt || '---'}"`),
+            h('div.stage-sub', {}, 'No cipher letter unlocked this turn. Subspace control passes.'),
+          ]);
+          await ctx.sleep(3200);
+        }
+      } else {
+        revealNextLetter(team);
+        ctx.sfx('pop');
+        if (isCodeCracked(team)) {
+          winner = team;
+          winReason = `${team.name} decrypted all 5 letters of "${team.code}"!`;
+        } else {
+          renderScreen([
+            h('div.stage-kicker', {}, 'CIPHER FRAGMENT DECRYPTED'),
+            h('div.stage-title', {}, `${team.name}: ${formatCode(team)}`),
+            h('div.stage-sub', {}, 'Advancing Starfleet override sequence.'),
+          ]);
+          await ctx.sleep(2600);
+        }
+      }
+    } else {
+      ctx.sfx('buzz');
+      borgAlert = true;
+      statusText = 'SIGNAL LOST';
+      playVoice(Math.random() < 0.5 ? 'sf_wrong' : 'borg_round');
+      revealNextLetter(opp);
+
+      renderScreen([
+        h('div.scanline-overlay', {}),
+        h('div.stage-kicker', { style: 'color:#39ff14' }, `TARGET WAS: ${target.word.toUpperCase()}`),
+        h('div.stage-title', { style: 'color:#39ff14' }, 'SIGNAL LOST — BORG ADVANCE'),
+        h('div.stage-sub', {}, `${opp.name} decrypts 1 override letter!`),
+        h('div.clue-grid', {}, ...revealedCards),
+      ]);
+      await ctx.sleep(3600);
+
+      if (isCodeCracked(opp)) {
+        winner = opp;
+        winReason = `${opp.name} completed their override code "${opp.code}" via Borg interference!`;
+      }
+    }
+
+    activeTeamIdx = 1 - activeTeamIdx;
+  }
+
+  // VICTORY
+  borgAlert = false;
+  statusText = 'OVERRIDE COMPLETE';
+  footerText = `${winner.name.toUpperCase()} VICTORIOUS`;
+  ctx.sfx('win');
+  playVoice('sf_win');
+
+  renderScreen([
+    h('div.stage-kicker', {}, 'STARFLEET OVERRIDE ACCEPTED'),
+    h('div.stage-title', { style: `color:${winner.color}; font-size:2.6em;` }, `${winner.name} WINS!`),
+    h('div.stage-sub', {}, winReason),
+  ]);
+
+  ctx.show(winner.members, {
+    title: 'Victory!',
+    text: winReason,
+    color: winner.color,
+    buzz: true,
+  });
+  const losers = teams.find((t) => t.id !== winner.id).members;
+  ctx.show(losers, {
+    title: `${winner.name} Cracked the Code`,
+    text: winReason,
+    color: '#94a3b8',
+  });
+
+  await ctx.sleep(8000);
+}
