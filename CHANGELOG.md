@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- New game: Peak Fever, a push-your-luck dice race for 2–6 players. Roll four dice, pair them into two sums and move your climbers up eleven mountain peaks (2 to 12). Keep rolling to climb higher or make camp to bank it; a roll with no usable pair is an avalanche that sweeps the turn away. Summit and make camp to plant a flag; three flags wins. The TV shows the range at dusk, the dice and the odds that the next roll is safe; the climbing player picks routes and pushes or camps on their phone, and everyone else can shout Push on / Make camp / Avalanche at them.
+
 ## 0.6.0
 
 - New game: Sketchy Rumours, a drawing telephone game for 3–12 players. Everyone writes a rumour, notebooks pass round alternating draw and guess, then each owner flips through their notebook on the TV while everyone throws emoji reactions; the most-loved pages win Crowd favourites. Phones get a full drawing pad (14 colours, 3 brush sizes, fill bucket, eraser, undo, clear), an Inspire me button, and anything unfinished is sent automatically when time runs out. The first player picks Quick, Normal or Relaxed timers.
