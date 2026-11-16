@@ -67,6 +67,7 @@ function setBanner(text) {
 }
 
 async function loadCustom(game) {
+  listeners = { message: [], view: [] };
   try {
     const list = await (await fetch('/api/games')).json();
     const meta = list.find((g) => g.id === game);
@@ -105,6 +106,8 @@ function connect() {
             gameScreen();
             renderView(stage, lastView, (d) => sock.send({ t: 'send', data: d }));
             custom = await loadCustom(m.game);
+            // A view that arrived while player.js was loading goes to it now.
+            if (lastView && listeners.view.length) listeners.view.forEach((f) => f(lastView));
           }
           setBanner(m.host ? '' : 'The host screen is offline…');
           break;
