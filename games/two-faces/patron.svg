@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 336" width="240" height="336">
+<defs>
+ <radialGradient id="bg" cx="50%" cy="38%" r="75%"><stop offset="0" stop-color="#7a5413"/><stop offset="1" stop-color="#120d1f"/></radialGradient>
+ <linearGradient id="m" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f6c95a"/><stop offset="1" stop-color="#7a5413"/></linearGradient>
+</defs>
+<rect width="240" height="336" rx="18" fill="url(#bg)"/>
+<rect x="8" y="8" width="224" height="320" rx="13" fill="none" stroke="#f6c95a" stroke-width="3" opacity=".85"/>
+<rect x="15" y="15" width="210" height="306" rx="9" fill="none" stroke="#f6c95a" stroke-width="1" opacity=".45" stroke-dasharray="2 5"/>
+<path d="M24 17 L31 24 L24 31 L17 24 Z" fill="#f6c95a"/><path d="M216 17 L223 24 L216 31 L209 24 Z" fill="#f6c95a"/><path d="M24 305 L31 312 L24 319 L17 312 Z" fill="#f6c95a"/><path d="M216 305 L223 312 L216 319 L209 312 Z" fill="#f6c95a"/>
+<path d="M80 110 L86 66 L103 90 L120 56 L137 90 L154 66 L160 110 Z" fill="#f6c95a" stroke="#0b0814" stroke-width="4" stroke-linejoin="round"/>
+     <circle cx="120" cy="95" r="7" fill="#ff5d73" stroke="#0b0814" stroke-width="2"/><circle cx="86" cy="62" r="5" fill="#f6c95a"/><circle cx="120" cy="52" r="5" fill="#f6c95a"/><circle cx="154" cy="62" r="5" fill="#f6c95a"/>
+<path d="M38 168 C38 134 82 128 120 146 C158 128 202 134 202 168 C202 204 166 218 140 208 C130 204 126 192 120 192 C114 192 110 204 100 208 C74 218 38 204 38 168 Z" fill="url(#m)" stroke="#0b0814" stroke-width="4" stroke-linejoin="round"/>
+<path d="M58 160 C76 150 96 152 104 160 M136 160 C144 152 164 150 182 160" stroke="#ffffff" stroke-opacity=".35" stroke-width="3" fill="none" stroke-linecap="round"/>
+<ellipse cx="84" cy="168" rx="19" ry="10" transform="rotate(8 84 168)" fill="#0b0814"/><ellipse cx="156" cy="168" rx="19" ry="10" transform="rotate(-8 156 168)" fill="#0b0814"/>
+<g stroke="#0b0814" stroke-width="3"><circle cx="70" cy="236" r="13" fill="#f6c95a"/><circle cx="96" cy="242" r="13" fill="#e8b23e"/><circle cx="170" cy="238" r="13" fill="#f6c95a"/></g>
+<text x="120" y="282" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="30" font-weight="700" fill="#f6c95a" letter-spacing="2">PATRON</text>
+</svg>
