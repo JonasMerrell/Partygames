@@ -1,0 +1,10 @@
+{
+  "name": "Fact or Fib",
+  "description": "Rapid-fire true or false. Be right, be fast, keep your streak alive.",
+  "icon": "⚡",
+  "color": "#ffe14d",
+  "minPlayers": 1,
+  "maxPlayers": 16,
+  "lateJoin": true,
+  "music": "party"
+}

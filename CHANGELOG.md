@@ -1,5 +1,12 @@
 # Changelog
 
+## Unreleased
+
+- New game: Split Decision, for 3–12 players. Each player finishes a tempting offer with a catch ("…BUT"), and the room votes deal or no deal. The closer the vote splits 50/50, the more the author scores; voters in the minority get a bravery bonus.
+- New game: Gallery of Lies, for 3–10 players. Everyone secretly draws a title, then writes fake museum placards for each other's art, and visitors try to pick the real one. Points for finding the truth and for every visitor your forgery fools.
+- New game: Odd One In, for 4–12 players. Everyone answers the same question except one player, who got a different one and has to blend in. Answers go up on the TV, the room talks, then votes.
+- New game: Fact or Fib, for 1–16 players (late joiners welcome). Twelve rapid true-or-false statements with speed bonuses and streaks, plus a one-line explanation after each.
+
 ## 0.5.0
 
 - New game: Tin Tongue, a team clue game for 4–16 players. The clue-giver's robot voice chip only does one-syllable words; their team guesses out loud while the other team sees the word too and hits BZZT on a slip (−1). Cards score a point per syllable, up to 3. Phones show the word with Got it / Skip, the TV shows the timer, scores and a recap of every turn.
