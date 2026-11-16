@@ -1,0 +1,9 @@
+{
+  "name": "Peak Fever",
+  "description": "Roll four dice, pair them up and race your climbers up eleven peaks. Push your luck, or make camp before the avalanche hits. First to plant three flags wins.",
+  "icon": "🏔️",
+  "color": "#ffb347",
+  "minPlayers": 2,
+  "maxPlayers": 6,
+  "music": "tense"
+}
