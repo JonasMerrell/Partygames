@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.4.0
+
+- New game: Hard Sell, for 3–10 players. One player is the customer and picks a persona card; everyone else glues two word cards into a product, pitches it out loud, and the customer buys one. Sellers also vote a crowd favourite.
+
 ## 0.3.0
 
 - New game: Star Charts, a team word-clue game for 4–16 players. Each team's astronomer sees the secret star map on their phone and gives one-word clues; teammates vote on their phones for which words to chart, and the black hole loses the game.
