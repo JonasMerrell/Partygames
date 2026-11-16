@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- New game: Sketchy Rumours, a drawing telephone game for 3–12 players. Everyone writes a rumour, notebooks pass round alternating draw and guess, then each owner flips through their notebook on the TV while everyone throws emoji reactions; the most-loved pages win Crowd favourites. Phones get a full drawing pad (14 colours, 3 brush sizes, fill bucket, eraser, undo, clear), an Inspire me button, and anything unfinished is sent automatically when time runs out. The first player picks Quick, Normal or Relaxed timers.
+
 ## 0.5.0
 
 - New game: Tin Tongue, a team clue game for 4–16 players. The clue-giver's robot voice chip only does one-syllable words; their team guesses out loud while the other team sees the word too and hits BZZT on a slip (−1). Cards score a point per syllable, up to 3. Phones show the word with Got it / Skip, the TV shows the timer, scores and a recap of every turn.
