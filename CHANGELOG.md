@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- New game: Tin Tongue, a team clue game for 4–16 players. The clue-giver's robot voice chip only does one-syllable words; their team guesses out loud while the other team sees the word too and hits BZZT on a slip (−1). Cards score a point per syllable, up to 3. Phones show the word with Got it / Skip, the TV shows the timer, scores and a recap of every turn.
+
 ## 0.4.0
 
 - New game: Hard Sell, for 3–10 players. One player is the customer and picks a persona card; everyone else glues two word cards into a product, pitches it out loud, and the customer buys one. Sellers also vote a crowd favourite.
