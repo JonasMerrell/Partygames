@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.6.0
 
 - New game: Sketchy Rumours, a drawing telephone game for 3–12 players. Everyone writes a rumour, notebooks pass round alternating draw and guess, then each owner flips through their notebook on the TV while everyone throws emoji reactions; the most-loved pages win Crowd favourites. Phones get a full drawing pad (14 colours, 3 brush sizes, fill bucket, eraser, undo, clear), an Inspire me button, and anything unfinished is sent automatically when time runs out. The first player picks Quick, Normal or Relaxed timers.
 - New game: Long Shot, a guess-and-bet trivia game for 2–12 players. Everyone guesses a number on a phone keypad, the guesses line up on a felt betting board with payout odds, and players bet free chips (and later their own points) on the guess closest without going over. 124 original questions; the final question pays double.
