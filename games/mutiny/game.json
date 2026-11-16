@@ -1,0 +1,9 @@
+{
+  "name": "Mutiny on the Starling",
+  "description": "Hidden roles in deep space. Loyal crew vote in Captains and First Mates while secret mutineers steer the ship toward a takeover. Find the Ringleader before it's too late.",
+  "icon": "🚀",
+  "color": "#4dd8ff",
+  "minPlayers": 5,
+  "maxPlayers": 10,
+  "music": "think"
+}

@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- New game: Mutiny on the Starling, a hidden-role voting game for 5–10 players. Loyal crew and secret mutineers (led by a hidden Ringleader) elect Captain and First Mate pairs, who pass ship's orders in secret. Five Steady orders win it for the crew; six Mutiny orders, or the Ringleader made First Mate late in the game, win it for the mutiny. Mutiny orders unlock Captain powers (scan, background check, field promotion, airlock) and a late veto. Phones have a hold-to-see role button.
 - New game: Hexam Night, for 2–10 players. Wizarding-world trivia (468 original questions about the Harry Potter books and films, mixed difficulty) hosted by Proctor Hollowell, a ghostly exam proctor. Get a question wrong and you go to detention, one of five deadly mini-games (Shifting Stairs, Counter-Curse, Candlelight, the Proctor's Brew, Oral Exam). The fallen keep playing as ghosts, then everyone races for the gate in the Midnight Escape, where ghosts who catch a living player come back to life.
 - New game: Split Decision, for 3–12 players. Each player finishes a tempting offer with a catch ("…BUT"), and the room votes deal or no deal. The closer the vote splits 50/50, the more the author scores; voters in the minority get a bravery bonus.
 - New game: Gallery of Lies, for 3–10 players. Everyone secretly draws a title, then writes fake museum placards for each other's art, and visitors try to pick the real one. Points for finding the truth and for every visitor your forgery fools.
