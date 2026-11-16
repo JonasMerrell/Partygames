@@ -10,7 +10,7 @@ const WIDTHS = [8, 22, 44];
 export default function (ctx) {
   const { h } = ctx;
   addStyles();
-  let cur = null;   // { phase, flush() } for the drawing being worked on
+  let cur = null;   // { phase, sid, flush() } for the turn being worked on
   let lastReact = 0;
 
   ctx.on('view', (v) => {
@@ -28,20 +28,80 @@ export default function (ctx) {
     set(k, v) { try { sessionStorage.setItem('gg.' + k, JSON.stringify(v)); } catch {} },
   };
 
-  function render(v) {
+  // Reads text out on this phone, for players who can't read yet.
+  const speak = (text) => {
+    try {
+      speechSynthesis.cancel();
+      const u = new SpeechSynthesisUtterance(text);
+      u.rate = 0.9; u.pitch = 1.1; u.volume = 0.8;
+      speechSynthesis.speak(u);
+    } catch {}
+  };
+  const hasSpeech = typeof speechSynthesis !== 'undefined';
+  const hear = (text, label = '🔊 Hear it') => hasSpeech && h('button.ggp-hear', { onclick: () => speak(typeof text === 'function' ? text() : text) }, label);
+
+  function frame() {
     const box = h('div.ggp');
     ctx.el.replaceChildren(box);
-    const add = (...k) => box.append(...k.filter((x) => x != null && x !== false && x !== ''));
-    if (v.gg === 'wait') add(h('div.ggp-wait', h('div.ggp-bob', v.emoji || '🦃'), h('p', v.text || 'Look at the TV!')));
-    else if (v.gg === 'pick') pickView(add, v);
-    else if (v.gg === 'draw') drawView(add, box, v);
-    else if (v.gg === 'mine') add(h('div.ggp-wait', h('div.ggp-bob', '🤫'), h('h2', 'That\'s your drawing!'),
-      h('p', 'Shh! Don\'t tell anyone what it is.'), cardEl(v.card)));
-    else if (v.gg === 'guess') guessView(add, v);
-    else if (v.gg === 'result') resultView(add, v);
-    else if (v.gg === 'award') add(h('div.ggp-wait', h('div.ggp-bob', v.win ? '🏆' : '🎉'),
-      h('h2', v.title), h('p', v.text), h('p', 'Happy Thanksgiving! 🍂')));
+    const add = (...k) => box.append(...k.flat().filter((x) => x != null && x !== false && x !== ''));
+    return { box, add };
   }
+
+  function render(v) {
+    if (v.gg === 'turns') return runTurns(v);
+    const { box, add } = frame();
+    if (v.gg === 'wait') add(h('div.ggp-wait', h('div.ggp-bob', v.emoji || '🦃'), h('p', v.text || 'Look at the TV!')));
+    else if (v.gg === 'who') whoView(add, v);
+    else if (v.gg === 'mine') add(h('div.ggp-wait', h('div.ggp-bob', '🤫'),
+      h('h2', v.who ? `${v.who.avatar} ${v.who.name}, that's yours!` : 'That\'s your drawing!'),
+      h('p', 'Shh! Don\'t tell anyone what it is.'), cardEl(v.card)));
+    else if (v.gg === 'result') resultView(add, v);
+    else if (v.gg === 'award') add(h('div.ggp-wait', h('div.ggp-bob', v.rows.some((r) => r.win) ? '🏆' : '🎉'),
+      v.rows.map((r) => h('div.ggp-row', { style: { '--c': r.color } }, h('span.ggp-rowava', r.avatar),
+        h('div', h('b', r.name), h('div.ggp-big', r.title), h('small', r.text)))),
+      h('p', 'Happy Thanksgiving! 🍂')));
+    void box;
+  }
+
+  // A shared phone takes turns. Before each secret turn it shows a "pass the
+  // phone" screen with the next player's animal, so nobody sees another
+  // player's card by accident.
+  function runTurns(v) {
+    let i = 0;
+    const step = () => {
+      if (i >= v.turns.length) {
+        const { add } = frame();
+        add(h('div.ggp-wait', h('div.ggp-bob', '👍'), h('p', 'All done! Look at the TV.')));
+        return;
+      }
+      const t = v.turns[i];
+      const inner = { ...t.view, phase: v.phase, seconds: v.seconds, ends: v.ends, sid: t.sid, who: t,
+        many: v.turns.length > 1, next: () => { i++; step(); } };
+      if (v.handoff) handoff(t, () => show(inner));
+      else show(inner);
+    };
+    const show = (inner) => {
+      const { box, add } = frame();
+      if (inner.gg === 'pick') pickView(add, inner);
+      else if (inner.gg === 'draw') drawView(add, box, inner);
+      else if (inner.gg === 'guess') guessView(add, inner);
+    };
+    step();
+  }
+
+  function handoff(t, go) {
+    cur = null;
+    const { add } = frame();
+    add(h('div.ggp-handoff', { style: { '--c': t.color } },
+      h('div.ggp-handava', t.avatar),
+      h('h2', `${t.name}'s turn!`),
+      h('p', 'Pass the phone. No peeking!'),
+      h('button.ggp-btn', { onclick: go }, `I'm ${t.name}! ▶`),
+      hear(`${t.name}, it's your turn!`, '🔊 Whose turn?')));
+  }
+
+  const whoBar = (v) => v.who && h('div.ggp-whobar', { style: { '--c': v.who.color } },
+    h('span.ggp-whoava', v.who.avatar), h('b', `${v.who.name}${v.many ? '\'s turn' : ''}`));
 
   const cardEl = (c, extra = '') => h('div.ggp-card' + extra, h('span.ggp-cardemoji', c.e), h('b', c.t));
 
@@ -67,30 +127,59 @@ export default function (ctx) {
   }
 
   function submit(v, value) {
-    if (!cur || cur.phase !== v.phase) return;
+    if (!cur || cur.phase !== v.phase || cur.sid !== v.sid) return;
     cur = null;
-    ctx.send({ kind: 'gg-answer', phase: v.phase, value });
+    ctx.send({ kind: 'gg-answer', phase: v.phase, sid: v.sid, value });
+    v.next?.();
+  }
+
+  function whoView(add, v) {
+    let me = true;
+    const kids = [];
+    const list = h('div.ggp-kids');
+    const meBtn = h('button.ggp-me.on', { onclick: () => { me = !me; meBtn.classList.toggle('on', me); meBtn.lastChild.textContent = me ? `${v.name} is playing` : `${v.name} is just helping`; } },
+      h('span.ggp-check', '✓'), h('span', `${v.name} is playing`));
+    const field = h('input.ggp-field', { placeholder: 'Kid\'s name', maxLength: 16, autocomplete: 'off', autocapitalize: 'words', enterKeyHint: 'done' });
+    const addBtn = h('button.ggp-add', { type: 'submit' }, '+ Add');
+    const drawList = () => {
+      list.replaceChildren(...kids.map((k, i) => h('div.ggp-kid', h('span', '🧒'), h('b', k),
+        h('button.ggp-x', { 'aria-label': 'remove', onclick: () => { kids.splice(i, 1); drawList(); } }, '×'))));
+      addBtn.disabled = field.disabled = kids.length >= v.max;
+    };
+    const addKid = () => { const n = field.value.replace(/\s+/g, ' ').trim(); if (n && kids.length < v.max) { kids.push(n); field.value = ''; drawList(); } };
+    drawList();
+    add(timerBar(v), h('h2.ggp-title', 'Who\'s playing on this phone?'),
+      h('p.ggp-text', 'Kids without a phone can play on yours. You\'ll pass it around.'),
+      meBtn, list,
+      h('form.ggp-addrow', { onsubmit: (e) => { e.preventDefault(); addKid(); } }, field, addBtn),
+      h('button.ggp-btn', { onclick: () => { addKid(); if (!me && !kids.length) me = true; ctx.send({ kind: 'gg-who', me, kids }); } }, 'Ready! ▶'));
   }
 
   function pickView(add, v) {
-    cur = { phase: v.phase, flush: () => submit(v, 0) };
-    add(timerBar(v), h('h2.ggp-title', 'Pick one to draw!'),
+    cur = { phase: v.phase, sid: v.sid, flush: () => submit(v, 0) };
+    add(timerBar(v), whoBar(v), h('h2.ggp-title', 'Pick one to draw!'),
       h('div.ggp-picks', v.cards.map((c, i) => h('button.ggp-pick', { onclick: () => submit(v, i) },
-        h('span.ggp-cardemoji', c.e), h('b', c.t)))));
+        h('span.ggp-cardemoji', c.e), h('b', c.t)))),
+      hear(`${v.cards[0].t}. Or. ${v.cards[1].t}.`, '🔊 Hear them (quietly!)'));
   }
 
   function guessView(add, v) {
-    cur = { phase: v.phase, flush: () => {} };
-    add(timerBar(v), h('h2.ggp-title', 'What is it?'), h('p.ggp-text', 'Look at the TV and tap the matching one.'),
+    cur = { phase: v.phase, sid: v.sid, flush: () => {} };
+    add(timerBar(v), whoBar(v), h('h2.ggp-title', 'What is it?'),
+      v.note ? h('p.ggp-text', v.note) : h('p.ggp-text', 'Look at the TV and tap the matching one.'),
       h('div.ggp-guesses', v.options.map((o, i) => h('button.ggp-guess', { style: { '--c': o.c }, onclick: () => submit(v, i) },
-        h('span.ggp-shape', o.s), h('span.ggp-cardemoji', o.e), h('b', o.t)))));
+        h('span.ggp-shape', o.s), h('span.ggp-cardemoji', o.e), h('b', o.t)))),
+      hear(v.options.map((o) => o.t).join('? '), '🔊 Hear them'));
   }
 
   function resultView(add, v) {
-    add(h('div.ggp-result' + (v.mine ? '.mine' : v.ok ? '.ok' : '.miss'),
-      h('div.ggp-bob', v.mine ? '🖼️' : v.ok ? '🎉' : '🍂'),
-      h('h2', v.text),
-      !v.mine && h('p', 'It was:'),
+    const rows = v.rows || [];
+    const mood = rows.some((r) => r.ok) ? '🎉' : rows.every((r) => r.mine) ? '🖼️' : '🍂';
+    add(h('div.ggp-result',
+      h('div.ggp-bob', mood),
+      rows.map((r) => h('div.ggp-row' + (r.ok ? '.ok' : ''), { style: { '--c': r.color } },
+        h('span.ggp-rowava', r.avatar), h('div', h('b', r.name), h('div.ggp-big', r.mine ? `🖼️ ${r.text}` : r.ok ? `🎉 ${r.text}` : `🍂 ${r.text}`)))),
+      h('p', 'It was:'),
       cardEl(v.card)));
     if (v.react && v.react.length) {
       add(h('p.ggp-text', `Send ${v.artist || 'the artist'} some love:`),
@@ -107,7 +196,7 @@ export default function (ctx) {
   }
 
   function drawView(add, box, v) {
-    const key = 'draw.' + v.phase;
+    const key = 'draw.' + v.phase + '.' + v.sid;
     const c = h('canvas.ggp-pad', { width: SIZE, height: SIZE });
     const g = c.getContext('2d', { willReadFrequently: true });
     let ops = store.get(key) || [];
@@ -177,7 +266,7 @@ export default function (ctx) {
       if (img.length > 440_000) img = c.toDataURL('image/jpeg', 0.35);
       submit(v, { img, blank: ops.length === 0 && !live });
     };
-    cur = { phase: v.phase, flush: () => { end(); finish(); } };
+    cur = { phase: v.phase, sid: v.sid, flush: () => { end(); finish(); } };
 
     let armed = 0;
     const clearBtn = h('button.ggp-tool', { onclick: () => {
@@ -187,8 +276,8 @@ export default function (ctx) {
       armed = now; clearBtn.classList.add('arm'); setTimeout(() => clearBtn.classList.remove('arm'), 2500);
     } }, h('span', '🗑️'), h('small', 'clear'));
 
-    add(timerBar(v),
-      h('div.ggp-drawthis', h('small', 'Draw this:'), cardEl(v.card, '.slim')),
+    add(timerBar(v), whoBar(v),
+      h('div.ggp-drawthis', h('small', 'Draw this:'), h('div.ggp-drawrow', cardEl(v.card, '.slim'), hear(v.card.t, '🔊'))),
       c,
       swatches,
       h('div.ggp-tools',
@@ -284,7 +373,7 @@ function addStyles() {
   .ggp-timer div { position: absolute; inset: 0 auto 0 0; background: #5ccf5c; transition: width .2s linear; }
   .ggp-timer.low div { background: #ff8a3d; }
   .ggp-timer span { position: absolute; inset: 0; text-align: center; font-weight: 700; line-height: 28px; }
-  .ggp-pad { width: 100%; aspect-ratio: 1; background: #fff; border-radius: 10px; touch-action: none;
+  .ggp-pad { width: min(100%, 36vh); align-self: center; aspect-ratio: 1; background: #fff; border-radius: 10px; touch-action: none;
     box-shadow: 0 0 0 4px #8b5a2b, 0 6px 14px #0003; cursor: crosshair; }
   .ggp-swatches { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; }
   .ggp-sw { border-radius: 99px; border: 3px solid #0002; cursor: pointer; padding: 0; min-height: 34px; aspect-ratio: auto; height: 34px; }
@@ -299,6 +388,37 @@ function addStyles() {
   .ggp-tool.arm { border-color: #e8413c; background: #ffd0cc; }
   .ggp-btn { font-family: inherit; font-weight: 700; font-size: 1.5em; background: #4f9d5d; color: #fff; border: 0; border-radius: 18px;
     padding: 18px; box-shadow: 0 6px 0 #2f6a3a; cursor: pointer; }
+  .ggp-hear { font-family: inherit; font-weight: 700; font-size: 1.05em; background: #fff; color: var(--ink); border: 3px solid #e0cfae;
+    border-radius: 14px; padding: 10px; cursor: pointer; }
+  .ggp-drawrow { display: flex; gap: 8px; align-items: stretch; }
+  .ggp-drawrow .ggp-card { flex: 1; }
+  .ggp-drawrow .ggp-hear { font-size: 1.5em; padding: 0 12px; }
+  .ggp-whobar { display: flex; align-items: center; gap: 10px; background: var(--c); border-radius: 16px; padding: 6px 12px; color: #2a1a0c; }
+  .ggp-whoava { font-size: 2.2em; line-height: 1; }
+  .ggp-whobar b { font-size: 1.3em; }
+  .ggp-handoff { display: flex; flex-direction: column; align-items: center; gap: 14px; text-align: center; padding: 3vh 0;
+    background: radial-gradient(circle at 50% 30%, color-mix(in srgb, var(--c) 45%, transparent), transparent 70%); }
+  .ggp-handava { font-size: 7em; line-height: 1; animation: ggp-bob 1.4s ease-in-out infinite; }
+  .ggp-handoff h2 { font-size: 2em; }
+  .ggp-handoff p { font-size: 1.2em; }
+  .ggp-handoff .ggp-btn { width: 100%; background: var(--c); color: #2a1a0c; box-shadow: 0 6px 0 color-mix(in srgb, var(--c) 55%, #000); }
+  .ggp-me { font-family: inherit; display: flex; align-items: center; gap: 10px; background: #fff; border: 3px solid #e0cfae; border-radius: 16px;
+    padding: 12px; font-size: 1.15em; font-weight: 700; color: var(--ink); cursor: pointer; text-align: left; }
+  .ggp-check { width: 1.6em; height: 1.6em; border-radius: 8px; border: 3px solid #c9b48c; display: grid; place-items: center; color: transparent; }
+  .ggp-me.on .ggp-check { background: #4f9d5d; border-color: #4f9d5d; color: #fff; }
+  .ggp-kids { display: flex; flex-direction: column; gap: 8px; }
+  .ggp-kids:empty { display: none; }
+  .ggp-kid { display: flex; align-items: center; gap: 10px; background: #fff3d6; border-radius: 14px; padding: 8px 12px; font-size: 1.2em; }
+  .ggp-kid b { flex: 1; }
+  .ggp-x { border: 0; background: #e8553e; color: #fff; border-radius: 10px; width: 40px; height: 40px; font-size: 1.3em; cursor: pointer; }
+  .ggp-addrow { display: flex; gap: 8px; }
+  .ggp-field { flex: 1; min-width: 0; background: #fff; color: var(--ink); border: 3px solid #e0cfae; border-radius: 14px; font-family: inherit; font-size: 1.15em; padding: 12px; }
+  .ggp-add { font-family: inherit; font-weight: 700; font-size: 1.1em; background: #f2a541; color: #fff; border: 0; border-radius: 14px; padding: 0 16px; cursor: pointer; }
+  .ggp-add:disabled, .ggp-field:disabled { opacity: .5; }
+  .ggp-row { display: flex; align-items: center; gap: 12px; width: 100%; background: #fff; border-left: 8px solid var(--c); border-radius: 14px; padding: 8px 12px; text-align: left; }
+  .ggp-rowava { font-size: 2.6em; line-height: 1; }
+  .ggp-big { font-size: 1.25em; font-weight: 700; }
+  .ggp-row.ok { background: #e3f6d8; }
   `;
   document.head.append(css);
 }
