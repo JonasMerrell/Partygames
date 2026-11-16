@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.15.0
 
 - New game: Bot Brawl, 2–8 players. Program four moves, then watch scrapyard robots shove, zap and tumble through a factory. Race for flags or survive the night shift.
 - New game: Same Frequency, 3–12 players. Give a clue, find the hidden spot on a shared radio dial, and see who's on your wavelength.
@@ -10,6 +10,7 @@
 - The TV has separate Music and Sound effects volume sliders.
 - The game list on the TV shows 3 bigger cards per row.
 - Tutorial narration uses new recorded voices.
+- Fixed: Subspace Intercept crashed in the decode phase when the crews had different sizes.
 
 ## 0.14.1
 

@@ -283,37 +283,44 @@ export default async function (ctx) {
       h('div.sx-sub', 'Pick one clue from the other crew on your phone and swap it for a misleading word.'),
     ]);
 
-    const victimOf = new Map();
-    teams[0].members.forEach((p, i) => victimOf.set(p.id, teams[1].members[i % teams[1].members.length]));
-    teams[1].members.forEach((p, i) => victimOf.set(p.id, teams[0].members[i % teams[0].members.length]));
-    // With uneven crews someone can be jammed twice; the last fake to arrive wins.
+    // Every player's clues get jammed by someone on the other crew. With uneven crews
+    // some jammers get two victims and handle them one after the other.
+    const victimsOf = new Map(players.map((p) => [p.id, []]));
+    for (const [ti, t] of teams.entries()) {
+      const other = teams[1 - ti].members;
+      t.members.forEach((v, i) => victimsOf.get(other[i % other.length].id).push(v));
+    }
     const jamBySender = new Map();
     await Promise.all(players.map(async (jammer) => {
-      const victim = victimOf.get(jammer.id);
-      const vTarget = targetByPlayer.get(victim.id);
-      const vClues = cluesByPlayer.get(victim.id);
-      const pickAns = await ctx.ask(jammer, {
-        title: `Jam ${victim.name}'s clues`,
-        text: `Category: ${vTarget.cat}\nPick ONE clue to swap out:`,
-        color: STATIC,
-        buzz: true,
-        choices: vClues.map((c, i) => ({ label: `${i + 1}. ${c}`, value: i })),
-      }, { timeout: 35 });
-      const chosenIdx = Number.isInteger(pickAns.get(jammer.id)) ? pickAns.get(jammer.id) : 0;
-      const originalWord = vClues[chosenIdx];
-      const replaceAns = await ctx.ask(jammer, {
-        title: 'Write the fake',
-        text: `Replacing "${originalWord}". Enter 1 misleading word:`,
-        color: STATIC,
-        input: { placeholder: 'Misleading word…', max: 24, submit: 'Jam it' },
-      }, {
-        timeout: 35,
-        after: { title: 'Jammed', text: 'Your fake is on the channel.', wait: 'Waiting for the other jammers…' },
-      });
-      const fakeWord = (replaceAns.get(jammer.id) || 'STATIC').trim().split(/\s+/)[0] || 'STATIC';
-      const finalClues = [...vClues];
-      finalClues[chosenIdx] = fakeWord;
-      jamBySender.set(victim.id, { jammer, chosenIdx, originalWord, fakeWord, finalClues });
+      const victims = victimsOf.get(jammer.id) || [];
+      for (const [n, victim] of victims.entries()) {
+        const vTarget = targetByPlayer.get(victim.id);
+        const vClues = cluesByPlayer.get(victim.id);
+        const more = n < victims.length - 1;
+        const pickAns = await ctx.ask(jammer, {
+          title: `Jam ${victim.name}'s clues`,
+          text: `Category: ${vTarget.cat}\nPick ONE clue to swap out:`,
+          color: STATIC,
+          buzz: true,
+          choices: vClues.map((c, i) => ({ label: `${i + 1}. ${c}`, value: i })),
+        }, { timeout: 35 });
+        const chosenIdx = Number.isInteger(pickAns.get(jammer.id)) ? pickAns.get(jammer.id) : 0;
+        const originalWord = vClues[chosenIdx];
+        const replaceAns = await ctx.ask(jammer, {
+          title: 'Write the fake',
+          text: `Replacing "${originalWord}". Enter 1 misleading word:`,
+          color: STATIC,
+          input: { placeholder: 'Misleading word…', max: 24, submit: 'Jam it' },
+        }, {
+          timeout: 35,
+          after: more ? { title: 'Jammed', wait: 'One more to jam…' }
+            : { title: 'Jammed', text: 'Your fake is on the channel.', wait: 'Waiting for the other jammers…' },
+        });
+        const fakeWord = (replaceAns.get(jammer.id) || 'STATIC').trim().split(/\s+/)[0] || 'STATIC';
+        const finalClues = [...vClues];
+        finalClues[chosenIdx] = fakeWord;
+        jamBySender.set(victim.id, { jammer, chosenIdx, originalWord, fakeWord, finalClues });
+      }
     }));
 
     ctx.sfx('glitch');
