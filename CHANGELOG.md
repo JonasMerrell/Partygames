@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.11.0
 
 - New game: Gobble Gallery, a Thanksgiving drawing game for kids and grown-ups, 2–10 players. Everyone picks one of two picture cards ("🦃 Turkey on roller skates", "🥧 Pie with a smiley face", 109 in all) and draws it on a kid-sized pad with crayons, a paint bucket and an eraser. Each drawing goes up framed on the TV and everyone else taps which card it is from four big buttons marked by colour, shape and emoji; the TV reads the choices out loud for players who can't read yet. Right guesses win 2 pies, artists win a pie for everyone who gets theirs, nobody loses points, and everyone gets an award at the end. Quick (1 round), Normal or Relaxed (2 rounds).
 - New game: Mutiny on the Starling, a hidden-role voting game for 5–10 players. Loyal crew and secret mutineers (led by a hidden Ringleader) elect Captain and First Mate pairs, who pass ship's orders in secret. Five Steady orders win it for the crew; six Mutiny orders, or the Ringleader made First Mate late in the game, win it for the mutiny. Mutiny orders unlock Captain powers (scan, background check, field promotion, airlock) and a late veto. Phones have a hold-to-see role button.
