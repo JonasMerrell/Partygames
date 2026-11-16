@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.5.0
 
 - New game: Tin Tongue, a team clue game for 4–16 players. The clue-giver's robot voice chip only does one-syllable words; their team guesses out loud while the other team sees the word too and hits BZZT on a slip (−1). Cards score a point per syllable, up to 3. Phones show the word with Got it / Skip, the TV shows the timer, scores and a recap of every turn.
 
