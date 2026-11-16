@@ -14,6 +14,9 @@ my-game/
 
 The folder name is the game's id: lowercase letters, digits and `-`.
 
+Before merging a game into this repo, check it against
+[GUIDELINES.md](GUIDELINES.md).
+
 ## game.json
 
 ```json
