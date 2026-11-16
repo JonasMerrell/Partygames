@@ -9,6 +9,8 @@ room code. No app, no accounts.
 - **New games:** a folder with `game.json` + `host.js`, loaded at runtime. See
   [GAMES.md](GAMES.md). Dropping a folder in or uploading it makes it playable
   right away; the server never needs a rebuild for a new game.
+- **Guidelines:** every game in this repo follows [GUIDELINES.md](GUIDELINES.md)
+  (original content, tutorial, 16:9, works with bots, themed, family-friendly).
 
 ## How it fits together
 
