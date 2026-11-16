@@ -44,7 +44,7 @@ const joinUrl = () => location.host;
 // wider than the frame, zoom it down until it fits.
 function fitScreen() {
   const el = [...app.children].find((c) => !c.classList.contains('t-overlay'));
-  if (!el) return;
+  if (!el || el.classList.contains('picker')) return;
   el.style.zoom = '';
   const cs = getComputedStyle(app);
   const availH = app.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom);
@@ -168,7 +168,7 @@ function lobby() {
   const list = [...players.values()];
   const min = game?.minPlayers || 1;
   const enough = list.filter((p) => p.connected).length >= min;
-  app.replaceChildren(h('div.lobby', { style: { '--accent': game?.color || '#7d8cff' } },
+  app.replaceChildren(h('div.lobby' + (game?.id ? `.lobby-${game.id}` : ''), { style: { '--accent': game?.color || '#7d8cff' } },
     h('div.lobby-head',
       h('div.qr', h('img', { src: '/qr.svg?text=' + encodeURIComponent(`${location.origin}/?code=${room.code}`), alt: 'Scan to join' }),
         h('p.sub', 'Scan to join')),

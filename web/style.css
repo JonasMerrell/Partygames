@@ -88,14 +88,16 @@ body.tv main#app > * { transform-origin: top center; }
 body.tv main#app > .t-overlay { transform: none; }
 body.tv.offline::after { content: 'Reconnecting to server…'; position: fixed; bottom: 16px; left: 50%; transform: translateX(-50%);
   background: #4a3a10; color: #ffe9a8; padding: 8px 16px; border-radius: 12px; }
-.picker .sub { text-align: center; }
+.picker .sub { text-align: center; font-size: 1.25em; }
 .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(9.2em, 1fr)); gap: .7em; margin-top: 1em; }
-body.tv .picker .logo { font-size: 2.4em; margin: 0 0 .2em; }
-body.tv .gcard { padding: .7em .8em; border-radius: .7em; gap: .2em; }
-body.tv .gcard h3 { font-size: .95em; }
-body.tv .gcard p { font-size: .62em; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
-body.tv .gicon { font-size: 1.5em; }
-body.tv .tag { font-size: .55em; }
+body.tv .picker { height: 100%; overflow-y: auto; padding: .2em .5em 1.5em; }
+body.tv .grid { grid-template-columns: repeat(3, 1fr); gap: 1.1em; }
+body.tv .picker .logo { font-size: 2.8em; margin: 0 0 .15em; }
+body.tv .gcard { padding: 1.15em 1.25em; border-radius: .9em; gap: .4em; }
+body.tv .gcard h3 { font-size: 1.45em; }
+body.tv .gcard p { font-size: .95em; line-height: 1.35; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+body.tv .gicon { font-size: 2.2em; }
+body.tv .tag { font-size: .8em; padding: 4px 12px; }
 .gcard { background: var(--card); border: 2px solid var(--line); border-radius: 24px; padding: 28px; text-align: left;
   cursor: pointer; display: flex; flex-direction: column; gap: 6px; transition: transform .12s, border-color .12s; }
 .gcard:hover, .gcard:focus-visible { transform: translateY(-4px); border-color: var(--accent); }
@@ -104,7 +106,129 @@ body.tv .tag { font-size: .55em; }
 .gicon { font-size: 2.4em; }
 .tag { align-self: flex-start; font-size: .75em; font-weight: 800; color: var(--dim); border: 1px solid var(--line); border-radius: 99px; padding: 3px 10px; }
 
-.lobby { display: flex; flex-direction: column; gap: 4vh; align-items: center; text-align: center; }
+.lobby { display: flex; flex-direction: column; gap: 3.2vh; align-items: center; justify-content: center; text-align: center;
+  width: 100%; height: 100%; padding: 1.6em 2.2em; border-radius: 1.1em; position: relative; overflow: hidden; }
+
+/* ---------- Bespoke Game Lobby Themes ---------- */
+/* 1. Saltwind Isles — Papercraft & Cut-Paper Diorama */
+.lobby.lobby-saltwind {
+  background: radial-gradient(circle at 50% 20%, #fef9ef 0%, #e4f3ef 55%, #b8e3dc 100%);
+  color: #2b3a42; font-family: "Georgia", "Palatino", serif;
+  border: 6px solid #fff; box-shadow: inset 0 0 0 3px #d8c39e, 0 12px 30px rgba(0,0,0,.35);
+}
+.lobby.lobby-saltwind .sub, .lobby.lobby-saltwind .inspired { color: #526b75; }
+.lobby.lobby-saltwind .roomcode { color: #d96b43; text-shadow: 3px 3px 0 #fff, 5px 5px 0 rgba(0,0,0,.15); }
+.lobby.lobby-saltwind .qr img, .lobby.lobby-saltwind .chip { background: #fffdf7; border: 3px dashed #cbb389; box-shadow: 4px 5px 0 rgba(43,58,66,.18); color: #2b3a42; }
+.lobby.lobby-saltwind button.big { background: #e07a5f; color: #fff; border: 3px solid #fff; box-shadow: 0 6px 0 #9e4731; }
+.lobby.lobby-saltwind button.ghost { border-color: #7da89b; color: #2b3a42; background: rgba(255,255,255,.65); }
+
+/* 2. Gobble Gallery — Claymation & Plasticine Stop-Motion */
+.lobby.lobby-gobble-gallery {
+  background: radial-gradient(circle at 50% 35%, #5c3a21 0%, #382110 85%);
+  color: #fff6e5; font-family: "Comic Sans MS", "Chalkboard SE", "Nunito", cursive, sans-serif;
+  border: 8px solid #f2a541; border-radius: 2em;
+  box-shadow: inset 0 6px 18px rgba(255,220,160,.35), inset 0 -10px 24px rgba(0,0,0,.55);
+}
+.lobby.lobby-gobble-gallery .roomcode { color: #ffd166; text-shadow: 0 5px 0 #b35900; transform: rotate(-1.5deg); }
+.lobby.lobby-gobble-gallery .chip, .lobby.lobby-gobble-gallery button.big {
+  border-radius: 28px; box-shadow: inset 0 4px 6px rgba(255,255,255,.45), inset 0 -5px 8px rgba(0,0,0,.3), 0 6px 0 rgba(0,0,0,.35);
+}
+
+/* 3. Hexam Night — Sumi-e Ink, Woodcut & Parchment */
+.lobby.lobby-hexam-night {
+  background: radial-gradient(circle at 50% 45%, #f2e3c6 0%, #cfb486 70%, #8a6f47 100%);
+  color: #1c140d; font-family: "Palatino Linotype", "Book Antiqua", Georgia, serif;
+  border: 4px double #2b1d12; box-shadow: inset 0 0 60px rgba(28,20,13,.55);
+}
+.lobby.lobby-hexam-night .sub, .lobby.lobby-hexam-night .inspired { color: #4a3520; font-style: italic; }
+.lobby.lobby-hexam-night .roomcode { color: #7a1c1c; text-shadow: 2px 2px 0 #e8d0a7; letter-spacing: .18em; }
+.lobby.lobby-hexam-night .chip { background: #e8d5b5; border: 2px solid #2b1d12; color: #1c140d; border-radius: 4px; box-shadow: 3px 3px 0 #2b1d12; }
+.lobby.lobby-hexam-night button.big { background: #7a1c1c; color: #f7ebd4; border: 2px solid #2b1d12; border-radius: 6px; box-shadow: 4px 4px 0 #2b1d12; }
+.lobby.lobby-hexam-night button.ghost { border: 2px solid #2b1d12; color: #1c140d; border-radius: 6px; }
+
+/* 4. Hollowmere — Watercolor & Gouache Storybook */
+.lobby.lobby-hollowmere {
+  background: radial-gradient(ellipse at 30% 25%, #2f3e46 0%, #1d2833 55%, #12161f 100%);
+  color: #f4ece1; font-family: "Garamond", "Georgia", serif;
+  border: 3px solid rgba(212,172,13,.45); box-shadow: inset 0 0 70px rgba(212,172,13,.15);
+}
+.lobby.lobby-hollowmere .roomcode { color: #f3c969; text-shadow: 0 0 24px rgba(243,201,105,.45); }
+.lobby.lobby-hollowmere .chip { background: rgba(255,248,231,.1); border: 2px solid #d4ac0d; backdrop-filter: blur(4px); }
+
+/* 5. Patch Party — Embroidered Denim & Felt Textile */
+.lobby.lobby-patch-party {
+  background: repeating-linear-gradient(45deg, #1b2d48 0 4px, #16253b 4px 8px);
+  color: #fdf8ee; border: 4px dashed #f4d35e; box-shadow: inset 0 0 0 6px #1b2d48, 0 8px 24px rgba(0,0,0,.5);
+}
+.lobby.lobby-patch-party .roomcode { color: #7cf0a4; text-shadow: 3px 3px 0 #0f1b2d; }
+.lobby.lobby-patch-party .chip, .lobby.lobby-patch-party button.big { border: 3px dashed #fff; box-shadow: 0 5px 0 #0d1726; }
+
+/* 6. Glitch Squad — CRT Vaporwave & Glitch Terminal */
+.lobby.lobby-glitch-squad {
+  background: repeating-linear-gradient(0deg, rgba(0,255,204,.05) 0 2px, transparent 2px 4px),
+              radial-gradient(circle at 50% 50%, #16092b 0%, #070312 100%);
+  color: #00ffcc; font-family: "Courier New", ui-monospace, monospace;
+  border: 3px solid #ff2a85; box-shadow: inset 0 0 40px rgba(255,42,133,.28), 0 0 20px rgba(0,255,204,.25);
+}
+.lobby.lobby-glitch-squad .roomcode { color: #ff2a85; text-shadow: -3px 0 #00ffcc, 3px 0 #ffea00; }
+.lobby.lobby-glitch-squad .chip { border-radius: 4px; background: rgba(0,255,204,.1); border: 2px solid #00ffcc; }
+
+/* 7. Peak Fever — Mid-Century Screenprint Alpine Poster */
+.lobby.lobby-peak-fever {
+  background: linear-gradient(180deg, #1d4e56 0%, #2a6f6b 55%, #f4e8d1 55.2%, #e6d5b8 100%);
+  color: #fff8eb; font-family: "Futura", "Trebuchet MS", Impact, sans-serif;
+  border: 8px solid #f4e8d1;
+}
+.lobby.lobby-peak-fever h2, .lobby.lobby-peak-fever .chips, .lobby.lobby-peak-fever .row { color: #213538; }
+.lobby.lobby-peak-fever .roomcode { color: #e75a3c; text-shadow: 3px 3px 0 #f4e8d1; }
+.lobby.lobby-peak-fever button.big { background: #e75a3c; color: #fff8eb; border-radius: 6px; box-shadow: 5px 5px 0 #213538; }
+.lobby.lobby-peak-fever button.ghost { border-color: #213538; color: #213538; }
+
+/* 8. Tin Tongue — Retro-Mechanical Tin Toy & Blueprint */
+.lobby.lobby-tin-tongue {
+  background: linear-gradient(90deg, rgba(255,255,255,.06) 1px, transparent 1px) 0 0 / 24px 24px,
+              linear-gradient(0deg, rgba(255,255,255,.06) 1px, transparent 1px) 0 0 / 24px 24px,
+              radial-gradient(circle at 50% 40%, #16426b 0%, #0b2540 100%);
+  color: #ffde8a; font-family: "Courier New", ui-monospace, monospace;
+  border: 6px ridge #a3b1bf; box-shadow: inset 0 0 30px rgba(0,0,0,.6);
+}
+.lobby.lobby-tin-tongue .roomcode { color: #ffb84d; background: #141a21; padding: .1em .3em; border: 3px inset #6c7a89; border-radius: 8px; }
+
+/* 9. Subspace Intercept — Starfleet LCARS */
+.lobby.lobby-subspace-intercept {
+  background: #000; color: #ffcf87; font-family: "Arial Narrow", "Helvetica Neue", Arial, sans-serif;
+  border-left: 28px solid #ff9900; border-top: 14px solid #cc99cc; border-radius: 32px 0 0 0;
+  text-transform: uppercase; letter-spacing: .08em;
+}
+.lobby.lobby-subspace-intercept .roomcode { color: #99ccff; background: #111827; padding: .08em .3em; border-radius: 99px; border: 3px solid #ff9900; }
+.lobby.lobby-subspace-intercept button.big { background: #ff9900; color: #000; border-radius: 99px; box-shadow: none; }
+.lobby.lobby-subspace-intercept button.ghost { background: #cc99cc; color: #000; border: 0; border-radius: 99px; }
+
+/* 10. Bot Brawl — Industrial Robot Arena */
+.lobby.lobby-bot-brawl {
+  background: repeating-linear-gradient(-45deg, #22262e 0 14px, #1a1d24 14px 28px);
+  color: #f8fafc; font-family: Impact, "Arial Black", sans-serif;
+  border: 6px solid #f59e0b; box-shadow: inset 0 0 40px rgba(245,158,11,.25);
+}
+.lobby.lobby-bot-brawl .roomcode { color: #f59e0b; text-shadow: 0 4px 0 #78350f; }
+.lobby.lobby-bot-brawl button.big { background: #f59e0b; color: #111; clip-path: polygon(6% 0, 100% 0, 94% 100%, 0 100%); border-radius: 0; }
+
+/* 11. Same Frequency — Vintage Hi-Fi Analog Radio */
+.lobby.lobby-same-frequency {
+  background: radial-gradient(circle at 50% 35%, #3b2818 0%, #1e130b 100%);
+  color: #fde6bd; font-family: "Trebuchet MS", "Gill Sans", sans-serif;
+  border: 8px solid #8c5828; box-shadow: inset 0 0 0 3px #f59e0b, inset 0 0 50px rgba(0,0,0,.7);
+}
+.lobby.lobby-same-frequency .roomcode { color: #38bdf8; text-shadow: 0 0 18px rgba(56,189,248,.6); background: #0f172a; padding: .08em .28em; border-radius: 10px; border: 2px solid #f59e0b; }
+
+/* 12. Press Conference — Breaking News Broadcast Studio */
+.lobby.lobby-press-conference {
+  background: radial-gradient(circle at 50% 25%, #1e3a8a 0%, #0f172a 75%);
+  color: #ffffff; font-family: "Helvetica Neue", Arial, sans-serif;
+  border-top: 10px solid #dc2626; border-bottom: 10px solid #facc15;
+}
+.lobby.lobby-press-conference .roomcode { color: #facc15; background: #dc2626; padding: .06em .28em; border-radius: 6px; box-shadow: 0 6px 20px rgba(220,38,38,.45); }
+.lobby.lobby-press-conference button.big { background: #dc2626; color: #fff; text-transform: uppercase; letter-spacing: .06em; }
 .lobby-head { display: flex; gap: 6vw; flex-wrap: wrap; justify-content: center; align-items: flex-end; }
 .url { font-size: 2em; font-weight: 900; }
 .qr { display: flex; flex-direction: column; align-items: center; gap: 6px; }
