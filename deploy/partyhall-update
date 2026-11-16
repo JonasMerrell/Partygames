@@ -2,7 +2,7 @@
 # Install the latest Party Hall release from GitHub, keeping uploaded games.
 #   sudo partyhall-update [tag]
 set -eu
-repo=JonasMerrell/partyhall
+repo=JonasMerrell/Partygames
 asset=partyhall-x86_64-linux.tar.gz
 if [ -n "${1:-}" ]; then base="https://github.com/$repo/releases/download/$1"
 else base="https://github.com/$repo/releases/latest/download"; fi
