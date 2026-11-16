@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- New game: Two Faces, a bluffing game at a masked ball for 2–8 players. Everyone hides two masks on their phone and may claim any mask's power (Patron, Poisoner, Pickpocket, Seer, Bodyguard); rivals challenge or block, and whoever is wrong drops a mask. The TV shows gold, dropped masks and the action log. Last guest with a mask on wins.
+
 ## 0.4.0
 
 - New game: Hard Sell, for 3–10 players. One player is the customer and picks a persona card; everyone else glues two word cards into a product, pitches it out loud, and the customer buys one. Sellers also vote a crowd favourite.

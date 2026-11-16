@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 336" width="240" height="336">
+<defs><pattern id="p" width="24" height="24" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="24" height="24" fill="#231a3d"/><rect width="12" height="12" fill="#2c2150"/></pattern></defs>
+<rect width="240" height="336" rx="18" fill="url(#p)"/>
+<rect x="8" y="8" width="224" height="320" rx="13" fill="none" stroke="#e4c77d" stroke-width="3"/>
+<circle cx="120" cy="168" r="78" fill="#14101f" stroke="#e4c77d" stroke-width="3"/>
+<g transform="translate(120 168) scale(.55) translate(-120 -168)"><path d="M38 168 C38 134 82 128 120 146 C158 128 202 134 202 168 C202 204 166 218 140 208 C130 204 126 192 120 192 C114 192 110 204 100 208 C74 218 38 204 38 168 Z" fill="#e4c77d" stroke="#0b0814" stroke-width="5"/><ellipse cx="84" cy="168" rx="19" ry="10" transform="rotate(8 84 168)" fill="#0b0814"/><ellipse cx="156" cy="168" rx="19" ry="10" transform="rotate(-8 156 168)" fill="#0b0814"/></g>
+<g transform="translate(120 132) scale(.3) translate(-120 -168)" opacity=".7"><path d="M38 168 C38 134 82 128 120 146 C158 128 202 134 202 168 C202 204 166 218 140 208 C130 204 126 192 120 192 C114 192 110 204 100 208 C74 218 38 204 38 168 Z" fill="#e4c77d"/></g>
+<g transform="translate(120 204) scale(.3) translate(-120 -168) rotate(180 120 168)" opacity=".7"><path d="M38 168 C38 134 82 128 120 146 C158 128 202 134 202 168 C202 204 166 218 140 208 C130 204 126 192 120 192 C114 192 110 204 100 208 C74 218 38 204 38 168 Z" fill="#e4c77d"/></g>
+</svg>
