@@ -2,7 +2,13 @@
 
 ## Unreleased
 
+- New game: Long Shot, a guess-and-bet trivia game for 2–12 players. Everyone guesses a number on a phone keypad, the guesses line up on a felt betting board with payout odds, and players bet free chips (and later their own points) on the guess closest without going over. 124 original questions; the final question pays double.
+- New game: Blanktastic, a family-friendly fill-in-the-blank card game for 3–10 players. A rotating Judge reads a prompt; everyone else plays the funniest answer card from the hand on their phone (or writes their own, twice a game), and the Judge picks a winner without knowing who played what. 117 prompts and 315 answers, all original; written cards pass a word filter.
 - New game: Hollowmere, a mansion inheritance board game for 2–6 players. Everyone secretly backs a few of twelve heirs, rolls two dice to move anyone around the house with a D-pad on their phone, and springs trap cards (chandelier, trapdoor, hungry orchid and more) on whoever is standing in a trap. The heir named in the will wins by walking out the front door; codicil cards rewrite the will, and at midnight the will is read.
+
+## 0.5.0
+
+- New game: Tin Tongue, a team clue game for 4–16 players. The clue-giver's robot voice chip only does one-syllable words; their team guesses out loud while the other team sees the word too and hits BZZT on a slip (−1). Cards score a point per syllable, up to 3. Phones show the word with Got it / Skip, the TV shows the timer, scores and a recap of every turn.
 
 ## 0.4.0
 
