@@ -1,0 +1,10 @@
+{
+  "name": "Subspace Intercept",
+  "inspiredBy": "Glitch Squad",
+  "description": "Transmit three one-word clues to your crewmate before the Borg assimilate one. Crack your 5-letter Starfleet override code first!",
+  "icon": "🖖",
+  "color": "#ff9900",
+  "minPlayers": 4,
+  "maxPlayers": 12,
+  "music": "tense"
+}
