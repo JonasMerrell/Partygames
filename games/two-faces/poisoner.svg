@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 336" width="240" height="336">
+<defs>
+ <radialGradient id="bg" cx="50%" cy="38%" r="75%"><stop offset="0" stop-color="#185a32"/><stop offset="1" stop-color="#120d1f"/></radialGradient>
+ <linearGradient id="m" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7ef0a0"/><stop offset="1" stop-color="#185a32"/></linearGradient>
+</defs>
+<rect width="240" height="336" rx="18" fill="url(#bg)"/>
+<rect x="8" y="8" width="224" height="320" rx="13" fill="none" stroke="#7ef0a0" stroke-width="3" opacity=".85"/>
+<rect x="15" y="15" width="210" height="306" rx="9" fill="none" stroke="#7ef0a0" stroke-width="1" opacity=".45" stroke-dasharray="2 5"/>
+<path d="M24 17 L31 24 L24 31 L17 24 Z" fill="#7ef0a0"/><path d="M216 17 L223 24 L216 31 L209 24 Z" fill="#7ef0a0"/><path d="M24 305 L31 312 L24 319 L17 312 Z" fill="#7ef0a0"/><path d="M216 305 L223 312 L216 319 L209 312 Z" fill="#7ef0a0"/>
+<path d="M110 52 h20 v22 c18 8 26 22 26 34 c0 20 -16 32 -36 32 c-20 0 -36 -12 -36 -32 c0 -12 8 -26 26 -34 Z" fill="#7ef0a0" stroke="#0b0814" stroke-width="4" stroke-linejoin="round"/>
+     <rect x="106" y="44" width="28" height="10" rx="3" fill="#c79a6a" stroke="#0b0814" stroke-width="3"/>
+     <circle cx="110" cy="112" r="5" fill="#ffffff" opacity=".5"/><circle cx="128" cy="120" r="3" fill="#ffffff" opacity=".5"/>
+<path d="M38 168 C38 134 82 128 120 146 C158 128 202 134 202 168 C202 204 166 218 140 208 C130 204 126 192 120 192 C114 192 110 204 100 208 C74 218 38 204 38 168 Z" fill="url(#m)" stroke="#0b0814" stroke-width="4" stroke-linejoin="round"/>
+<path d="M58 160 C76 150 96 152 104 160 M136 160 C144 152 164 150 182 160" stroke="#ffffff" stroke-opacity=".35" stroke-width="3" fill="none" stroke-linecap="round"/>
+<ellipse cx="84" cy="168" rx="19" ry="10" transform="rotate(8 84 168)" fill="#0b0814"/><ellipse cx="156" cy="168" rx="19" ry="10" transform="rotate(-8 156 168)" fill="#0b0814"/>
+<path d="M84 210 q-6 14 0 20 q6 -6 0 -20 Z M156 210 q-6 18 0 26 q6 -8 0 -26 Z" fill="#7ef0a0" stroke="#0b0814" stroke-width="2"/>
+<text x="120" y="282" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="30" font-weight="700" fill="#7ef0a0" letter-spacing="2">POISONER</text>
+</svg>

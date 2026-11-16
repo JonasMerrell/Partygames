@@ -1,0 +1,153 @@
+// Long Shot question bank. Every answer is a number, and nobody is expected
+// to know it exactly: the fun is in the guessing and the betting.
+//   q     the question
+//   a     the answer (guesses win if they are closest WITHOUT going over)
+//   unit  optional, shown after numbers ("m", "km", "days")
+//   year  true for years, so they show as 1969, not 1,969
+//   note  optional one-liner shown with the answer
+// Add as many as you like; a game uses one per round.
+export const QUESTIONS = [
+  // ---- history ----
+  { q: 'In what year did the Titanic sink?', a: 1912, year: true },
+  { q: 'In what year did people first walk on the Moon?', a: 1969, year: true },
+  { q: 'In what year did the Berlin Wall fall?', a: 1989, year: true },
+  { q: 'In what year was the Battle of Hastings?', a: 1066, year: true },
+  { q: 'In what year was Magna Carta sealed?', a: 1215, year: true },
+  { q: 'In what year did Columbus first reach the Americas?', a: 1492, year: true },
+  { q: 'In what year was the US Declaration of Independence adopted?', a: 1776, year: true },
+  { q: 'In what year was the Bastille stormed, starting the French Revolution?', a: 1789, year: true },
+  { q: 'In what year did the Great Fire of London break out?', a: 1666, year: true },
+  { q: 'In what year did World War I begin?', a: 1914, year: true },
+  { q: 'In what year did the Wright brothers make their first powered flight?', a: 1903, year: true },
+  { q: 'In what year was Nelson Mandela released from prison?', a: 1990, year: true },
+  { q: 'In what year did the Soviet Union dissolve?', a: 1991, year: true },
+  { q: 'In what year did the Chernobyl disaster happen?', a: 1986, year: true },
+  { q: 'In what year were the first modern Olympic Games held?', a: 1896, year: true, note: 'In Athens.' },
+  { q: 'In what year was the first football (soccer) World Cup played?', a: 1930, year: true, note: 'Uruguay hosted and won.' },
+  { q: 'In what year was the Suez Canal opened?', a: 1869, year: true },
+  { q: 'In what year was the Panama Canal opened?', a: 1914, year: true },
+  { q: 'In what year was the Eiffel Tower completed?', a: 1889, year: true, note: 'Built for the World\'s Fair.' },
+  { q: 'In what year was the Statue of Liberty dedicated?', a: 1886, year: true },
+  { q: 'In what year did the Sydney Opera House open?', a: 1973, year: true },
+  { q: 'In what year did the London Underground open?', a: 1863, year: true, note: 'The world\'s first underground railway.' },
+  { q: 'In what year was the first Tour de France raced?', a: 1903, year: true },
+  { q: 'In what year did euro notes and coins go into circulation?', a: 2002, year: true },
+  { q: 'How many years did the Hundred Years\' War actually last?', a: 116, unit: 'years', note: '1337 to 1453.' },
+  { q: 'For how many years did Queen Elizabeth II reign?', a: 70, unit: 'years', note: '1952 to 2022.' },
+  { q: 'How many wives did Henry VIII have?', a: 6 },
+  { q: 'How old was Mozart when he died?', a: 35, unit: 'years old' },
+  { q: 'In what year was William Shakespeare born?', a: 1564, year: true },
+
+  // ---- science & space ----
+  { q: 'In what year did Sputnik 1, the first artificial satellite, launch?', a: 1957, year: true },
+  { q: 'In what year did Yuri Gagarin become the first person in space?', a: 1961, year: true },
+  { q: 'In what year was the Hubble Space Telescope launched?', a: 1990, year: true },
+  { q: 'In what year was the James Webb Space Telescope launched?', a: 2021, year: true, note: 'On Christmas Day.' },
+  { q: 'In what year was Pluto reclassified as a dwarf planet?', a: 2006, year: true },
+  { q: 'How many people have walked on the Moon?', a: 12, unit: 'people', note: 'All between 1969 and 1972.' },
+  { q: 'How many Earth days does Mars take to go once around the Sun?', a: 687, unit: 'days' },
+  { q: 'How many moons does Mars have?', a: 2, unit: 'moons', note: 'Phobos and Deimos.' },
+  { q: 'How far is the Moon from Earth on average, in kilometres?', a: 384400, unit: 'km' },
+  { q: 'What is Earth\'s mean diameter in kilometres?', a: 12742, unit: 'km' },
+  { q: 'About how many seconds does sunlight take to reach Earth?', a: 499, unit: 'seconds', note: 'A little over 8 minutes.' },
+  { q: 'How fast does light travel in a vacuum, in kilometres per second?', a: 299792, unit: 'km/s' },
+  { q: 'How fast does sound travel through air at 20 °C, in metres per second?', a: 343, unit: 'm/s' },
+  { q: 'How many elements are on the periodic table today?', a: 118, unit: 'elements' },
+  { q: 'What is the atomic number of gold?', a: 79 },
+  { q: 'What is the atomic number of iron?', a: 26 },
+  { q: 'What is the boiling point of water at sea level in °F?', a: 212, unit: '°F' },
+  { q: 'In what year did Einstein publish his theory of special relativity?', a: 1905, year: true },
+  { q: 'In what year was On the Origin of Species published?', a: 1859, year: true },
+  { q: 'In what year were the first Nobel Prizes awarded?', a: 1901, year: true },
+  { q: 'In what year did Alexander Fleming discover penicillin?', a: 1928, year: true },
+  { q: 'In what year was the double-helix structure of DNA published?', a: 1953, year: true },
+  { q: 'How many carats is pure gold?', a: 24, unit: 'carats' },
+
+  // ---- the human body ----
+  { q: 'How many bones are in an adult human body?', a: 206, unit: 'bones' },
+  { q: 'How many bones are in one human hand, including the wrist?', a: 27, unit: 'bones' },
+  { q: 'How many teeth are in a full adult set, wisdom teeth included?', a: 32, unit: 'teeth' },
+  { q: 'How many chromosomes does a typical human cell have?', a: 46, unit: 'chromosomes' },
+  { q: 'How many vertebrae are in the human spine, counting the fused ones?', a: 33, unit: 'vertebrae' },
+
+  // ---- animals ----
+  { q: 'How many hearts does an octopus have?', a: 3, unit: 'hearts' },
+  { q: 'How many bones are in a giraffe\'s neck?', a: 7, unit: 'bones', note: 'The same number as in yours.' },
+  { q: 'How many compartments does a cow\'s stomach have?', a: 4 },
+  { q: 'How many eyes does a honeybee have?', a: 5, unit: 'eyes', note: 'Two big ones and three small ones on top.' },
+  { q: 'How many legs does a lobster have, counting its claws?', a: 10, unit: 'legs' },
+  { q: 'How many arms plus tentacles does a squid have in total?', a: 10, note: 'Eight arms and two tentacles.' },
+  { q: 'How many months is an African elephant pregnant for, roughly?', a: 22, unit: 'months' },
+
+  // ---- geography ----
+  { q: 'How tall is Mount Everest, in metres?', a: 8849, unit: 'm', note: 'As measured in 2020.' },
+  { q: 'How tall is the Burj Khalifa, in metres?', a: 828, unit: 'm' },
+  { q: 'How many floors above ground does the Burj Khalifa have?', a: 163, unit: 'floors' },
+  { q: 'How tall is the Eiffel Tower today, in metres, antennas included?', a: 330, unit: 'm' },
+  { q: 'How tall is the Statue of Liberty from the ground to the tip of the torch, in metres?', a: 93, unit: 'm' },
+  { q: 'How tall is the Elizabeth Tower (home of Big Ben), in metres?', a: 96, unit: 'm' },
+  { q: 'How long is the Channel Tunnel between England and France, in kilometres?', a: 50, unit: 'km' },
+  { q: 'About how long is the Nile, in kilometres?', a: 6650, unit: 'km' },
+  { q: 'How many member states does the United Nations have?', a: 193, unit: 'countries' },
+  { q: 'How many countries are in Africa?', a: 54, unit: 'countries' },
+  { q: 'How many countries are in the European Union?', a: 27, unit: 'countries' },
+  { q: 'How many countries share a land border with Germany?', a: 9, unit: 'countries' },
+  { q: 'How many time zones does Russia span?', a: 11, unit: 'time zones' },
+  { q: 'How many provinces does Canada have?', a: 10, unit: 'provinces', note: 'Plus three territories.' },
+  { q: 'How many states does Australia have?', a: 6, unit: 'states', note: 'Plus two mainland territories.' },
+  { q: 'How many official national languages does Switzerland have?', a: 4, unit: 'languages' },
+  { q: 'How many amendments does the US Constitution have?', a: 27, unit: 'amendments' },
+  { q: 'How many stars are on the flag of the European Union?', a: 12, unit: 'stars' },
+  { q: 'How many stripes are on the flag of the United States?', a: 13, unit: 'stripes' },
+
+  // ---- sport ----
+  { q: 'How long is a marathon, in metres?', a: 42195, unit: 'm' },
+  { q: 'What is the highest possible score in a game of ten-pin bowling?', a: 300, unit: 'points' },
+  { q: 'What is the maximum break in snooker?', a: 147, unit: 'points' },
+  { q: 'How many feet apart are the bases in baseball?', a: 90, unit: 'ft' },
+  { q: 'How high is a basketball hoop, in feet?', a: 10, unit: 'ft' },
+  { q: 'How long is an Olympic swimming pool, in metres?', a: 50, unit: 'm' },
+  { q: 'How many players does one team have on the ice in hockey, goalie included?', a: 6, unit: 'players' },
+  { q: 'How many players are on a rugby union team on the pitch?', a: 15, unit: 'players' },
+
+  // ---- music & arts ----
+  { q: 'How many keys does a standard piano have?', a: 88, unit: 'keys' },
+  { q: 'How many black keys does a standard piano have?', a: 36, unit: 'keys' },
+  { q: 'How many strings does a standard concert (pedal) harp have?', a: 47, unit: 'strings' },
+  { q: 'How many symphonies did Beethoven complete?', a: 9, unit: 'symphonies' },
+  { q: 'How many lines are in a sonnet?', a: 14, unit: 'lines' },
+  { q: 'How many syllables are in a traditional haiku?', a: 17, unit: 'syllables' },
+
+  // ---- games & toys ----
+  { q: 'How many squares are on a chessboard?', a: 64, unit: 'squares' },
+  { q: 'How many intersections are on a full-size 19 × 19 Go board?', a: 361, unit: 'points' },
+  { q: 'How many dominoes are in a double-six set?', a: 28, unit: 'dominoes' },
+  { q: 'How many coloured stickers are on a classic 3 × 3 Rubik\'s Cube?', a: 54, unit: 'stickers' },
+  { q: 'In what year was the Rubik\'s Cube invented?', a: 1974, year: true },
+  { q: 'In what year was Tetris first created?', a: 1984, year: true, note: 'By Alexey Pajitnov in Moscow.' },
+  { q: 'How many cards are in a full tarot deck?', a: 78, unit: 'cards' },
+  { q: 'How many tiles are in an English Scrabble set?', a: 100, unit: 'tiles' },
+  { q: 'What do all the dots on one standard six-sided die add up to?', a: 21, unit: 'dots' },
+  { q: 'How many letters are in the Greek alphabet?', a: 24, unit: 'letters' },
+
+  // ---- tech ----
+  { q: 'In what year was the first iPhone released?', a: 2007, year: true },
+  { q: 'In what year was Google founded?', a: 1998, year: true },
+  { q: 'In what year did Wikipedia launch?', a: 2001, year: true },
+  { q: 'In what year did Tim Berners-Lee first propose the World Wide Web?', a: 1989, year: true },
+  { q: 'How many bytes are in a kibibyte (the "binary" kilobyte)?', a: 1024, unit: 'bytes' },
+  { q: 'What is 2 to the power of 16?', a: 65536 },
+
+  // ---- numbers & measures ----
+  { q: 'How many minutes are in a week?', a: 10080, unit: 'minutes' },
+  { q: 'How many seconds are in a day?', a: 86400, unit: 'seconds' },
+  { q: 'How many hours are in a (non-leap) year?', a: 8760, unit: 'hours' },
+  { q: 'What do the numbers 1 to 100 add up to?', a: 5050 },
+  { q: 'How many prime numbers are there below 100?', a: 25, unit: 'primes' },
+  { q: 'How many degrees do the inside angles of a hexagon add up to?', a: 720, unit: '°' },
+  { q: 'How many feet are in a mile?', a: 5280, unit: 'ft' },
+  { q: 'How many yards are in a mile?', a: 1760, unit: 'yards' },
+  { q: 'How many metres are in a mile?', a: 1609.34, unit: 'm' },
+  { q: 'How many grams are in a pound?', a: 453.59, unit: 'g' },
+  { q: 'About how many Earths would fit inside the Sun, by volume?', a: 1300000, unit: 'Earths', note: 'Roughly 1.3 million.' },
+];

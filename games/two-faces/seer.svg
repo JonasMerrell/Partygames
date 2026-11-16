@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 336" width="240" height="336">
+<defs>
+ <radialGradient id="bg" cx="50%" cy="38%" r="75%"><stop offset="0" stop-color="#164a6e"/><stop offset="1" stop-color="#120d1f"/></radialGradient>
+ <linearGradient id="m" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7fd6ff"/><stop offset="1" stop-color="#164a6e"/></linearGradient>
+</defs>
+<rect width="240" height="336" rx="18" fill="url(#bg)"/>
+<rect x="8" y="8" width="224" height="320" rx="13" fill="none" stroke="#7fd6ff" stroke-width="3" opacity=".85"/>
+<rect x="15" y="15" width="210" height="306" rx="9" fill="none" stroke="#7fd6ff" stroke-width="1" opacity=".45" stroke-dasharray="2 5"/>
+<path d="M24 17 L31 24 L24 31 L17 24 Z" fill="#7fd6ff"/><path d="M216 17 L223 24 L216 31 L209 24 Z" fill="#7fd6ff"/><path d="M24 305 L31 312 L24 319 L17 312 Z" fill="#7fd6ff"/><path d="M216 305 L223 312 L216 319 L209 312 Z" fill="#7fd6ff"/>
+<g stroke="#7fd6ff" stroke-width="4" stroke-linecap="round"><line x1="81.95773934819385" y1="83.6393202250021" x2="66.7408350874714" y2="78.69504831500294"/><line x1="87.63932022500211" y1="72.48858990830107" x2="74.69504831500296" y2="63.08402587162149"/><line x1="96.48858990830107" y1="63.63932022500211" x2="87.08402587162149" y2="50.69504831500295"/><line x1="107.6393202250021" y1="57.95773934819386" x2="102.69504831500294" y2="42.7408350874714"/><line x1="119.99999999999999" y1="56" x2="119.99999999999999" y2="40"/><line x1="132.3606797749979" y1="57.957739348193854" x2="137.30495168499704" y2="42.740835087471396"/><line x1="143.51141009169896" y1="63.63932022500212" x2="152.91597412837854" y2="50.695048315002964"/><line x1="152.36067977499792" y1="72.4885899083011" x2="165.3049516849971" y2="63.084025871621535"/><line x1="158.04226065180615" y1="83.6393202250021" x2="173.2591649125286" y2="78.69504831500294"/></g>
+     <path d="M80 98 Q120 64 160 98 Q120 132 80 98 Z" fill="#e8f7ff" stroke="#0b0814" stroke-width="4"/><circle cx="120" cy="98" r="13" fill="#164a6e"/><circle cx="120" cy="98" r="6" fill="#0b0814"/><circle cx="116" cy="94" r="3" fill="#fff"/>
+<path d="M38 168 C38 134 82 128 120 146 C158 128 202 134 202 168 C202 204 166 218 140 208 C130 204 126 192 120 192 C114 192 110 204 100 208 C74 218 38 204 38 168 Z" fill="url(#m)" stroke="#0b0814" stroke-width="4" stroke-linejoin="round"/>
+<path d="M58 160 C76 150 96 152 104 160 M136 160 C144 152 164 150 182 160" stroke="#ffffff" stroke-opacity=".35" stroke-width="3" fill="none" stroke-linecap="round"/>
+<ellipse cx="84" cy="168" rx="19" ry="10" transform="rotate(8 84 168)" fill="#0b0814"/><ellipse cx="156" cy="168" rx="19" ry="10" transform="rotate(-8 156 168)" fill="#0b0814"/>
+<path d="M120 150 l5 10 l10 1 l-8 7 l3 10 l-10 -6 l-10 6 l3 -10 l-8 -7 l10 -1 Z" fill="#e8f7ff" stroke="#0b0814" stroke-width="2"/>
+<text x="120" y="282" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="30" font-weight="700" fill="#7fd6ff" letter-spacing="2">SEER</text>
+</svg>

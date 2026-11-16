@@ -1,0 +1,9 @@
+{
+  "name": "Sketchy Rumours",
+  "description": "Write something silly, the next person draws it, the next guesses the drawing, and on it goes. Then watch every rumour fall apart on the big screen.",
+  "icon": "✏️",
+  "color": "#ffb84d",
+  "minPlayers": 3,
+  "maxPlayers": 12,
+  "music": "think"
+}
