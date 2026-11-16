@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- New game: Tall Tales, for 2–10 players. Strange-but-true facts with a blank: everyone writes a believable lie, then picks the truth from the list. 34 original facts, house lies fill in for small groups, and round 2 is worth double.
+- New game: Letter Forge, for 1–16 players. Everyone gets the same nine letter tiles and types as many words as they can in 75 seconds; tile values add up, and words nobody else found score double. Words are checked against a bundled SCOWL word list.
+- New game: Crowd Read, for 2–16 players. Answer a yes-or-no question in secret, then guess how many of the room said yes. Exact guesses score big; the last question is double.
+- New game: Out of Context, for 3–12 players. Answer an innocent question, then someone else writes a new question that makes your answer sound ridiculous. The room votes for the best twist.
 - New game: Orbit Estates, a property trading board game for 2–8 players on a 32-space ring space station. Roll and fly around the ring, buy lots in seven districts, build domes and Spires, collect rent, ride the shuttle pads, draw Transmission cards and dodge Quarantine. Turning down a lot puts it up for a secret phone auction; on your turn you can mortgage, build or propose a trade (lots plus cash both ways) that the other pilot accepts on their phone. Phones show your cash and deeds at all times. The first player picks a 30, 45, 60 or 90 minute limit (or none); when time runs out everyone finishes the round and the highest net worth wins.
 - New game: Hire Wire, for 3–8 players. Everyone makes small talk, Ledger the filing cabinet shreds the answers into word tiles, and then each player answers job-interview questions by tapping together words salvaged from everyone else (plus a few office-supply glue words). The room votes, votes become salary, and a word's original owner earns royalties when it helps win votes. Three interviews, the last pays double; the top salary gets hired.
 - Phones: a game's player.js now gets the current view even if it arrived while player.js was still loading (e.g. after a refresh mid-game).

@@ -1,0 +1,9 @@
+{
+  "name": "Crowd Read",
+  "description": "Answer a yes-or-no question in secret, then guess how many of the room said yes.",
+  "icon": "📊",
+  "color": "#6ec8ff",
+  "minPlayers": 2,
+  "maxPlayers": 16,
+  "music": "party"
+}
