@@ -1,0 +1,9 @@
+{
+  "name": "Orbit Estates",
+  "description": "Buy up a ring space station, build domes, charge rent and wheel and deal on your phone. Last pilot solvent (or richest when the clock runs out) wins.",
+  "icon": "🪐",
+  "color": "#ffb84d",
+  "minPlayers": 2,
+  "maxPlayers": 8,
+  "music": "party"
+}
