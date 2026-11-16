@@ -1,0 +1,9 @@
+{
+  "name": "Out of Context",
+  "description": "Answer an innocent question. Then someone writes a new question that makes your answer sound terrible.",
+  "icon": "💬",
+  "color": "#ff7eb6",
+  "minPlayers": 3,
+  "maxPlayers": 12,
+  "music": "party"
+}

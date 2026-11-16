@@ -1,0 +1,9 @@
+{
+  "name": "Tall Tales",
+  "description": "Strange true facts with a blank. Write a lie good enough to fool everyone, then find the truth.",
+  "icon": "📜",
+  "color": "#e8c37a",
+  "minPlayers": 2,
+  "maxPlayers": 10,
+  "music": "think"
+}
