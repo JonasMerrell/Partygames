@@ -1,5 +1,26 @@
 [
  {
+  "title": "No phone? Share one!",
+  "text": "A grown-up can add kids on their phone. The phone shows whose turn it is with their animal, and you pass it along.",
+  "scene": [
+   {
+    "phone": "Who's playing on this phone?",
+    "buttons": [
+     "✓ Mom",
+     "🧒 Leo",
+     "🧒 Ava"
+    ],
+    "tap": 1
+   },
+   {
+    "icon": "🦊",
+    "label": "Leo's turn!",
+    "fx": "pop"
+   }
+  ],
+  "flow": true
+ },
+ {
   "title": "Pick a card",
   "text": "Everyone gets two picture cards on their phone. Pick the one you want to draw and keep it secret!",
   "scene": [
@@ -16,7 +37,7 @@
  },
  {
   "title": "Draw it",
-  "text": "Draw your card on your phone with crayons, a paint bucket and an eraser. No letters or numbers!",
+  "text": "Draw your card with crayons, a paint bucket and an eraser. Tap 🔊 to hear the card. No letters or numbers!",
   "scene": [
    {
     "card": "🦃 Turkey on roller skates",

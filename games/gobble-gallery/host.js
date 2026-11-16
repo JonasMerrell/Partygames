@@ -6,29 +6,41 @@
 // coloured buttons. The TV reads the four choices out loud, so players who
 // can't read yet can still play by colour, shape and emoji.
 //
+// Kids don't need their own phone: before the game each phone says who's
+// playing on it, so a parent can add several kids (and play too, or not).
+// A shared phone takes turns: "🦊 Leo's turn! Pass the phone", so secret
+// cards stay secret. Every player gets an animal, shown on the phone and
+// the TV, so a kid who can't read their name can still find themselves.
+//
 // Scoring is all upside: 2 pies for a right guess, 1 pie to the artist for
 // every person who got theirs, and a bonus pie if everyone did. Nobody loses
 // points, there's no speed race, and at the end every player gets an award.
 //
-// Phones run player.js (a kid-sized drawing pad and big answer buttons). The
-// two sides talk with messages whose kind starts with "gg-".
+// Phones run player.js. The two sides talk with messages whose kind starts
+// with "gg-".
 import { CARDS, TITLES } from './cards.js';
+import { addStyles } from './tv-style.js';
 
 const PACES = {
   quick: { label: '🐇 Quick', rounds: 1, draw: 60 },
   normal: { label: '🦃 Normal', rounds: 2, draw: 80 },
   relaxed: { label: '🐢 Take our time', rounds: 2, draw: 120 },
 };
+const WHO_TIME = 60;
 const PICK_TIME = 20;
 const GUESS_TIME = 25;
 const GRACE = 5;           // seconds phones get to send their drawing after time's up
 const MAX_IMG = 450_000;   // characters of data URL we accept for a drawing
+const MAX_KIDS = 4;        // extra players on one phone
+const MAX_SEATS = 16;
 const REACTIONS = ['❤️', '😂', '🤩', '🦃'];
+const AVATARS = ['🦊', '🐻', '🐰', '🐸', '🐼', '🐯', '🐨', '🐵', '🦁', '🐷', '🐮', '🐔', '🐧', '🦄', '🐶', '🐱', '🦉', '🐢'];
+const KID_COLORS = ['#ff9ecd', '#7ee0c3', '#ffd166', '#a5b4fc', '#ffb38a', '#9be564', '#7cc6fe', '#f4a6ff'];
 const TILES = [            // colour + shape, so "the blue star one" works for little kids
-  { c: '#e8553e', s: '●', name: 'red circle' },
-  { c: '#f2b134', s: '▲', name: 'yellow triangle' },
-  { c: '#4f9d5d', s: '■', name: 'green square' },
-  { c: '#4a7fd1', s: '★', name: 'blue star' },
+  { c: '#e8553e', s: '●' },
+  { c: '#f2b134', s: '▲' },
+  { c: '#4f9d5d', s: '■' },
+  { c: '#4a7fd1', s: '★' },
 ];
 
 export default async function (ctx) {
@@ -56,10 +68,19 @@ export default async function (ctx) {
   };
   const hush = () => { try { window.speechSynthesis?.cancel(); } catch {} };
 
+  // ---- seats: the players. A phone can carry several. ----
+  let seats = [];   // { id, name, color, avatar, phone }
+  const online = (s) => !!ctx.player(s.phone.id)?.connected;
+  const seatsOf = (phoneId) => seats.filter((s) => s.phone.id === phoneId);
+  const label = (s) => `${s.avatar} ${s.name}`;
+  const shared = () => seats.some((s) => seatsOf(s.phone.id).length > 1);
+  const pub = (s) => ({ sid: s.id, name: s.name, color: s.color, avatar: s.avatar });
+
   // ---- phones talk to us here ----
   const lastView = new Map();
-  let collecting = null;   // { phase, answers: Map, who: Set, after, onAnswer }
-  let reacting = null;     // (player, emoji) => void
+  let collecting = null;
+  let reacting = null;     // (phone, emoji) => void
+  let whoing = null;       // (phone, data) => void
   const show = (to, view) => {
     for (const p of [].concat(to === 'all' ? ctx.players : to)) lastView.set(p.id, view);
     ctx.show(to, view);
@@ -69,37 +90,63 @@ export default async function (ctx) {
     if (d.kind === 'gg-hello') {
       const v = lastView.get(p.id);
       if (v) ctx.show(p, v);
-    } else if (d.kind === 'gg-answer' && collecting && d.phase === collecting.phase
-      && collecting.who.has(p.id) && !collecting.answers.has(p.id)) {
-      collecting.answers.set(p.id, d.value);
-      if (collecting.after) show(p, collecting.after(p, d.value));
-      collecting.onAnswer?.(p, d.value);
-    } else if (d.kind === 'gg-react' && REACTIONS.includes(d.e)) reacting?.(p, d.e);
+    } else if (d.kind === 'gg-answer' && collecting && d.phase === collecting.phase) {
+      collecting.take(p, d.sid, d.value);
+    } else if (d.kind === 'gg-who') whoing?.(p, d);
+    else if (d.kind === 'gg-react' && REACTIONS.includes(d.e)) reacting?.(p, d.e);
   });
 
-  // Give each player their own view and wait for answers. At `seconds` the
-  // phones are told time's up and send what they have; anyone still quiet
-  // GRACE seconds later is skipped.
+  // One job per seat. Seats that share a phone take turns on it, so that
+  // phone gets time for each of them. At a phone's deadline it is told time's
+  // up and sends what it has; anything still missing GRACE seconds later is
+  // skipped. Resolves to Map(seatId → answer).
   let phaseSeq = 0;
-  async function collect(jobs, seconds, { after, onAnswer, grace = GRACE } = {}) {
+  async function collect(jobs, seconds, { after, onAnswer, grace = GRACE, handoff = true } = {}) {
     const phase = `g${++phaseSeq}`;
-    const ends = Date.now() + seconds * 1000;
-    collecting = { phase, answers: new Map(), who: new Set(jobs.map((j) => j.p.id)), after, onAnswer };
-    for (const j of jobs) show(j.p, { ...j.view, phase, seconds, ends });
-    const stopClock = ctx.clock(seconds);
-    let warned = false;
-    const done = () => [...collecting.who].every((id) => collecting.answers.has(id) || !ctx.player(id)?.connected);
+    const now0 = Date.now();
+    const phones = new Map();   // phoneId → { phone, turns, ends, warned }
+    for (const j of jobs) {
+      const ph = phones.get(j.seat.phone.id) || { phone: j.seat.phone, turns: [] };
+      ph.turns.push({ ...pub(j.seat), view: j.view });
+      phones.set(j.seat.phone.id, ph);
+    }
+    let longest = 0;
+    for (const ph of phones.values()) {
+      const secs = seconds * ph.turns.length;
+      longest = Math.max(longest, secs);
+      ph.ends = now0 + secs * 1000;
+      ph.secs = secs;
+    }
+    const answers = new Map();
+    const view = (ph) => ({ gg: 'turns', phase, handoff: handoff && ph.turns.length > 1, seconds: ph.secs, ends: ph.ends,
+      turns: ph.turns.filter((t) => !answers.has(t.sid)) });
+    collecting = {
+      phase,
+      take(p, sid, value) {
+        const ph = phones.get(p.id);
+        const t = ph?.turns.find((x) => x.sid === sid);
+        if (!t || answers.has(sid)) return;
+        answers.set(sid, value);
+        const left = ph.turns.filter((x) => !answers.has(x.sid));
+        if (left.length) lastView.set(p.id, view(ph));   // a reload carries on with the next turn
+        else if (after) show(p, after);
+        onAnswer?.(seats.find((s) => s.id === sid), value);
+      },
+    };
+    for (const ph of phones.values()) show(ph.phone, view(ph));
+    const stopClock = ctx.clock(longest);
+    const finished = (ph) => ph.turns.every((t) => answers.has(t.sid)) || !ctx.player(ph.phone.id)?.connected
+      || Date.now() >= ph.ends + grace * 1000;
     try {
-      while (!done()) {
+      while (![...phones.values()].every(finished)) {
         const now = Date.now();
-        if (!warned && now >= ends) { warned = true; ctx.broadcast({ kind: 'gg-timesup', phase }); }
-        if (now >= ends + grace * 1000) break;
+        for (const ph of phones.values()) {
+          if (!ph.warned && now >= ph.ends) { ph.warned = true; ctx.send(ph.phone, { kind: 'gg-timesup', phase }); }
+        }
         await ctx.sleep(150);
       }
-    } finally { stopClock(); }
-    const got = collecting.answers;
-    collecting = null;
-    return got;
+    } finally { stopClock(); collecting = null; }
+    return answers;
   }
 
   // ---- intro ----
@@ -111,21 +158,25 @@ export default async function (ctx) {
   say('Welcome to Gobble Gallery!');
   await ctx.sleep(3500);
 
-  const players0 = ctx.connected;
-  if (players0.length < 2) return ctx.say('Not enough players', 'Gobble Gallery needs at least 2 people.', 5000);
+  const phones0 = ctx.connected;
+  if (!phones0.length) return;
 
   // ---- how long? ----
-  const vip = players0[0];
+  const vip = phones0[0];
   paint(h('div.gg-page.gg-center', turkey('gg-mascot.small'),
     h('h1.gg-title', 'How long should we play?'),
     h('p.gg-sub', h('b', { style: { color: vip.color } }, vip.name), ' is choosing on their phone.')));
-  show(players0.filter((p) => p.id !== vip.id), { gg: 'wait', emoji: '⏳', text: `${vip.name} is choosing…` });
+  show(phones0.filter((p) => p.id !== vip.id), { gg: 'wait', emoji: '⏳', text: `${vip.name} is choosing…` });
   const paceAns = await ctx.ask(vip, {
     title: 'How long should we play?',
     choices: Object.entries(PACES).map(([k, v]) => ({
       label: `${v.label}: ${v.rounds} round${v.rounds > 1 ? 's' : ''}, ${v.draw}s to draw`, value: k })),
   }, { timeout: 20, after: { wait: 'Great choice!' } });
   const pace = PACES[paceAns.get(vip.id)] || PACES.normal;
+
+  // ---- who's playing on each phone? ----
+  await whoIsPlaying(ctx.connected);
+  if (seats.length < 2) return ctx.say('Not enough players', 'Gobble Gallery needs at least 2 players. Add a kid on your phone!', 6000);
 
   // ---- how to play ----
   paint(h('div.gg-page.gg-center',
@@ -135,42 +186,42 @@ export default async function (ctx) {
       h('div.gg-step', h('div.gg-big', '🖍️'), h('b', '2. Draw it')),
       h('div.gg-step', h('div.gg-big', '🤔'), h('b', '3. Guess the others')),
       h('div.gg-step', h('div.gg-big', '🥧'), h('b', '4. Win pies!'))),
-    h('p.gg-sub', 'No letters in your drawing! Right guesses win 2 pies, and artists win a pie for everyone who gets theirs.')));
+    h('p.gg-sub', shared()
+      ? 'Sharing a phone? Pass it when it says your animal\'s turn. No peeking at someone else\'s card!'
+      : 'No letters in your drawing! Right guesses win 2 pies, and artists win a pie for everyone who gets theirs.')));
   show('all', { gg: 'wait', emoji: '👀', text: 'Look at the TV!' });
-  say('Pick a card. Draw it. Then guess what everyone else drew. Right guesses win pies!');
+  say(`Pick a card. Draw it. Then guess what everyone else drew. Right guesses win pies!${shared() ? ' If you share a phone, pass it when it is your turn.' : ''}`);
   await ctx.sleep(8000);
 
-  const pies = new Map(ctx.players.map((p) => [p.id, 0]));
-  const stats = new Map(ctx.players.map((p) => [p.id, { right: 0, gotMine: 0, love: 0 }]));
-  const stat = (id) => { if (!stats.has(id)) stats.set(id, { right: 0, gotMine: 0, love: 0 }); return stats.get(id); };
+  const pies = new Map(seats.map((s) => [s.id, 0]));
+  const stats = new Map(seats.map((s) => [s.id, { right: 0, gotMine: 0, love: 0 }]));
   const addPies = (id, n) => pies.set(id, (pies.get(id) || 0) + n);
-  const gallery = [];   // every drawing, for the gallery wall at the end
+  const gallery = [];
   let deck = ctx.shuffle(CARDS);
   const deal = () => { if (!deck.length) deck = ctx.shuffle(CARDS); return deck.pop(); };
 
   for (let round = 1; round <= pace.rounds; round++) {
-    const players = ctx.connected;
-    if (players.length < 2) break;
+    const here = seats.filter(online);
+    if (here.length < 2) break;
     const last = round === pace.rounds;
 
     // ---- pick a card ----
     await banner(pace.rounds > 1 ? `Round ${round}` : 'Let\'s draw!', last && pace.rounds > 1 ? 'Last round!' : 'Pick a card on your phone', 2500);
-    const hands = new Map(players.map((p) => [p.id, [deal(), deal()]]));
+    const hands = new Map(here.map((s) => [s.id, [deal(), deal()]]));
     const picked = new Set();
     const pickBoard = () => paint(h('div.gg-page.gg-center',
       h('h1.gg-title', '🃏 Pick a card!'),
       h('p.gg-sub', 'Choose the one you want to draw. Keep it secret!'),
-      easels(players, picked)));
+      easels(here, picked)));
     pickBoard();
     say('Pick a card to draw. Keep it secret!');
-    const picks = await collect(players.map((p) => ({ p, view: { gg: 'pick', cards: hands.get(p.id) } })), PICK_TIME, {
+    const picks = await collect(here.map((s) => ({ seat: s, view: { gg: 'pick', cards: hands.get(s.id) } })), PICK_TIME, {
       grace: 1,
-      after: (p, i) => ({ gg: 'wait', emoji: hands.get(p.id)[i === 1 ? 1 : 0].e, text: 'Got it! Get your crayons ready…' }),
-      onAnswer: (p) => { picked.add(p.id); sfx('pop'); pickBoard(); },
+      after: { gg: 'wait', emoji: '🖍️', text: 'Got it! Get your crayons ready…' },
+      onAnswer: (s) => { picked.add(s.id); sfx('pop'); pickBoard(); },
     });
-    const cardOf = new Map(players.map((p) => [p.id, hands.get(p.id)[picks.get(p.id) === 1 ? 1 : 0]]));
-    // Put the card you didn't pick back in the deck for later rounds.
-    for (const p of players) deck.unshift(hands.get(p.id)[picks.get(p.id) === 1 ? 0 : 1]);
+    const cardOf = new Map(here.map((s) => [s.id, hands.get(s.id)[picks.get(s.id) === 1 ? 1 : 0]]));
+    for (const s of here) deck.unshift(hands.get(s.id)[picks.get(s.id) === 1 ? 0 : 1]);
 
     // ---- draw ----
     const drawn = new Set();
@@ -178,26 +229,25 @@ export default async function (ctx) {
       turkey('gg-mascot.small.draw'),
       h('h1.gg-title', '🖍️ Everybody draw!'),
       h('p.gg-sub', 'Draw your card. No letters or numbers!'),
-      easels(players, drawn)));
+      easels(here, drawn)));
     drawBoard();
     say('Everybody draw!');
-    const got = await collect(players.map((p) => ({ p, view: { gg: 'draw', card: cardOf.get(p.id) } })), pace.draw, {
-      after: () => ({ gg: 'wait', emoji: '🖼️', text: 'Beautiful! Waiting for the other artists…' }),
-      onAnswer: (p) => { drawn.add(p.id); sfx('ding'); drawBoard(); },
+    const got = await collect(here.map((s) => ({ seat: s, view: { gg: 'draw', card: cardOf.get(s.id) } })), pace.draw, {
+      after: { gg: 'wait', emoji: '🖼️', text: 'Beautiful! Waiting for the other artists…' },
+      onAnswer: (s) => { drawn.add(s.id); sfx('ding'); drawBoard(); },
     });
     const art = [];
-    for (const p of players) {
-      const v = got.get(p.id);
+    for (const s of here) {
+      const v = got.get(s.id);
       const ok = v && typeof v === 'object' && !v.blank && typeof v.img === 'string'
         && /^data:image\/(png|jpeg|webp);base64,/.test(v.img) && v.img.length < MAX_IMG;
-      if (ok) art.push({ by: p, card: cardOf.get(p.id), img: v.img, right: 0, love: 0 });
+      if (ok) art.push({ by: s, card: cardOf.get(s.id), img: v.img, right: 0, love: 0 });
     }
     sfx('whoosh');
     show('all', { gg: 'wait', emoji: '🖼️', text: 'Crayons down! Look at the TV.' });
     if (!art.length) { await banner('Oh no, empty easels!', 'Nobody finished a drawing this time.', 4000); continue; }
     await banner('🖼️ Gallery time!', 'What did everyone draw?', 3000);
 
-    // ---- guess each drawing ----
     const roundCards = [...cardOf.values()];
     for (const [i, a] of ctx.shuffle(art).entries()) {
       await guessDrawing(a, i, art.length, roundCards);
@@ -212,11 +262,12 @@ export default async function (ctx) {
     show('all', { gg: 'wait', emoji: '🖼️', text: 'Look at all that art!' });
     paint(h('div.gg-page',
       h('h1.gg-title', '🖼️ The Gobble Gallery'),
-      h('div.gg-wall', { style: { '--w': gallery.length <= 6 ? '28vh' : gallery.length <= 12 ? '20vh' : '15vh' } }, gallery.map((a, i) => h('figure.gg-mini', { style: { '--r': `${((i * 37) % 7) - 3}deg`, '--d': `${i * 0.12}s` } },
-        h('img', { src: a.img, alt: '' }),
-        h('figcaption', h('span', a.card.e), ' ', a.card.t, h('small', { style: { background: a.by.color } }, a.by.name)))))));
+      h('div.gg-wall', { style: { '--w': `calc(${gallery.length <= 6 ? 28 : gallery.length <= 12 ? 20 : 14} * var(--fh))` } },
+        gallery.map((a, i) => h('figure.gg-mini', { style: { '--r': `${((i * 37) % 7) - 3}deg`, '--d': `${i * 0.12}s` } },
+          h('img', { src: a.img, alt: '' }),
+          h('figcaption', h('span', a.card.e), ' ', a.card.t, h('small', { style: { background: a.by.color } }, label(a.by))))))));
     say('Look at all that art!');
-    await ctx.sleep(Math.min(16000, 6000 + gallery.length * 900));
+    await ctx.sleep(Math.min(18000, 6000 + gallery.length * 900));
   }
 
   await scoreboard('Final pie count', true);
@@ -226,6 +277,52 @@ export default async function (ctx) {
   hush();
 
   // ===================================================================
+
+  async function whoIsPlaying(phones) {
+    // Every phone says who's on it. Until it answers, its owner plays alone.
+    const answers = new Map();
+    const board = () => {
+      const list = buildSeats(phones, answers);
+      paint(h('div.gg-page.gg-center',
+        h('h1.gg-title', '👨‍👩‍👧 Who\'s playing?'),
+        h('p.gg-sub', 'No phone? No problem! Grown-ups can add kids on their phone and pass it around.'),
+        h('div.gg-easels', list.map((s, k) => h('div.gg-easel.done', { style: { '--c': s.color, '--r': `${((k * 37) % 7) - 3}deg` } },
+          h('div.gg-canvas.ava', s.avatar), h('span', s.name)))),
+        h('p.gg-sub', `${phones.filter((p) => answers.has(p.id)).length} of ${phones.length} phones ready`)));
+    };
+    board();
+    say('Who is playing? No phone? No problem! Grown-ups can add kids on their phone.');
+    const clean = (v) => (typeof v === 'string' ? v.replace(/\s+/g, ' ').trim().slice(0, 16) : '');
+    whoing = (p, d) => {
+      if (!phones.some((x) => x.id === p.id) || answers.has(p.id)) return;
+      const kids = (Array.isArray(d.kids) ? d.kids : []).map(clean).filter(Boolean).slice(0, MAX_KIDS);
+      answers.set(p.id, { me: d.me !== false, kids });
+      show(p, { gg: 'wait', emoji: '👍', text: kids.length ? `${kids.length + (d.me !== false ? 1 : 0)} players on this phone. Pass it when it's your turn!` : 'Ready!' });
+      sfx('pop');
+      board();
+    };
+    for (const p of phones) show(p, { gg: 'who', name: p.name, max: MAX_KIDS, seconds: WHO_TIME, ends: Date.now() + WHO_TIME * 1000 });
+    const stopClock = ctx.clock(WHO_TIME);
+    const until = Date.now() + WHO_TIME * 1000;
+    try {
+      while (Date.now() < until && !phones.every((p) => answers.has(p.id) || !ctx.player(p.id)?.connected)) await ctx.sleep(200);
+    } finally { stopClock(); whoing = null; }
+    await ctx.sleep(1200);
+    seats = buildSeats(phones, answers);
+    function buildSeats(list, ans) {
+      const out = [];
+      let kidColor = 0;
+      for (const p of list) {
+        const a = ans.get(p.id) || { me: true, kids: [] };
+        if (a.me || !a.kids.length) out.push({ id: p.id, name: p.name, color: p.color, phone: p });
+        a.kids.forEach((name, k) => out.push({ id: `${p.id}:${k}`, name, color: KID_COLORS[kidColor++ % KID_COLORS.length], phone: p }));
+      }
+      out.splice(MAX_SEATS);
+      out.forEach((s, k) => { s.avatar = AVATARS[k % AVATARS.length]; });
+      return out;
+    }
+    return answers;
+  }
 
   async function guessDrawing(a, i, n, roundCards) {
     // Four choices: the real card, up to two other cards drawn this round (so
@@ -243,7 +340,7 @@ export default async function (ctx) {
     }
     const opts = ctx.shuffle([a.card, ...fake]).map((c, k) => ({ ...c, ...TILES[k] }));
     const answer = opts.findIndex((o) => o.t === a.card.t);
-    const guessers = ctx.connected.filter((p) => p.id !== a.by.id);
+    const guessers = seats.filter((s) => s.id !== a.by.id && online(s));
     const picks = new Map();
 
     const frame = h('div.gg-frame', h('img', { src: a.img, alt: 'drawing' }));
@@ -254,68 +351,83 @@ export default async function (ctx) {
       ? `${picks.size} of ${guessers.length} guessed`
       : 'Nobody else is here to guess!');
     setStatus();
+    const q = h('b', 'What is it?');
     paint(h('div.gg-page.gg-guess',
       h('div.gg-count', `Drawing ${i + 1} of ${n}`),
       h('div.gg-guess-body', frame, h('div.gg-tiles', tiles)),
-      h('div.gg-q', h('b', 'What is it?'), status)));
+      h('div.gg-q', q, status)));
     sfx('pop');
     hush();
     say(`What is it? Is it ${opts.map((o) => o.t).join('? ... ')}?`);
 
-    show(a.by, { gg: 'mine', card: a.card });
+    // A phone whose only player drew this one just waits.
+    for (const ph of new Set(seats.map((s) => s.phone))) {
+      if (seatsOf(ph.id).every((s) => s.id === a.by.id)) show(ph, { gg: 'mine', card: a.card, who: pub(a.by) });
+    }
     if (guessers.length) {
-      await collect(guessers.map((p) => ({ p, view: { gg: 'guess', options: opts.map(({ e, t, c, s }) => ({ e, t, c, s })) } })), GUESS_TIME, {
-        grace: 0,
-        after: (p, k) => ({ gg: 'wait', emoji: opts[k]?.e || '🤔', text: opts[k] ? `You picked “${opts[k].t}”` : 'Got it!' }),
-        onAnswer: (p, k) => { if (Number.isInteger(k) && opts[k]) picks.set(p.id, k); sfx('pop'); setStatus(); },
+      await collect(guessers.map((s) => ({ seat: s, view: {
+        gg: 'guess', options: opts.map(({ e, t, c, s: sh }) => ({ e, t, c, s: sh })),
+        note: a.by.phone.id === s.phone.id ? `Shh! ${a.by.name} drew this one.` : null,
+      } })), GUESS_TIME, {
+        grace: 0, handoff: false,
+        after: { gg: 'wait', emoji: '🤔', text: 'Got it! Watch the TV…' },
+        onAnswer: (s, k) => { if (Number.isInteger(k) && opts[k]) picks.set(s.id, k); sfx('pop'); setStatus(); },
       });
     }
 
     // ---- reveal ----
     hush();
-    const right = guessers.filter((p) => picks.get(p.id) === answer);
+    const right = guessers.filter((s) => picks.get(s.id) === answer);
     a.right = right.length;
-    for (const p of right) { addPies(p.id, 2); stat(p.id).right++; }
+    for (const s of right) { addPies(s.id, 2); stats.get(s.id).right++; }
     let artistPies = right.length;
     const everyone = guessers.length > 1 && right.length === guessers.length;
     if (everyone) artistPies++;
     addPies(a.by.id, artistPies);
-    stat(a.by.id).gotMine += right.length;
+    stats.get(a.by.id).gotMine += right.length;
 
     tiles.forEach((t, k) => {
       t.classList.add(k === answer ? 'yes' : 'no');
-      t.querySelector('.gg-who').replaceChildren(...guessers.filter((p) => picks.get(p.id) === k)
-        .map((p) => h('span.gg-chip', { style: { background: p.color } }, p.name)));
+      t.querySelector('.gg-who').replaceChildren(...guessers.filter((s) => picks.get(s.id) === k)
+        .map((s) => h('span.gg-chip', { style: { background: s.color } }, label(s))));
     });
-    frame.append(h('div.gg-tag', 'by ', h('b', { style: { color: a.by.color } }, a.by.name)));
+    frame.append(h('div.gg-tag', 'by ', h('b', { style: { color: a.by.color } }, label(a.by))));
     const fx = h('div.gg-fx');
     root.append(fx);
     let line;
-    if (!guessers.length) line = `It was ${a.card.t}!`;
+    if (!guessers.length) line = '';
     else if (everyone) line = `Everybody got it! ${a.by.name} wins ${artistPies} pies!`;
     else if (right.length) line = `${right.length === 1 ? right[0].name + ' got it' : right.length + ' people got it'}! ${a.by.name} wins ${artistPies} pie${artistPies === 1 ? '' : 's'}.`;
     else line = 'A tricky one! Nobody guessed it this time.';
     status.replaceChildren(line);
-    root.querySelector('.gg-q b').replaceChildren(`It's ${a.card.e} ${a.card.t}!`);
+    q.replaceChildren(`It's ${a.card.e} ${a.card.t}!`);
     sfx(right.length ? 'win' : 'ding');
-    say(`It's ${a.card.t}! Drawn by ${a.by.name}. ${line.replace(/^It was.*$/, '')}`);
+    say(`It's ${a.card.t}! Drawn by ${a.by.name}. ${line}`);
 
-    for (const p of guessers) {
-      const ok = picks.get(p.id) === answer;
-      show(p, { gg: 'result', ok, card: a.card, text: ok ? 'You got it! +2 🥧' : picks.has(p.id) ? 'Good try!' : 'Out of time!',
-        react: REACTIONS, artist: a.by.name });
+    // One result screen per phone, with a line for each of its players.
+    for (const ph of new Set(seats.map((s) => s.phone))) {
+      const mine = seatsOf(ph.id);
+      const rows = [];
+      for (const s of mine) {
+        if (s.id === a.by.id) rows.push({ ...pub(s), mine: true, text: artistPies ? `${right.length} got yours! +${artistPies} 🥧` : 'Tricky! Nobody got yours.' });
+        else if (guessers.includes(s)) {
+          const ok = picks.get(s.id) === answer;
+          rows.push({ ...pub(s), ok, text: ok ? 'You got it! +2 🥧' : picks.has(s.id) ? 'Good try!' : 'Out of time!' });
+        }
+      }
+      if (!rows.length) continue;
+      const artistHere = mine.some((s) => s.id === a.by.id);
+      show(ph, { gg: 'result', card: a.card, rows, react: artistHere && mine.length === 1 ? [] : REACTIONS, artist: a.by.name });
     }
-    show(a.by, { gg: 'result', mine: true, card: a.card,
-      text: artistPies ? `${right.length} got yours! +${artistPies} 🥧` : 'Tricky! Nobody got yours this time.', react: [] });
 
     const reacted = new Map();
     reacting = (p, e) => {
       const f = h('span.gg-fly', { style: { left: `${8 + Math.random() * 84}%`, '--x': `${Math.random() * 80 - 40}px` } }, e);
       fx.append(f); setTimeout(() => f.remove(), 2600);
-      if (p.id !== a.by.id) {
+      if (p.id !== a.by.phone.id) {
         const nTimes = (reacted.get(p.id) || 0) + 1;
         reacted.set(p.id, nTimes);
-        if (nTimes <= 3) { a.love++; stat(a.by.id).love++; }
+        if (nTimes <= 3) { a.love++; stats.get(a.by.id).love++; }
       }
     };
     await ctx.sleep(7000);
@@ -324,55 +436,53 @@ export default async function (ctx) {
   }
 
   async function scoreboard(title, final = false) {
-    const rows = ctx.players.map((p) => ({ p, n: pies.get(p.id) || 0 })).sort((x, y) => y.n - x.n);
+    const rows = seats.map((s) => ({ s, n: pies.get(s.id) || 0 })).sort((x, y) => y.n - x.n);
     const top = Math.max(1, rows[0]?.n || 0);
     show('all', { gg: 'wait', emoji: '🥧', text: 'Pies are on the TV!' });
     paint(h('div.gg-page.gg-center',
       h('h1.gg-title', `🥧 ${title}`),
-      h('div.gg-scores', rows.map(({ p, n }, k) => h('div.gg-srow', { style: { '--d': `${k * 0.15}s` } },
-        h('span.gg-sname', { style: { color: p.color } }, p.name),
-        h('div.gg-sbar', h('div', { style: { width: `${Math.max(3, (n / top) * 100)}%`, background: p.color } })),
+      h('div.gg-scores' + (rows.length > 10 ? '.many' : ''), rows.map(({ s, n }, k) => h('div.gg-srow', { style: { '--d': `${k * 0.12}s` } },
+        h('span.gg-sname', h('span.gg-ava', s.avatar), h('span', { style: { color: s.color } }, s.name)),
+        h('div.gg-sbar', h('div', { style: { width: `${Math.max(3, (n / top) * 100)}%`, background: s.color } })),
         h('span.gg-snum', `${n} 🥧`))))));
     sfx(final ? 'win' : 'ding');
-    await ctx.sleep(final ? 6000 : 5000);
+    await ctx.sleep(final ? 6500 : 5000);
   }
 
   // Everybody gets an award. The real ones go to whoever earned them, and the
   // rest of the table gets a fun title, so nobody goes home empty-handed.
   async function awards() {
-    const all = ctx.players.filter((p) => pies.has(p.id));
+    const all = seats;
     if (!all.length) return;
-    const best = Math.max(...all.map((p) => pies.get(p.id)));
-    const winners = all.filter((p) => pies.get(p.id) === best);
+    const best = Math.max(...all.map((s) => pies.get(s.id)));
+    const winners = all.filter((s) => pies.get(s.id) === best);
     const given = new Map();
-    for (const p of winners) given.set(p.id, { t: '🏆 Top Turkey', why: `${best} pies!` });
+    if (best > 0) for (const s of winners) given.set(s.id, { t: '🏆 Top Turkey', why: `${best} pies!` });
     const award = (title, key, why) => {
-      const val = (p) => stat(p.id)[key];
+      const val = (s) => stats.get(s.id)[key];
       const max = Math.max(0, ...all.map(val));
       if (!max) return;
-      const p = all.filter((x) => val(x) === max && !given.has(x.id))[0];
-      if (p) given.set(p.id, { t: title, why: why(max) });
+      const s = all.filter((x) => val(x) === max && !given.has(x.id))[0];
+      if (s) given.set(s.id, { t: title, why: why(max) });
     };
     award('🥧 Pie Picasso', 'gotMine', (n) => `${n} right guess${n === 1 ? '' : 'es'} on their art`);
     award('👀 Eagle Eyes', 'right', (n) => `guessed ${n} right`);
     award('❤️ Crowd Favourite', 'love', (n) => `${n} reaction${n === 1 ? '' : 's'}`);
-    const spare = ctx.shuffle(TITLES.filter((t) => ![...given.values()].some((g) => g.t === t)
-      && !/Picasso|Eagle|Favourite|Top Turkey/.test(t)));
-    for (const p of all) if (!given.has(p.id)) given.set(p.id, { t: spare.pop() || '🦃 Turkey Trotter', why: 'thanks for playing!' });
+    const spare = ctx.shuffle(TITLES.filter((t) => !/Picasso|Eagle|Favourite|Top Turkey/.test(t)));
+    for (const s of all) if (!given.has(s.id)) given.set(s.id, { t: spare.pop() || '🦃 Turkey Trotter', why: 'thanks for playing!' });
 
-    for (const p of all) {
-      const g = given.get(p.id);
-      show(p, { gg: 'award', title: g.t, text: g.why, win: winners.includes(p) });
+    for (const ph of new Set(all.map((s) => s.phone))) {
+      show(ph, { gg: 'award', rows: seatsOf(ph.id).map((s) => ({ ...pub(s), title: given.get(s.id).t, text: given.get(s.id).why, win: best > 0 && winners.includes(s) })) });
     }
     paint(h('div.gg-page.gg-center',
       turkey('gg-mascot.small.party'),
-      h('h1.gg-title', winners.length > 1 ? `🏆 ${winners.map((p) => p.name).join(' & ')} win!` : `🏆 ${winners[0].name} wins!`),
-      h('div.gg-awards', all.map((p, k) => h('div.gg-award', { style: { '--c': p.color, '--d': `${k * 0.25}s` } },
-        h('div.gg-aname', p.name), h('div.gg-atitle', given.get(p.id).t), h('small', given.get(p.id).why)))),
+      h('h1.gg-title', best === 0 ? '🦃 What a team!' : winners.length > 3 ? `🏆 ${winners.length}-way tie!` : `🏆 ${winners.map(label).join(' & ')} ${winners.length > 1 ? 'win' : 'wins'}!`),
+      h('div.gg-awards' + (all.length > 8 ? '.many' : ''), all.map((s, k) => h('div.gg-award', { style: { '--c': s.color, '--d': `${k * 0.2}s` } },
+        h('div.gg-aname', s.avatar, ' ', s.name), h('div.gg-atitle', given.get(s.id).t), h('small', given.get(s.id).why)))),
       h('p.gg-sub', 'Happy Thanksgiving! 🍂')));
     sfx('win');
-    say(`${winners.map((p) => p.name).join(' and ')} ${winners.length > 1 ? 'win' : 'wins'}! Happy Thanksgiving, everybody!`);
-    await ctx.sleep(Math.min(16000, 8000 + all.length * 700));
+    say(best === 0 ? 'What a team! Happy Thanksgiving, everybody!' : `${winners.map((s) => s.name).join(' and ')} ${winners.length > 1 ? 'win' : 'wins'}! Happy Thanksgiving, everybody!`);
+    await ctx.sleep(Math.min(18000, 8000 + all.length * 700));
   }
 
   async function banner(title, sub, ms) {
@@ -382,19 +492,18 @@ export default async function (ctx) {
     await ctx.sleep(ms);
   }
 
-  function easels(players, done) {
-    return h('div.gg-easels', players.map((p, k) => h('div.gg-easel' + (done.has(p.id) ? '.done' : '') + (p.connected ? '' : '.away'),
-      { style: { '--c': p.color, '--r': `${((k * 37) % 7) - 3}deg` } },
-      h('div.gg-canvas', done.has(p.id) ? '✓' : '🖍️'), h('span', p.name))));
+  function easels(list, done) {
+    return h('div.gg-easels' + (list.length > 10 ? '.many' : ''), list.map((s, k) => h('div.gg-easel' + (done.has(s.id) ? '.done' : '') + (online(s) ? '' : '.away'),
+      { style: { '--c': s.color, '--r': `${((k * 37) % 7) - 3}deg` } },
+      h('div.gg-canvas', h('span.gg-eava', s.avatar), h('span.gg-emark', done.has(s.id) ? '✓' : '🖍️')), h('span', s.name))));
   }
 
   function turkey(cls) {
     // An original cartoon turkey drawn in SVG: round body, a fan of autumn
     // feathers, big friendly eyes.
-    const NS = 'http://www.w3.org/2000/svg';
     const wrap = h('div.' + cls);
     const feathers = ['#e8553e', '#f2b134', '#4f9d5d', '#e8813e', '#c9473b', '#f2b134', '#e8553e'];
-    wrap.innerHTML = `<svg viewBox="0 0 200 200" xmlns="${NS}" aria-hidden="true">
+    wrap.innerHTML = `<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
       <g class="gg-tail">${feathers.map((c, k) => `<ellipse cx="100" cy="62" rx="17" ry="52" fill="${c}"
         transform="rotate(${-72 + k * 24} 100 112)" stroke="#5a2e12" stroke-width="3"/>`).join('')}</g>
       <ellipse cx="100" cy="128" rx="52" ry="48" fill="#8b5a2b" stroke="#5a2e12" stroke-width="4"/>
@@ -411,105 +520,4 @@ export default async function (ctx) {
     </svg>`;
     return wrap;
   }
-}
-
-function addStyles() {
-  if (!document.getElementById('gg-font')) {
-    document.head.append(Object.assign(document.createElement('link'), { id: 'gg-font', rel: 'stylesheet',
-      href: 'https://fonts.googleapis.com/css2?family=Fredoka:wght@500;700&display=swap' }));
-  }
-  document.getElementById('gg-css')?.remove();
-  document.head.append(Object.assign(document.createElement('style'), { id: 'gg-css', textContent: `
-  .gg { --cream: #fff6e5; --ink: #4a2a12; --orange: #f2a541; --font: 'Fredoka', ui-rounded, system-ui, sans-serif;
-    position: fixed; inset: 0; z-index: 0; overflow: hidden; font-family: var(--font); color: var(--cream);
-    background: radial-gradient(1200px 700px at 50% 0%, #a8501f 0%, transparent 65%),
-      radial-gradient(900px 600px at 100% 100%, #6b2d1a 0%, transparent 60%), #3b1d10; }
-  .game:has(.gg) .hostbar { position: relative; z-index: 2; padding: 0 1vw; color: #ffe2b8; }
-  .gg-leaves span { position: absolute; top: -8vh; font-size: 4vh; opacity: .35; animation: gg-fall linear infinite; }
-  @keyframes gg-fall { to { transform: translate(8vw, 116vh) rotate(540deg); } }
-  .gg-page { position: absolute; inset: 0; padding: 9vh 4vw 6vh; display: flex; flex-direction: column; gap: 2.5vh; }
-  .gg-center { align-items: center; justify-content: center; text-align: center; }
-  .gg-logo { font-size: 5.2em; margin: 0; font-weight: 700; color: var(--cream); text-shadow: 0 .08em 0 #7a3412; }
-  .gg-logo span { color: var(--orange); }
-  .gg-title { font-size: 3em; margin: 0; font-weight: 700; text-shadow: 0 .06em 0 #0005; }
-  .gg-title.pop { animation: gg-pop .5s ease-out; }
-  .gg-sub { font-size: 1.4em; margin: 0; color: #ffe2b8; max-width: 1200px; }
-  @keyframes gg-pop { 0% { transform: scale(.4); opacity: 0; } 70% { transform: scale(1.08); } }
-  .gg-mascot { width: 32vh; height: 32vh; animation: gg-bob 1.6s ease-in-out infinite; }
-  .gg-mascot.small { width: 20vh; height: 20vh; }
-  .gg-mascot svg { width: 100%; height: 100%; overflow: visible; }
-  .gg-mascot .gg-tail { transform-origin: 100px 112px; animation: gg-fan 2.4s ease-in-out infinite; }
-  .gg-mascot.draw .gg-head { animation: gg-nod .6s ease-in-out infinite; transform-origin: 100px 100px; }
-  .gg-mascot.party { animation: gg-hop .7s ease-in-out infinite; }
-  @keyframes gg-bob { 50% { transform: translateY(-2vh); } }
-  @keyframes gg-hop { 50% { transform: translateY(-4vh) rotate(-4deg); } }
-  @keyframes gg-fan { 50% { transform: scale(1.06) rotate(2deg); } }
-  @keyframes gg-nod { 50% { transform: rotate(-8deg); } }
-  .gg-how { display: flex; gap: 3vw; flex-wrap: wrap; justify-content: center; }
-  .gg-step { background: var(--cream); color: var(--ink); border-radius: 28px; padding: 3vh 2vw; width: 15vw; min-width: 160px;
-    display: flex; flex-direction: column; gap: 1vh; font-size: 1.3em; box-shadow: 0 1vh 0 #0004; }
-  .gg-big { font-size: 3em; }
-  .gg-easels { display: flex; gap: 2vw; flex-wrap: wrap; justify-content: center; max-width: 1500px; }
-  .gg-easel { display: flex; flex-direction: column; align-items: center; gap: 1vh; transform: rotate(var(--r)); font-weight: 700; font-size: 1.2em; }
-  .gg-canvas { width: 9vw; min-width: 90px; aspect-ratio: 1; background: var(--cream); border: .6vh solid #8b5a2b; border-radius: 10px;
-    display: grid; place-items: center; font-size: 2.2em; color: #4f9d5d; box-shadow: 0 .8vh 0 #0004; }
-  .gg-easel:not(.done) .gg-canvas { animation: gg-wiggle 1.2s ease-in-out infinite; }
-  .gg-easel.done .gg-canvas { background: #e3f6d8; border-color: var(--c); }
-  .gg-easel span { color: var(--c); }
-  .gg-easel.away { opacity: .4; }
-  @keyframes gg-wiggle { 50% { transform: rotate(4deg); } }
-
-  .gg-guess { padding-bottom: 9vh; }
-  .gg-count { font-weight: 700; color: #ffd08a; letter-spacing: .08em; font-size: 1.1em; }
-  .gg-guess-body { flex: 1; min-height: 0; display: flex; gap: 3vw; align-items: center; justify-content: center; }
-  .gg-frame { position: relative; height: 62vh; aspect-ratio: 1; padding: 2vh; flex: none;
-    background: linear-gradient(135deg, #d9a441, #a8701f); border-radius: 12px; box-shadow: 0 1.5vh 3vh #0007, inset 0 0 0 .6vh #7a4d12;
-    animation: gg-pop .5s ease-out; }
-  .gg-frame img { width: 100%; height: 100%; background: #fff; border-radius: 4px; display: block; }
-  .gg-tag { position: absolute; left: 50%; bottom: -2.4vh; transform: translateX(-50%); background: var(--cream); color: var(--ink);
-    padding: .5vh 1.4vw; border-radius: 99px; font-size: 1.2em; white-space: nowrap; animation: gg-pop .5s ease-out; box-shadow: 0 .5vh 0 #0004; }
-  .gg-tiles { display: grid; grid-template-columns: 1fr; gap: 1.8vh; width: min(38vw, 720px); }
-  .gg-tile { background: var(--c); color: #fff; border-radius: 22px; padding: 1.6vh 1.4vw; display: grid;
-    grid-template-columns: auto auto 1fr; grid-template-rows: auto auto; align-items: center; column-gap: 1vw;
-    box-shadow: 0 .8vh 0 color-mix(in srgb, var(--c) 55%, #000); text-align: left; transition: transform .3s, opacity .3s, filter .3s; }
-  .gg-shape { font-size: 1.6em; text-shadow: 0 .05em 0 #0004; }
-  .gg-emoji { font-size: 2em; }
-  .gg-text { font-size: 1.45em; font-weight: 700; text-shadow: 0 .05em 0 #0004; line-height: 1.1; }
-  .gg-who { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: .5vw; }
-  .gg-who:empty { display: none; }
-  .gg-chip { font-size: .85em; font-weight: 700; padding: .2vh .8vw; border-radius: 99px; color: #1a1a1a; margin-top: .6vh;
-    box-shadow: 0 0 0 2px #fff8; animation: gg-pop .4s ease-out; }
-  .gg-tile.yes { transform: scale(1.06); box-shadow: 0 0 0 .6vh #fff, 0 0 4vh #fff8; animation: gg-shine 1s ease-in-out 2; }
-  .gg-tile.no { opacity: .45; filter: saturate(.4); transform: scale(.95); }
-  @keyframes gg-shine { 50% { transform: scale(1.12); } }
-  .gg-q { margin-top: 3.5vh; text-align: center; display: flex; flex-direction: column; gap: .6vh; }
-  .gg-q b { font-size: 2.2em; }
-  .gg-fx { position: absolute; inset: 0; pointer-events: none; }
-  .gg-fly { position: absolute; bottom: 4vh; font-size: 7vh; animation: gg-fly 2.6s ease-out forwards; }
-  @keyframes gg-fly { to { transform: translate(var(--x), -75vh) scale(1.4); opacity: 0; } }
-
-  .gg-scores { width: min(1100px, 92vw); display: flex; flex-direction: column; gap: 1.6vh; }
-  .gg-srow { display: grid; grid-template-columns: 9em 1fr 5em; gap: 1.2vw; align-items: center; font-weight: 700; font-size: 1.35em;
-    text-align: left; animation: gg-slide .5s ease-out backwards; animation-delay: var(--d); }
-  @keyframes gg-slide { from { transform: translateX(-10vw); opacity: 0; } }
-  .gg-sname { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; text-shadow: 0 .05em 0 #0006; }
-  .gg-sbar { height: 1.3em; background: #0003; border-radius: 99px; overflow: hidden; }
-  .gg-sbar div { height: 100%; border-radius: 99px; }
-  .gg-snum { text-align: right; }
-
-  .gg-wall { flex: 1; display: flex; flex-wrap: wrap; gap: 2.4vh 2vw; justify-content: center; align-content: center; }
-  .gg-mini { margin: 0; background: var(--cream); color: var(--ink); padding: 1vh 1vh 1.2vh; border-radius: 8px; width: var(--w, 15vh); min-width: 120px;
-    transform: rotate(var(--r)); box-shadow: 0 1vh 2vh #0006; animation: gg-pop .5s ease-out backwards; animation-delay: var(--d); }
-  .gg-mini img { width: 100%; aspect-ratio: 1; background: #fff; display: block; border-radius: 3px; }
-  .gg-mini figcaption { font-size: calc(var(--w, 15vh) / 7.5); font-weight: 700; line-height: 1.15; margin-top: .6vh; display: flex; flex-direction: column; }
-  .gg-mini small { font-size: .95em; color: #1a1a1a; border-radius: 99px; padding: 0 .6em; margin-top: .4vh; align-self: center; }
-
-  .gg-awards { display: flex; flex-wrap: wrap; gap: 2vh 1.6vw; justify-content: center; max-width: 1500px; }
-  .gg-award { background: var(--cream); color: var(--ink); border-top: 1.2vh solid var(--c); border-radius: 18px; padding: 1.4vh 1.4vw;
-    min-width: 13vw; display: flex; flex-direction: column; gap: .4vh; box-shadow: 0 .8vh 0 #0004;
-    animation: gg-pop .5s ease-out backwards; animation-delay: var(--d); }
-  .gg-aname { font-weight: 700; font-size: 1.3em; }
-  .gg-atitle { font-size: 1.15em; }
-  .gg-award small { opacity: .7; }
-  ` }));
 }

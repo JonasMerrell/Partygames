@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Gobble Gallery: kids don't need their own phone. Before the game each phone says who's playing on it, so a grown-up can add up to four kids (and play too, or just help). A shared phone takes turns with a "🦊 Leo's turn! Pass the phone" screen so cards stay secret. Every player gets an animal on the phone and the TV, phones have 🔊 buttons that read the cards and choices aloud for kids who can't read yet, and scores, the gallery and awards are per player. The game now fits the 16:9 TV frame.
+
 ## 0.12.0
 
 - The TV is always a 16:9 frame, letterboxed into any window, and screens that would overflow are shrunk to fit.

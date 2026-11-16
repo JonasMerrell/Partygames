@@ -234,9 +234,11 @@ T = {
        I("🏆", fx="float"), S("10", "points")),
 ],
 "gobble-gallery": [
+  step("No phone? Share one!", "A grown-up can add kids on their phone. The phone shows whose turn it is with their animal, and you pass it along.",
+       P("Who's playing on this phone?", buttons=["✓ Mom", "🧒 Leo", "🧒 Ava"], tap=1), I("🦊", "Leo's turn!", fx="pop"), flow=True),
   step("Pick a card", "Everyone gets two picture cards on their phone. Pick the one you want to draw and keep it secret!",
        P("Pick one to draw!", buttons=["🦃 Turkey on roller skates", "🥧 Giant pumpkin pie"], tap=0), flow=True),
-  step("Draw it", "Draw your card on your phone with crayons, a paint bucket and an eraser. No letters or numbers!",
+  step("Draw it", "Draw your card with crayons, a paint bucket and an eraser. Tap 🔊 to hear the card. No letters or numbers!",
        C("🦃 Turkey on roller skates", Y), I("🖍️", fx="shake"), C("🖼️", "#ffffff", label="your drawing"), flow=True),
   step("Guess the pictures", "Each drawing goes up on the TV. Tap the matching button on your phone. The TV reads the choices out loud.",
        TV("What is it?", "● ▲ ■ ★"), P("What is it?", buttons=["🌽 Corn wearing a hat", "🦃 Turkey on roller skates", "🍂 Big pile of leaves"], tap=1)),
