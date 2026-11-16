@@ -158,6 +158,27 @@ function injectStyles() {
       color: #99ccff;
       opacity: 0.9;
     }
+    .team-pips {
+      display: flex;
+      gap: 0.3em;
+      margin-top: 0.2em;
+    }
+    .team-pip {
+      width: 1.5em;
+      height: 0.55em;
+      border-radius: 999px;
+      background: #1e293b;
+      border: 1px solid #475569;
+    }
+    .team-pip.done {
+      background: #ff9900;
+      border-color: #fff3d6;
+      box-shadow: 0 0 8px rgba(255, 153, 0, 0.7);
+    }
+    .team-panel.beta .team-pip.done {
+      background: #cc99cc;
+      box-shadow: 0 0 8px rgba(204, 153, 204, 0.7);
+    }
     .cipher-row {
       display: flex;
       gap: 0.35em;
@@ -476,26 +497,30 @@ export default async function (ctx) {
   const players = ctx.shuffle([...ctx.players]);
   const mid = Math.ceil(players.length / 2);
   const codes = ctx.shuffle([...OVERRIDE_CODES]);
+  let codeIdx = 0;
+  function nextCode() {
+    if (codeIdx >= codes.length) codeIdx = 0;
+    return codes[codeIdx++];
+  }
+
   const teams = [
     {
       id: 'alpha',
       name: 'Team Alpha',
       color: '#ff9900',
       members: players.slice(0, mid),
-      code: codes[0],
+      code: nextCode(),
       revealed: [false, false, false, false, false],
-      senderIdx: 0,
-      borgIdx: 0,
+      codesCracked: 0,
     },
     {
       id: 'beta',
       name: 'Team Beta',
       color: '#cc99cc',
       members: players.slice(mid),
-      code: codes[1],
+      code: nextCode(),
       revealed: [false, false, false, false, false],
-      senderIdx: 0,
-      borgIdx: 0,
+      codesCracked: 0,
     },
   ];
 
@@ -549,8 +574,11 @@ export default async function (ctx) {
         ...teams.map((t, idx) =>
           h('div', { class: `team-panel ${t.id}${idx === activeTeamIdx ? ' active' : ''}` },
             h('div.team-meta', {},
-              h('div.team-name', { style: `color:${t.color}` }, t.name),
-              h('div.team-roster', {}, t.members.map((m) => m.name).join(' • '))
+              h('div.team-name', { style: `color:${t.color}` }, `${t.name} (${t.codesCracked}/3)`),
+              h('div.team-roster', {}, t.members.map((m) => m.name).join(' • ')),
+              h('div.team-pips', {},
+                ...[0, 1, 2].map((p) => h('div', { class: `team-pip${p < t.codesCracked ? ' done' : ''}` }))
+              )
             ),
             h('div.cipher-row', {},
               ...t.code.split('').map((ch, ci) =>
@@ -581,38 +609,48 @@ export default async function (ctx) {
   renderScreen([
     h('div.stage-kicker', {}, 'INCOMING STARFLEET BRIEFING'),
     h('div.stage-title', {}, 'SUBSPACE INTERCEPT'),
-    h('div.stage-sub', {}, 'Send 3 one-word clues to your crewmate. The Borg will assimilate one. Crack your 5-letter override code first to neutralize the cube!'),
+    h('div.stage-sub', {}, 'Everyone writes 3 clues at once, everyone assimilates an enemy clue at once, then teams decode! Crack 3 five-letter override codes to win.'),
   ]);
   await ctx.sleep(4500);
 
   let winner = null;
   let winReason = '';
 
+  async function handleCodeCracked(team, reason) {
+    team.codesCracked += 1;
+    if (team.codesCracked >= 3) {
+      winner = team;
+      winReason = reason;
+      return true;
+    }
+    const oldCode = team.code;
+    team.code = nextCode();
+    team.revealed = [false, false, false, false, false];
+    ctx.sfx('win');
+    renderScreen([
+      h('div.stage-kicker', {}, `OVERRIDE CODE ${team.codesCracked} OF 3 CRACKED`),
+      h('div.stage-title', { style: `color:${team.color}` }, `${team.name}: "${oldCode}" DECRYPTED!`),
+      h('div.stage-sub', {}, `Loading next 5-letter override cipher (${3 - team.codesCracked} remaining).`),
+    ]);
+    await ctx.sleep(3200);
+    return false;
+  }
+
   while (!winner) {
     round += 1;
-    const team = teams[activeTeamIdx];
-    const opp = teams[1 - activeTeamIdx];
 
-    const sender = team.members[team.senderIdx % team.members.length];
-    team.senderIdx += 1;
-    const guessers = team.members.filter((m) => m.id !== sender.id);
-    const borgPlayer = opp.members[opp.borgIdx % opp.members.length];
-    opp.borgIdx += 1;
-
-    const target = nextWord();
-
-    // 1. TRANSMIT PHASE
+    // 1. SIMULTANEOUS TRANSMIT PHASE (everyone writes 3 clues for their own word)
     borgAlert = false;
-    statusText = 'TRANSMITTING';
-    footerText = `${team.name.toUpperCase()} • SENDER: ${sender.name.toUpperCase()}`;
+    statusText = 'ALL TRANSMITTING';
+    footerText = `CYCLE ${round} • ALL CREW ENCODING CLUES`;
     playVoice('sf_transmit');
     renderScreen([
-      h('div.stage-kicker', {}, `${team.name} • ENCRYPTED TRANSMISSION`),
-      h('div.stage-title', {}, `${sender.name} IS ENCODING`),
+      h('div.stage-kicker', {}, `CYCLE ${round} • SIMULTANEOUS TRANSMISSION`),
+      h('div.stage-title', {}, 'EVERYONE: ENCODE 3 CLUES'),
       h('div.subspace-wave', {},
         h('span', {}), h('span', {}), h('span', {}), h('span', {}), h('span', {}), h('span', {}), h('span', {})
       ),
-      h('div.stage-sub', {}, `Category: ${target.cat} — Sending 3 one-word clues to ${guessers.map((g) => g.name).join(' & ')}.`),
+      h('div.stage-sub', {}, 'Check your phone! Everyone has a secret word—enter 3 one-word clues at the same time.'),
       h('div.clue-grid', {},
         h('div.clue-card.encrypted', {}, h('div.clue-label', {}, 'MARKER 01'), h('div.clue-word', {}, '•••')),
         h('div.clue-card.encrypted', {}, h('div.clue-label', {}, 'MARKER 02'), h('div.clue-word', {}, '•••')),
@@ -620,247 +658,243 @@ export default async function (ctx) {
       ),
     ]);
 
-    ctx.show(guessers, {
-      title: 'Stand By',
-      text: `${sender.name} is encoding 3 clues for you (${target.cat}). Watch out for ${borgPlayer.name} (Borg)!`,
-      wait: 'Awaiting subspace transmission...',
-      color: team.color,
-    });
-    ctx.show(borgPlayer, {
-      title: 'Borg Intercept Ready',
-      text: `${sender.name} is writing 3 clues. Get ready to assimilate one!`,
-      wait: 'Scanning subspace...',
-      color: '#39ff14',
-    });
-    const idleOpp = opp.members.filter((m) => m.id !== borgPlayer.id);
-    if (idleOpp.length) {
-      ctx.show(idleOpp, {
-        title: `${team.name} Turn`,
-        text: `${borgPlayer.name} is your Borg operative this round.`,
-        wait: 'Monitoring subspace...',
-        color: opp.color,
+    const targetByPlayer = new Map();
+    const cluesByPlayer = new Map();
+    await Promise.all(players.map(async (p) => {
+      const target = nextWord();
+      targetByPlayer.set(p.id, target);
+      const t = teams.find((tm) => tm.members.some((m) => m.id === p.id));
+      const ans = await ctx.ask(p, {
+        title: `Secret Word: ${target.word}`,
+        text: `Category: ${target.cat}\nEnter 3 one-word clues separated by spaces:`,
+        color: t.color,
+        buzz: true,
+        input: { placeholder: 'word1 word2 word3', max: 60, submit: 'Transmit Clues' },
+      }, {
+        timeout: 65,
+        after: { title: 'Transmitted', text: 'Signal routed!', wait: 'Waiting for other crew...' },
       });
-    }
+      cluesByPlayer.set(p.id, parseClues(ans.get(p.id)));
+    }));
 
-    const clueAns = await ctx.ask(sender, {
-      title: `Secret Word: ${target.word}`,
-      text: `Category: ${target.cat}\nEnter 3 one-word clues separated by spaces:`,
-      color: team.color,
-      buzz: true,
-      input: { placeholder: 'word1 word2 word3', max: 60, submit: 'Transmit Clues' },
-    }, {
-      timeout: 65,
-      after: { title: 'Transmitted', text: 'Routing through main deflector...', wait: 'Borg interference detected!' },
-    });
-
-    const clues = parseClues(clueAns.get(sender.id));
-
-    // 2. BORG ASSIMILATION PHASE
+    // 2. SIMULTANEOUS BORG ASSIMILATION PHASE (everyone sabotages an opposing player's clues)
     borgAlert = true;
     statusText = 'BORG INTERCEPT';
-    footerText = `BORG OPERATIVE: ${borgPlayer.name.toUpperCase()} • ASSIMILATING`;
+    footerText = `CYCLE ${round} • ALL BORG ASSIMILATING`;
     ctx.sfx('glitch');
     renderScreen([
       h('div.scanline-overlay', {}),
-      h('div.stage-kicker', { style: 'color:#39ff14' }, 'WARNING // SUBSPACE INTRUSION'),
-      h('div.stage-title', { style: 'color:#39ff14' }, `${borgPlayer.name} IS ASSIMILATING A CLUE`),
-      h('div.stage-sub', {}, 'The Borg Collective is overwriting one telemetry marker with disinformation.'),
-      h('div.clue-grid', {},
-        ...clues.map((_, i) =>
-          h('div.clue-card.encrypted', { style: 'border-color:#39ff14; border-top-color:#39ff14;' },
-            h('div.clue-label', { style: 'color:#39ff14' }, `MARKER 0${i + 1}`),
-            h('div.clue-word', { style: 'color:#39ff14' }, 'SCANNING')
-          )
-        )
-      ),
+      h('div.borg-reticle', {}, 'BORG'),
+      h('div.stage-kicker', { style: 'color:#39ff14' }, 'WARNING // MASS SUBSPACE INTRUSION'),
+      h('div.stage-title', { style: 'color:#39ff14' }, 'EVERYONE: ASSIMILATE AN ENEMY CLUE'),
+      h('div.stage-sub', {}, 'Pick 1 clue on your phone and overwrite it with a misleading decoy word!'),
     ]);
 
-    ctx.show(sender, {
-      title: 'Borg Interference!',
-      text: `${borgPlayer.name} is assimilating one of your clues...`,
-      wait: 'Hold for decode...',
-      color: '#39ff14',
+    const assignments = new Map();
+    teams[0].members.forEach((p, idx) => {
+      assignments.set(p.id, teams[1].members[idx % teams[1].members.length]);
+    });
+    teams[1].members.forEach((p, idx) => {
+      assignments.set(p.id, teams[0].members[idx % teams[0].members.length]);
     });
 
-    const pickAns = await ctx.ask(borgPlayer, {
-      title: 'BORG INTERCEPT',
-      text: `Target category: ${target.cat}\nPick ONE clue to assimilate:`,
-      color: '#39ff14',
-      buzz: true,
-      choices: clues.map((c, i) => ({ label: `${i + 1}. ${c}`, value: i })),
-    }, { timeout: 35 });
+    const saboBySender = new Map();
+    await Promise.all(players.map(async (borgP) => {
+      const victim = assignments.get(borgP.id);
+      const vTarget = targetByPlayer.get(victim.id);
+      const vClues = cluesByPlayer.get(victim.id);
 
-    const chosenIdx = Number.isInteger(pickAns.get(borgPlayer.id)) ? pickAns.get(borgPlayer.id) : 0;
-    const originalWord = clues[chosenIdx];
+      const pickAns = await ctx.ask(borgP, {
+        title: `BORG INTERCEPT (${victim.name})`,
+        text: `Category: ${vTarget.cat}\nPick ONE clue to assimilate:`,
+        color: '#39ff14',
+        buzz: true,
+        choices: vClues.map((c, i) => ({ label: `${i + 1}. ${c}`, value: i })),
+      }, { timeout: 35 });
 
-    const replaceAns = await ctx.ask(borgPlayer, {
-      title: 'ASSIMILATE CLUE',
-      text: `Replacing "${originalWord}" — enter 1 misleading word:`,
-      color: '#39ff14',
-      input: { placeholder: 'Misleading word...', max: 24, submit: 'Assimilate' },
-    }, {
-      timeout: 35,
-      after: { title: 'Assimilated', text: 'Disinformation injected into subspace.', wait: 'Watch the main screen!' },
-    });
+      const chosenIdx = Number.isInteger(pickAns.get(borgP.id)) ? pickAns.get(borgP.id) : 0;
+      const originalWord = vClues[chosenIdx];
 
-    const fakeWord = (replaceAns.get(borgPlayer.id) || 'CUBE').trim().split(/\s+/)[0] || 'CUBE';
-    const finalClues = [...clues];
-    finalClues[chosenIdx] = fakeWord;
+      const replaceAns = await ctx.ask(borgP, {
+        title: 'ASSIMILATE CLUE',
+        text: `Replacing "${originalWord}" — enter 1 misleading word:`,
+        color: '#39ff14',
+        input: { placeholder: 'Misleading word...', max: 24, submit: 'Assimilate' },
+      }, {
+        timeout: 35,
+        after: { title: 'Assimilated', text: 'Disinformation injected.', wait: 'Waiting for other Borg...' },
+      });
 
-    // Dramatic assimilation sweep on TV (without spoiling which slot!)
+      const fakeWord = (replaceAns.get(borgP.id) || 'CUBE').trim().split(/\s+/)[0] || 'CUBE';
+      const finalClues = [...vClues];
+      finalClues[chosenIdx] = fakeWord;
+      saboBySender.set(victim.id, { borgP, chosenIdx, originalWord, fakeWord, finalClues });
+    }));
+
     ctx.sfx('glitch');
     playVoice('borg_assimilate');
     renderScreen([
       h('div.scanline-overlay', {}),
       h('div.borg-reticle', {}, 'BORG'),
       h('div.stage-kicker', { style: 'color:#39ff14' }, 'RESISTANCE IS FUTILE'),
-      h('div.stage-title', { style: 'color:#39ff14' }, 'CLUE ASSIMILATED'),
-      h('div.stage-sub', {}, 'One of the three markers below now serves the Borg Collective.'),
+      h('div.stage-title', { style: 'color:#39ff14' }, 'ALL TRANSMISSIONS ASSIMILATED'),
+      h('div.stage-sub', {}, 'Every signal now contains one Borg decoy. Preparing in-person decode!'),
     ]);
-    await ctx.sleep(3200);
+    await ctx.sleep(3000);
 
-    // 3. DECODE PHASE (IN-PERSON)
-    borgAlert = false;
-    statusText = 'DECODE SIGNAL';
-    footerText = `${team.name.toUpperCase()} • CALL OUT YOUR GUESS IN PERSON`;
-    playVoice('sf_decode');
-    renderScreen([
-      h('div.stage-kicker', {}, `CATEGORY: ${target.cat.toUpperCase()}`),
-      h('div.stage-title', {}, `${guessers.map((g) => g.name).join(' & ')}: DECODE THE WORD`),
-      h('div.stage-sub', {}, 'Say your guess out loud! One of these three clues was overwritten by the Borg.'),
-      h('div.clue-grid', {},
-        ...finalClues.map((c, i) =>
-          h('div.clue-card', {},
-            h('div.clue-label', {}, `MARKER 0${i + 1}`),
-            h('div.clue-word', {}, c)
-          )
-        )
-      ),
-    ]);
-
-    ctx.show(guessers, {
-      title: `Category: ${target.cat}`,
-      text: `Clues: ${finalClues.join('  •  ')}\n\nSay your guess out loud to ${sender.name}!`,
-      color: team.color,
-      buzz: true,
-    });
-    ctx.show(borgPlayer, {
-      title: 'Disinformation Active',
-      text: `You replaced "${originalWord}" with "${fakeWord}".`,
-      wait: `Waiting for ${team.name}'s guess...`,
-      color: '#39ff14',
-    });
-
-    const judgeAns = await ctx.ask(sender, {
-      title: `Answer: ${target.word}`,
-      text: `Clues shown: ${finalClues.join(' • ')}\nDid your crewmate say "${target.word}" out loud?`,
-      color: team.color,
-      choices: [
-        { label: '✓ Confirmed (Correct!)', value: 'hit' },
-        { label: '✕ Signal Lost (Wrong)', value: 'miss' },
-      ],
-    }, { timeout: 90, clock: false });
-
-    const isHit = judgeAns.get(sender.id) === 'hit';
-
-    // Reveal which clue was assimilated
-    const revealedCards = finalClues.map((c, i) =>
-      h('div', { class: `clue-card${i === chosenIdx ? ' assimilated' : ''}` },
-        h('div.clue-label', {}, `MARKER 0${i + 1}`),
-        h('div.clue-word', {}, c),
-        ...(i === chosenIdx
-          ? [
-              h('div.clue-orig', {}, `Original: ${originalWord}`),
-              h('div.borg-tag', {}, 'ASSIMILATED'),
-            ]
-          : [])
-      )
-    );
-
-    if (isHit) {
-      ctx.sfx('ding');
-      playVoice('sf_correct');
-      statusText = 'CONFIRMED';
-      renderScreen([
-        h('div.stage-kicker', { style: 'color:#99ccff' }, `TARGET IDENTIFIED: ${target.word.toUpperCase()}`),
-        h('div.stage-title', {}, 'TRANSMISSION CONFIRMED!'),
-        h('div.stage-sub', {}, `${team.name} may reveal 1 override letter—or risk it all to guess the full 5-letter code!`),
-        h('div.clue-grid', {}, ...revealedCards),
-      ]);
-
-      const choiceAns = await ctx.ask(sender, {
-        title: `Override Code: ${formatCode(team)}`,
-        text: 'Reveal 1 letter, or skip the letter to attempt the whole 5-letter override code?',
-        color: team.color,
-        choices: [
-          { label: '🔓 Reveal 1 Letter', value: 'letter' },
-          { label: '⚡ Attempt Full 5-Letter Code', value: 'full' },
-        ],
-      }, { timeout: 45 });
-
-      const choice = choiceAns.get(sender.id) || 'letter';
-
-      if (choice === 'full') {
-        playVoice('sf_attempt');
-        const fullAns = await ctx.ask(sender, {
-          title: `Attempt Full Code (${formatCode(team)})`,
-          text: 'Enter the exact 5-letter Starfleet override code:',
-          color: team.color,
-          input: { placeholder: '5-LETTER CODE', max: 12, submit: 'Execute Override' },
-        }, { timeout: 45 });
-
-        const attempt = (fullAns.get(sender.id) || '').trim().toUpperCase();
-        if (attempt === team.code) {
-          team.revealed = [true, true, true, true, true];
-          winner = team;
-          winReason = `${team.name} cracked the full override code "${team.code}"!`;
-        } else {
-          ctx.sfx('buzz');
-          renderScreen([
-            h('div.stage-kicker', { style: 'color:#cc4444' }, 'OVERRIDE REJECTED'),
-            h('div.stage-title', { style: 'color:#cc4444' }, `INVALID CODE: "${attempt || '---'}"`),
-            h('div.stage-sub', {}, 'No cipher letter unlocked this turn. Subspace control passes.'),
-          ]);
-          await ctx.sleep(3200);
-        }
-      } else {
-        revealNextLetter(team);
-        ctx.sfx('pop');
-        if (isCodeCracked(team)) {
-          winner = team;
-          winReason = `${team.name} decrypted all 5 letters of "${team.code}"!`;
-        } else {
-          renderScreen([
-            h('div.stage-kicker', {}, 'CIPHER FRAGMENT DECRYPTED'),
-            h('div.stage-title', {}, `${team.name}: ${formatCode(team)}`),
-            h('div.stage-sub', {}, 'Advancing Starfleet override sequence.'),
-          ]);
-          await ctx.sleep(2600);
-        }
-      }
-    } else {
-      ctx.sfx('buzz');
-      borgAlert = true;
-      statusText = 'SIGNAL LOST';
-      playVoice(Math.random() < 0.5 ? 'sf_wrong' : 'borg_round');
-      revealNextLetter(opp);
-
-      renderScreen([
-        h('div.scanline-overlay', {}),
-        h('div.stage-kicker', { style: 'color:#39ff14' }, `TARGET WAS: ${target.word.toUpperCase()}`),
-        h('div.stage-title', { style: 'color:#39ff14' }, 'SIGNAL LOST — BORG ADVANCE'),
-        h('div.stage-sub', {}, `${opp.name} decrypts 1 override letter!`),
-        h('div.clue-grid', {}, ...revealedCards),
-      ]);
-      await ctx.sleep(3600);
-
-      if (isCodeCracked(opp)) {
-        winner = opp;
-        winReason = `${opp.name} completed their override code "${opp.code}" via Borg interference!`;
-      }
+    // 3. ALTERNATING IN-PERSON DECODE FOR EACH TRANSMISSION
+    const queue = [];
+    const maxLen = Math.max(teams[0].members.length, teams[1].members.length);
+    for (let i = 0; i < maxLen; i++) {
+      if (i < teams[0].members.length) queue.push({ team: teams[0], opp: teams[1], sender: teams[0].members[i] });
+      if (i < teams[1].members.length) queue.push({ team: teams[1], opp: teams[0], sender: teams[1].members[i] });
     }
 
-    activeTeamIdx = 1 - activeTeamIdx;
+    for (const turn of queue) {
+      if (winner) break;
+      const { team, opp, sender } = turn;
+      activeTeamIdx = team.id === 'alpha' ? 0 : 1;
+      const guessers = team.members.filter((m) => m.id !== sender.id);
+      const target = targetByPlayer.get(sender.id);
+      const sabo = saboBySender.get(sender.id);
+      const { chosenIdx, originalWord, fakeWord, finalClues } = sabo;
+
+      borgAlert = false;
+      statusText = 'DECODE SIGNAL';
+      footerText = `${team.name.toUpperCase()} • ${sender.name.toUpperCase()} → ${guessers.map((g) => g.name.toUpperCase()).join(' & ')}`;
+      playVoice('sf_decode');
+      renderScreen([
+        h('div.stage-kicker', {}, `${team.name} • CATEGORY: ${target.cat.toUpperCase()}`),
+        h('div.stage-title', {}, `${guessers.map((g) => g.name).join(' & ')}: DECODE ${sender.name}'S WORD`),
+        h('div.stage-sub', {}, 'Say your guess out loud! One of these three clues was overwritten by the Borg.'),
+        h('div.clue-grid', {},
+          ...finalClues.map((c, i) =>
+            h('div.clue-card', {},
+              h('div.clue-label', {}, `MARKER 0${i + 1}`),
+              h('div.clue-word', {}, c)
+            )
+          )
+        ),
+      ]);
+
+      ctx.show(guessers, {
+        title: `Decode ${sender.name}'s Word (${target.cat})`,
+        text: `Clues: ${finalClues.join('  •  ')}\n\nSay your guess out loud to ${sender.name}!`,
+        color: team.color,
+        buzz: true,
+      });
+      ctx.show(opp.members, {
+        title: `${team.name} Decoding`,
+        text: `Listen to ${guessers.map((g) => g.name).join(' & ')} guess "${target.word}"!`,
+        wait: 'Waiting for result...',
+        color: opp.color,
+      });
+
+      const judgeAns = await ctx.ask(sender, {
+        title: `Answer: ${target.word}`,
+        text: `Clues shown: ${finalClues.join(' • ')}\nDid your crewmate say "${target.word}" out loud?`,
+        color: team.color,
+        choices: [
+          { label: '✓ Confirmed (Correct!)', value: 'hit' },
+          { label: '✕ Signal Lost (Wrong)', value: 'miss' },
+        ],
+      }, { timeout: 90, clock: false });
+
+      const isHit = judgeAns.get(sender.id) === 'hit';
+
+      const revealedCards = finalClues.map((c, i) =>
+        h('div', { class: `clue-card${i === chosenIdx ? ' assimilated' : ''}` },
+          h('div.clue-label', {}, `MARKER 0${i + 1}`),
+          h('div.clue-word', {}, c),
+          ...(i === chosenIdx
+            ? [
+                h('div.clue-orig', {}, `Original: ${originalWord}`),
+                h('div.borg-tag', {}, 'ASSIMILATED'),
+              ]
+            : [])
+        )
+      );
+
+      if (isHit) {
+        ctx.sfx('ding');
+        playVoice('sf_correct');
+        statusText = 'CONFIRMED';
+        renderScreen([
+          h('div.stage-kicker', { style: 'color:#99ccff' }, `TARGET IDENTIFIED: ${target.word.toUpperCase()}`),
+          h('div.stage-title', {}, 'TRANSMISSION CONFIRMED!'),
+          h('div.stage-sub', {}, `${team.name} may reveal 1 override letter—or risk it all to guess the full 5-letter code!`),
+          h('div.clue-grid', {}, ...revealedCards),
+        ]);
+
+        const choiceAns = await ctx.ask(sender, {
+          title: `Code ${team.codesCracked + 1}/3: ${formatCode(team)}`,
+          text: 'Reveal 1 letter, or skip the letter to attempt the whole 5-letter override code?',
+          color: team.color,
+          choices: [
+            { label: '🔓 Reveal 1 Letter', value: 'letter' },
+            { label: '⚡ Attempt Full 5-Letter Code', value: 'full' },
+          ],
+        }, { timeout: 45 });
+
+        const choice = choiceAns.get(sender.id) || 'letter';
+
+        if (choice === 'full') {
+          playVoice('sf_attempt');
+          const fullAns = await ctx.ask(sender, {
+            title: `Attempt Full Code (${formatCode(team)})`,
+            text: 'Enter the exact 5-letter Starfleet override code:',
+            color: team.color,
+            input: { placeholder: '5-LETTER CODE', max: 12, submit: 'Execute Override' },
+          }, { timeout: 45 });
+
+          const attempt = (fullAns.get(sender.id) || '').trim().toUpperCase();
+          if (attempt === team.code) {
+            team.revealed = [true, true, true, true, true];
+            await handleCodeCracked(team, `${team.name} cracked all 3 override codes (finishing with "${team.code}")!`);
+          } else {
+            ctx.sfx('buzz');
+            renderScreen([
+              h('div.stage-kicker', { style: 'color:#cc4444' }, 'OVERRIDE REJECTED'),
+              h('div.stage-title', { style: 'color:#cc4444' }, `INVALID CODE: "${attempt || '---'}"`),
+              h('div.stage-sub', {}, 'No cipher letter unlocked this turn.'),
+            ]);
+            await ctx.sleep(2800);
+          }
+        } else {
+          revealNextLetter(team);
+          ctx.sfx('pop');
+          if (isCodeCracked(team)) {
+            await handleCodeCracked(team, `${team.name} decrypted all 3 override codes!`);
+          } else {
+            renderScreen([
+              h('div.stage-kicker', {}, `CODE ${team.codesCracked + 1}/3 • FRAGMENT DECRYPTED`),
+              h('div.stage-title', {}, `${team.name}: ${formatCode(team)}`),
+              h('div.stage-sub', {}, 'Advancing Starfleet override sequence.'),
+            ]);
+            await ctx.sleep(2400);
+          }
+        }
+      } else {
+        ctx.sfx('buzz');
+        borgAlert = true;
+        statusText = 'SIGNAL LOST';
+        playVoice(Math.random() < 0.5 ? 'sf_wrong' : 'borg_round');
+        revealNextLetter(opp);
+
+        renderScreen([
+          h('div.scanline-overlay', {}),
+          h('div.stage-kicker', { style: 'color:#39ff14' }, `TARGET WAS: ${target.word.toUpperCase()}`),
+          h('div.stage-title', { style: 'color:#39ff14' }, 'SIGNAL LOST — BORG ADVANCE'),
+          h('div.stage-sub', {}, `${opp.name} decrypts 1 override letter!`),
+          h('div.clue-grid', {}, ...revealedCards),
+        ]);
+        await ctx.sleep(3200);
+
+        if (isCodeCracked(opp)) {
+          await handleCodeCracked(opp, `${opp.name} completed all 3 override codes via Borg interference!`);
+        }
+      }
+    }
   }
 
   // VICTORY
