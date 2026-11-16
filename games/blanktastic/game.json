@@ -1,0 +1,10 @@
+{
+  "name": "Blanktastic",
+  "description": "A family-friendly fill-in-the-blank card game. Play the funniest card from your hand and win the Judge's star.",
+  "icon": "⭐",
+  "color": "#7a3cff",
+  "minPlayers": 3,
+  "maxPlayers": 10,
+  "lateJoin": true,
+  "music": "party"
+}

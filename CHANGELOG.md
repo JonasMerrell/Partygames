@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- New game: Blanktastic, a family-friendly fill-in-the-blank card game for 3–10 players. A rotating Judge reads a prompt; everyone else plays the funniest answer card from the hand on their phone (or writes their own, twice a game), and the Judge picks a winner without knowing who played what. 117 prompts and 315 answers, all original; written cards pass a word filter.
+
 ## 0.4.0
 
 - New game: Hard Sell, for 3–10 players. One player is the customer and picks a persona card; everyone else glues two word cards into a product, pitches it out loud, and the customer buys one. Sellers also vote a crowd favourite.
