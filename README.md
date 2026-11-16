@@ -53,6 +53,6 @@ Uploaded games live in `/var/lib/partyhall/games`, built-in ones in
 
 ## Releases
 
-Add a `## X.Y.Z` section to CHANGELOG.md, bump Cargo.toml, then publish a
-GitHub release tagged `vX.Y.Z` (for example `gh release create vX.Y.Z --notes-file …`).
+Add a `## X.Y.Z` section to CHANGELOG.md and bump Cargo.toml, then run the
+`release` workflow (Actions tab, or `gh workflow run release`).
 The workflow builds a static Linux binary and attaches it to the release.

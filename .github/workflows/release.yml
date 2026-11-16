@@ -1,8 +1,10 @@
 name: release
+# Run "release" from the Actions tab (or `gh workflow run release`) to publish
+# the version in Cargo.toml. CHANGELOG.md needs a matching "## X.Y.Z" section.
 on:
+  workflow_dispatch:
   release:
     types: [published]
-  workflow_dispatch:
 permissions:
   contents: write
 jobs:
@@ -16,18 +18,22 @@ jobs:
       - name: Package
         run: |
           set -eu
-          ver=${GITHUB_REF_NAME#v}
-          echo "building $ver"
+          ver=$(sed -n 's/^version = "\(.*\)"/\1/p' Cargo.toml | head -1)
+          echo "VER=$ver" >> "$GITHUB_ENV"
+          grep -q "^## $ver\$" CHANGELOG.md || { echo "CHANGELOG.md has no ## $ver section"; exit 1; }
           mkdir -p pkg/partyhall
           cp target/x86_64-unknown-linux-musl/release/partyhall pkg/partyhall/
           cp -r games deploy GAMES.md README.md CHANGELOG.md tools pkg/partyhall/
           tar -C pkg -czf partyhall-x86_64-linux.tar.gz partyhall
           sha256sum partyhall-x86_64-linux.tar.gz > partyhall-x86_64-linux.tar.gz.sha256
           awk -v v="## $ver" '$0==v{f=1;next} /^## /{f=0} f' CHANGELOG.md > notes.md
-      - name: Attach to release
-        if: github.event_name == 'release'
+      - name: Publish
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh release upload "$GITHUB_REF_NAME" --clobber \
-            partyhall-x86_64-linux.tar.gz partyhall-x86_64-linux.tar.gz.sha256
+          set -eu
+          if [ "${{ github.event_name }}" = release ]; then tag="$GITHUB_REF_NAME"; else tag="v$VER"; fi
+          if ! gh release view "$tag" >/dev/null 2>&1; then
+            gh release create "$tag" --target "$GITHUB_SHA" --latest --title "$tag" --notes-file notes.md
+          fi
+          gh release upload "$tag" --clobber partyhall-x86_64-linux.tar.gz partyhall-x86_64-linux.tar.gz.sha256
