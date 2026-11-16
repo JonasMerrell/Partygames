@@ -1,0 +1,9 @@
+{
+  "name": "Two Faces",
+  "description": "A masked ball of bluffs. Claim any mask's power, call out liars, and be the last guest still in disguise.",
+  "icon": "🎭",
+  "color": "#e4c77d",
+  "minPlayers": 2,
+  "maxPlayers": 8,
+  "music": "tense"
+}
