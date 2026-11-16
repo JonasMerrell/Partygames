@@ -1,0 +1,80 @@
+[
+ {
+  "title": "Everyone writes an entry",
+  "text": "A topic goes up. Write the best entry you can think of.",
+  "scene": [
+   {
+    "tv": "The best thing to bring to a desert island"
+   },
+   {
+    "phone": "Your entry",
+    "type": "a hot tub"
+   }
+  ],
+  "flow": true
+ },
+ {
+  "title": "Bet on a champion",
+  "text": "Entries are seeded into a knockout bracket. Before the first match, bet on which entry will win it all.",
+  "scene": [
+   {
+    "phone": "Who wins it all?",
+    "buttons": [
+     "a hot tub",
+     "a llama",
+     "my mum"
+    ],
+    "tap": 1
+   },
+   {
+    "icon": "🎟️"
+   }
+  ],
+  "flow": true
+ },
+ {
+  "title": "Match by match",
+  "text": "Each match, everyone except the two authors votes. Winners move on.",
+  "scene": [
+   {
+    "card": "a hot tub",
+    "color": "#f2c14e"
+   },
+   {
+    "icon": "⚔️"
+   },
+   {
+    "card": "a llama",
+    "color": "#5fa8d3",
+    "fx": "glow"
+   },
+   {
+    "icon": "➜"
+   },
+   {
+    "card": "a llama",
+    "color": "#5fa8d3"
+   }
+  ]
+ },
+ {
+  "title": "Scoring",
+  "text": "Points for every vote your entry gets, a big bonus if it's champion, and more if you bet on the champion.",
+  "scene": [
+   {
+    "score": "+100",
+    "label": "per vote"
+   },
+   {
+    "score": "+1000",
+    "label": "champion entry",
+    "color": "#f2c14e"
+   },
+   {
+    "score": "+800",
+    "label": "right bet",
+    "color": "#8cc084"
+   }
+  ]
+ }
+]

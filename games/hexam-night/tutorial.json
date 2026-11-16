@@ -1,0 +1,78 @@
+[
+ {
+  "title": "A deadly exam",
+  "text": "Answer wizarding-world trivia on your phone. Everyone answers every question.",
+  "scene": [
+   {
+    "tv": "Which plant screams when pulled up?"
+   },
+   {
+    "phone": "Your answer",
+    "buttons": [
+     "Mandrake",
+     "Gillyweed",
+     "Devil's Snare"
+    ],
+    "tap": 0
+   }
+  ],
+  "flow": true
+ },
+ {
+  "title": "Wrong? Detention!",
+  "text": "Living students who answer wrong go to detention, a deadly mini-game. Fail it and you become a ghost.",
+  "scene": [
+   {
+    "icon": "📕",
+    "label": "detention",
+    "fx": "shake"
+   },
+   {
+    "icon": "➜"
+   },
+   {
+    "icon": "👻",
+    "label": "ghost"
+   }
+  ]
+ },
+ {
+  "title": "Ghosts keep playing",
+  "text": "Ghosts still answer questions, so nobody sits out.",
+  "scene": [
+   {
+    "icon": "👻",
+    "fx": "float"
+   },
+   {
+    "phone": "Ghosts answer too",
+    "buttons": [
+     "Owl",
+     "Toad",
+     "Cat"
+    ],
+    "tap": 0
+   }
+  ]
+ },
+ {
+  "title": "The Midnight Escape",
+  "text": "After the exam, everyone races to the castle gate. Ghosts start behind but can catch up and come back to life!",
+  "scene": [
+   {
+    "icon": "🏰",
+    "label": "the gate"
+   },
+   {
+    "icon": "🏃",
+    "label": "the living"
+   },
+   {
+    "icon": "👻",
+    "label": "ghosts chase",
+    "fx": "float"
+   }
+  ],
+  "flow": true
+ }
+]

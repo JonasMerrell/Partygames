@@ -1,0 +1,70 @@
+[
+ {
+  "title": "Every answer is a number",
+  "text": "Guess the answer to a trivia question on your phone.",
+  "scene": [
+   {
+    "tv": "How many keys on a piano?"
+   },
+   {
+    "phone": "Your guess",
+    "type": "88"
+   }
+  ],
+  "flow": true
+ },
+ {
+  "title": "Guesses get odds",
+  "text": "Guesses line up smallest to largest. The middle pays 2 to 1, outliers pay more.",
+  "scene": [
+   {
+    "card": "52  ×5",
+    "color": "#5fa8d3"
+   },
+   {
+    "card": "76  ×3",
+    "color": "#8cc084"
+   },
+   {
+    "card": "88  ×2",
+    "color": "#f2c14e"
+   },
+   {
+    "card": "100  ×3",
+    "color": "#f78fb3"
+   }
+  ]
+ },
+ {
+  "title": "Bet on the closest",
+  "text": "Bet chips on the guess closest without going over. You get two free chips each round and can stake points too.",
+  "scene": [
+   {
+    "phone": "Place your bets",
+    "buttons": [
+     "76  ×3",
+     "88  ×2",
+     "100  ×3"
+    ],
+    "tap": 1
+   },
+   {
+    "icon": "🪙"
+   }
+  ]
+ },
+ {
+  "title": "Cash in",
+  "text": "Right bets pay their odds. The guesser closest without going over earns a bonus. The final round pays double!",
+  "scene": [
+   {
+    "score": "×3",
+    "label": "long shots pay big"
+   },
+   {
+    "icon": "💰",
+    "fx": "float"
+   }
+  ]
+ }
+]

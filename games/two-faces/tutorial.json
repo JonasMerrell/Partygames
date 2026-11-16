@@ -1,0 +1,71 @@
+[
+ {
+  "title": "Two hidden masks",
+  "text": "Everyone holds two hidden masks. Each mask has a power.",
+  "scene": [
+   {
+    "card": "👑 Patron",
+    "color": "#f2c14e"
+   },
+   {
+    "card": "🧪 Poisoner",
+    "color": "#8cc084"
+   },
+   {
+    "card": "🗝️ Pickpocket",
+    "color": "#b8a1e3"
+   },
+   {
+    "card": "🛡️ Bodyguard",
+    "color": "#e8553d"
+   }
+  ]
+ },
+ {
+  "title": "Claim any power",
+  "text": "On your turn, use any mask's power, whether you're wearing it or not.",
+  "scene": [
+   {
+    "phone": "Your turn",
+    "buttons": [
+     "Fund: take 3 gold",
+     "Lift: take 2 gold",
+     "Poison"
+    ],
+    "tap": 0
+   },
+   {
+    "icon": "🪙"
+   }
+  ]
+ },
+ {
+  "title": "Call it out",
+  "text": "Rivals can call you out or block you. Whoever is wrong loses a mask.",
+  "scene": [
+   {
+    "icon": "🫵",
+    "label": "\"Liar!\"",
+    "fx": "shake"
+   },
+   {
+    "card": "👑",
+    "color": "#f2c14e",
+    "back": "revealed"
+   }
+  ]
+ },
+ {
+  "title": "Last guest standing",
+  "text": "The last guest with a mask still hidden wins.",
+  "scene": [
+   {
+    "icon": "🎭",
+    "fx": "float"
+   },
+   {
+    "icon": "🏆"
+   }
+  ]
+ }
+]

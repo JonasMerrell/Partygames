@@ -2,6 +2,7 @@
 // host.js and hands it a `ctx` with everything a game needs. See GAMES.md.
 import { h, esc, sleep, shuffle, pick, socket, colorOf, keepAwake } from './common.js';
 import * as audio from './audio.js';
+import { playTutorial } from './tutorial.js';
 
 function muteButton(cls = '') {
   const b = h('button.ghost.sm' + cls, { title: 'Sound on/off', onclick: () => { audio.setMuted(!audio.isMuted()); b.textContent = audio.isMuted() ? '🔇' : '🔊'; } }, audio.isMuted() ? '🔇' : '🔊');
@@ -27,7 +28,7 @@ async function picker(err) {
     h('div.grid', games.map((g) => h('button.gcard', {
       onclick: () => { audio.unlock(); create(g); },
       style: { '--accent': g.color || '#7d8cff' },
-    }, h('div.gicon', g.icon || '🎲'), h('h3', g.name || g.id), h('p', g.description || ''),
+    }, h('div.gicon', g.icon || '🎲'), h('h3', g.name || g.id, g.inspiredBy && h('span.inspired', ` (${g.inspiredBy})`)), h('p', g.description || ''),
       h('span.tag', `${g.minPlayers || 1}–${g.maxPlayers || 16} players`)))),
     !games.length && h('p', 'No games found. Add a folder to the games directory.'),
   ));
@@ -90,14 +91,17 @@ function lobby() {
   const enough = list.filter((p) => p.connected).length >= min;
   app.replaceChildren(h('div.lobby', { style: { '--accent': game?.color || '#7d8cff' } },
     h('div.lobby-head',
+      h('div.qr', h('img', { src: '/qr.svg?text=' + encodeURIComponent(`${location.origin}/?code=${room.code}`), alt: 'Scan to join' }),
+        h('p.sub', 'Scan to join')),
       h('div', h('p.sub', 'Join on your phone at'), h('div.url', joinUrl())),
       h('div', h('p.sub', 'Room code'), h('div.roomcode', room.code))),
-    h('h2', `${game?.icon || ''} ${game?.name || ''}`),
+    h('h2', `${game?.icon || ''} ${game?.name || ''}`, game?.inspiredBy && h('span.inspired', ` (${game.inspiredBy})`)),
     h('div.chips', list.length ? list.map((p) => h('div.chip' + (p.connected ? '' : '.away') + (shown.has(p.id) ? '' : '.new'), { style: { '--c': p.color } },
       p.name, h('button.x', { title: 'Remove', onclick: () => sock.send({ t: 'kick', id: p.id }) }, '×')))
       : h('p.sub', 'Waiting for players…')),
     h('div.row',
       h('button.big', { disabled: !enough, onclick: start }, enough ? 'Everybody\'s in!' : `Need ${min}+ players`),
+      game?.hasTutorial && h('button.ghost', { onclick: () => playTutorial(document.body, game) }, '▶ How to play'),
       h('button.ghost', { onclick: quit }, 'Pick another game'),
       muteButton())));
   list.forEach((p) => shown.add(p.id));
@@ -307,6 +311,22 @@ function makeRun() {
 
 // Resume a room after a refresh of the host screen.
 (async () => {
+  // /host?tutorial=<id> plays just that tutorial (used to record videos).
+  const tut = new URLSearchParams(location.search).get('tutorial');
+  if (tut) {
+    document.body.classList.add('recording');
+    games = await (await fetch('/api/games')).json();
+    const g = games.find((x) => x.id === tut);
+    if (g) {
+      await playTutorial(document.body, g, { controls: false });
+      app.replaceChildren(h('div.say.t-end', { style: { '--accent': g.color || '#7d8cff' } },
+        h('div.t-icon', g.icon || '🎲'), h('h1', `Let's play ${g.name}!`),
+        h('p', `Open ${location.host}/host on the TV, then join on your phone.`)));
+      await sleep(3000);
+    }
+    document.title = 'tutorial-done';
+    return;
+  }
   let saved = null;
   try { saved = JSON.parse(sessionStorage.getItem(SAVE)); } catch {}
   if (saved?.code) {

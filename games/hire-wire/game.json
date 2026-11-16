@@ -1,0 +1,10 @@
+{
+  "name": "Hire Wire",
+  "inspiredBy": "Job Job",
+  "description": "Make small talk, then nail a job interview using only words salvaged from everyone else's answers.",
+  "icon": "🗄️",
+  "color": "#ffb84d",
+  "minPlayers": 3,
+  "maxPlayers": 8,
+  "music": "think"
+}

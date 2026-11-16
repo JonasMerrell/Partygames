@@ -3,6 +3,35 @@
 ## Unreleased
 
 - New game: Mutiny on the Starling, a hidden-role voting game for 5–10 players. Loyal crew and secret mutineers (led by a hidden Ringleader) elect Captain and First Mate pairs, who pass ship's orders in secret. Five Steady orders win it for the crew; six Mutiny orders, or the Ringleader made First Mate late in the game, win it for the mutiny. Mutiny orders unlock Captain powers (scan, background check, field promotion, airlock) and a late veto. Phones have a hold-to-see role button.
+
+## 0.10.0
+
+- Animated "How to play" for every game, from a ▶ How to play button in the lobby (tutorial.json per game).
+
+## 0.9.0
+
+- The game picker and lobby show the well-known game each one plays like, in brackets (`inspiredBy` in game.json).
+
+## 0.8.0
+
+- Lobby screen shows a QR code that opens the join page with the room code filled in.
+
+## 0.7.0
+
+- New game: Bracket Brawl, for 3–12 players. Everyone writes an entry for a silly topic, the entries are seeded into a knockout bracket (house entries fill gaps), and everyone bets on the champion before voting through each match.
+- New game: Patch Party, for 3–10 players. Draw two jacket-patch designs and write three mottos, then get dealt other people's art and words and stitch the best patch. Everyone votes for two favourites; the stitcher, artist and motto writer all score. Phones pick designs from a picture grid (the game's own player.js).
+- New game: Line 'Em Up, for 1–16 players (late joiners welcome). Put four things in order by year, size, speed, depth and more by tapping them in turn. Points for each one in the right spot, plus bonuses for a perfect line and the fastest perfect line.
+- New game: Mind Meld, for 2–16 players (late joiners welcome). A category goes up and everyone writes the answer they think the room will write; every match scores, and small typos and plurals still count.
+- New game: Airlock, a hidden-team game for 6–16 players in two real rooms. Everyone gets a secret card (Crew or Swarm, with one Captain and one Mimic; Scanner and Lurker from 8 players, a lone Drifter when the count is odd) and splits between Module A (the TV room) and Module B. On your phone you show your whole card or just your colour to someone in your module, back a chief (anyone backed by more than half the module takes over), and pop up what others show you with a one-tap "show mine back". When the timer runs out the chiefs send people through the airlock. After three rounds the cards flip: if the Mimic ended up with the Captain, the Swarm wins. The TV shows both modules, the chiefs, the round timer and the big reveal; the host picks Quick, Standard or Long rounds.
+- New game: Tall Tales, for 2–10 players. Strange-but-true facts with a blank: everyone writes a believable lie, then picks the truth from the list. 34 original facts, house lies fill in for small groups, and round 2 is worth double.
+- New game: Letter Forge, for 1–16 players. Everyone gets the same nine letter tiles and types as many words as they can in 75 seconds; tile values add up, and words nobody else found score double. Words are checked against a bundled SCOWL word list.
+- New game: Crowd Read, for 2–16 players. Answer a yes-or-no question in secret, then guess how many of the room said yes. Exact guesses score big; the last question is double.
+- New game: Out of Context, for 3–12 players. Answer an innocent question, then someone else writes a new question that makes your answer sound ridiculous. The room votes for the best twist.
+- New game: Orbit Estates, a property trading board game for 2–8 players on a 32-space ring space station. Roll and fly around the ring, buy lots in seven districts, build domes and Spires, collect rent, ride the shuttle pads, draw Transmission cards and dodge Quarantine. Turning down a lot puts it up for a secret phone auction; on your turn you can mortgage, build or propose a trade (lots plus cash both ways) that the other pilot accepts on their phone. Phones show your cash and deeds at all times. The first player picks a 30, 45, 60 or 90 minute limit (or none); when time runs out everyone finishes the round and the highest net worth wins.
+- New game: Hire Wire, for 3–8 players. Everyone makes small talk, Ledger the filing cabinet shreds the answers into word tiles, and then each player answers job-interview questions by tapping together words salvaged from everyone else (plus a few office-supply glue words). The room votes, votes become salary, and a word's original owner earns royalties when it helps win votes. Three interviews, the last pays double; the top salary gets hired.
+- Phones: a game's player.js now gets the current view even if it arrived while player.js was still loading (e.g. after a refresh mid-game).
+- New game: Codswallop, a bluffing game for 3–12 players. The TV shows a bizarre word, an odd law, a strange fact or an obscure everyday thing (164 real ones, all checked). Everyone writes a convincing fake answer, the truth is shuffled in, and players vote for the real one: points for finding the truth and for every player your lie fools. Six prompts, the last two rounds worth double and triple.
+- New game: Saltwind Isles, an island-settling trading game for 2–6 players. Roll for cargo from a random hex archipelago, build bridges, huts and lighthouses from your phone's map, trade with friends or the harbours, dodge the squall, and race to 7 or 10 points. The TV shows the islands, dice and scores; turn timers and stand-ins keep it moving when someone wanders off.
 - New game: Hexam Night, for 2–10 players. Wizarding-world trivia (468 original questions about the Harry Potter books and films, mixed difficulty) hosted by Proctor Hollowell, a ghostly exam proctor. Get a question wrong and you go to detention, one of five deadly mini-games (Shifting Stairs, Counter-Curse, Candlelight, the Proctor's Brew, Oral Exam). The fallen keep playing as ghosts, then everyone races for the gate in the Midnight Escape, where ghosts who catch a living player come back to life.
 - New game: Split Decision, for 3–12 players. Each player finishes a tempting offer with a catch ("…BUT"), and the room votes deal or no deal. The closer the vote splits 50/50, the more the author scores; voters in the minority get a bravery bonus.
 - New game: Gallery of Lies, for 3–10 players. Everyone secretly draws a title, then writes fake museum placards for each other's art, and visitors try to pick the real one. Points for finding the truth and for every visitor your forgery fools.

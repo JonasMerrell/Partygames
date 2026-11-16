@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 300" role="img" aria-label="Codswallop">
+  <defs>
+    <linearGradient id="pg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#fbf3dd"/><stop offset="1" stop-color="#e9d9ad"/>
+    </linearGradient>
+    <linearGradient id="gold" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffd77a"/><stop offset="1" stop-color="#e59a1f"/>
+    </linearGradient>
+  </defs>
+  <!-- open book -->
+  <g transform="translate(410 70)">
+    <path d="M0 18 C-60 -6 -130 -6 -190 14 L-190 150 C-130 130 -60 130 0 154 Z" fill="url(#pg)" stroke="#8a6a2e" stroke-width="5" stroke-linejoin="round"/>
+    <path d="M0 18 C60 -6 130 -6 190 14 L190 150 C130 130 60 130 0 154 Z" fill="url(#pg)" stroke="#8a6a2e" stroke-width="5" stroke-linejoin="round"/>
+    <g stroke="#c4ad7a" stroke-width="5" stroke-linecap="round">
+      <path d="M-160 40 C-120 30 -70 30 -30 42"/><path d="M-160 66 C-120 56 -70 56 -30 68"/><path d="M-160 92 C-120 82 -80 82 -50 90"/>
+      <path d="M30 42 C70 30 120 30 160 40"/><path d="M30 68 C70 56 120 56 160 66"/><path d="M50 90 C80 82 120 82 160 92"/>
+    </g>
+    <!-- quill -->
+    <g transform="translate(120 -46) rotate(28)">
+      <path d="M0 0 C26 30 30 90 6 150 C-22 92 -24 34 0 0 Z" fill="#ff6b6b" stroke="#7a2430" stroke-width="4"/>
+      <path d="M0 6 L4 168" stroke="#7a2430" stroke-width="4" stroke-linecap="round"/>
+    </g>
+  </g>
+  <!-- wordmark -->
+  <g font-family="Georgia, 'Times New Roman', serif" font-weight="700" font-style="italic" text-anchor="middle">
+    <text x="410" y="282" font-size="104" fill="#3a2410" opacity=".55" transform="translate(5 6)">Codswallop</text>
+    <text x="410" y="282" font-size="104" fill="url(#gold)" stroke="#5a3608" stroke-width="3" paint-order="stroke">Codswallop</text>
+  </g>
+  <!-- sparkle -->
+  <g fill="#ffe9a8">
+    <path d="M118 74 l7 18 18 7 -18 7 -7 18 -7 -18 -18 -7 18 -7z"/>
+    <path d="M712 128 l5 12 12 5 -12 5 -5 12 -5 -12 -12 -5 12 -5z"/>
+  </g>
+</svg>

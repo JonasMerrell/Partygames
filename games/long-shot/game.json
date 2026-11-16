@@ -1,5 +1,6 @@
 {
   "name": "Long Shot",
+  "inspiredBy": "Wits & Wagers",
   "description": "Guess the number, then bet chips on whose guess is closest without going over. Long shots pay big.",
   "icon": "🎯",
   "color": "#ffc94d",

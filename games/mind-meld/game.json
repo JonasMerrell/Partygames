@@ -1,0 +1,11 @@
+{
+  "name": "Mind Meld",
+  "inspiredBy": "Herd Mentality",
+  "description": "A category goes up. Write the answer you think everyone else will write; every match scores.",
+  "icon": "🧠",
+  "color": "#9f8cff",
+  "minPlayers": 2,
+  "maxPlayers": 16,
+  "lateJoin": true,
+  "music": "party"
+}

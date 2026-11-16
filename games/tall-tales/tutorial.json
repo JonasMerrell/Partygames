@@ -1,0 +1,51 @@
+[
+ {
+  "title": "A strange true fact",
+  "text": "A real fact goes up with a blank.",
+  "scene": [
+   {
+    "tv": "In 1932, Australia lost a war against ____."
+   }
+  ]
+ },
+ {
+  "title": "Write a lie",
+  "text": "Fill the blank with a believable fake.",
+  "scene": [
+   {
+    "phone": "Your tall tale",
+    "type": "kangaroos"
+   }
+  ]
+ },
+ {
+  "title": "Find the truth",
+  "text": "The truth hides among the lies. Pick the one you think is real.",
+  "scene": [
+   {
+    "phone": "Which is true?",
+    "buttons": [
+     "kangaroos",
+     "emus",
+     "rabbits"
+    ],
+    "tap": 1
+   }
+  ]
+ },
+ {
+  "title": "Scoring",
+  "text": "Big points for finding the truth, and more for every player your tall tale fooled.",
+  "scene": [
+   {
+    "score": "+1000",
+    "label": "found the truth"
+   },
+   {
+    "score": "+500",
+    "label": "per player fooled",
+    "color": "#f2c14e"
+   }
+  ]
+ }
+]

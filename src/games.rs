@@ -96,7 +96,7 @@ pub async fn list(State(st): State<Arc<AppState>>) -> Json<Value> {
             if meta.get("hidden").and_then(Value::as_bool) == Some(true) {
                 continue;
             }
-            let ver = ["game.json", "host.js", "player.js"]
+            let ver = ["game.json", "host.js", "player.js", "tutorial.json"]
                 .iter()
                 .filter_map(|f| e.path().join(f).metadata().ok()?.modified().ok())
                 .max()
@@ -106,6 +106,7 @@ pub async fn list(State(st): State<Arc<AppState>>) -> Json<Value> {
             meta["id"] = json!(id);
             meta["version"] = json!(ver);
             meta["hasPlayer"] = json!(e.path().join("player.js").is_file());
+            meta["hasTutorial"] = json!(e.path().join("tutorial.json").is_file());
             seen.insert(id);
             out.push(meta);
         }

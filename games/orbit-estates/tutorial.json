@@ -1,0 +1,73 @@
+[
+ {
+  "title": "A ring space station",
+  "text": "Take turns rolling and flying your ship around a ring of station modules.",
+  "scene": [
+   {
+    "dice": [
+     4,
+     2
+    ]
+   },
+   {
+    "icon": "🚀"
+   },
+   {
+    "icon": "🛰️",
+    "label": "the ring"
+   }
+  ],
+  "flow": true
+ },
+ {
+  "title": "Buy and build",
+  "text": "Land on a free module to buy it. Own a full set to build domes and raise the rent.",
+  "scene": [
+   {
+    "phone": "Buy Hydroponics?",
+    "buttons": [
+     "Buy",
+     "Pass"
+    ],
+    "tap": 0
+   },
+   {
+    "card": "DOME",
+    "color": "#8cc084",
+    "fx": "pop"
+   }
+  ],
+  "flow": true
+ },
+ {
+  "title": "Charge rent",
+  "text": "Anyone who lands on your module pays you rent. Deal and trade with other pilots from your phone.",
+  "scene": [
+   {
+    "icon": "🚀"
+   },
+   {
+    "icon": "💸"
+   },
+   {
+    "score": "+120",
+    "label": "rent"
+   }
+  ],
+  "flow": true
+ },
+ {
+  "title": "Stay solvent",
+  "text": "Run out of money and you're out. The last pilot solvent, or the richest when the clock runs out, wins.",
+  "scene": [
+   {
+    "icon": "💰",
+    "fx": "float"
+   },
+   {
+    "icon": "🏆",
+    "label": "last one solvent"
+   }
+  ]
+ }
+]

@@ -1,5 +1,6 @@
 {
   "name": "Star Charts",
+  "inspiredBy": "Codenames",
   "description": "Two teams, one sky of words. Your astronomer gives one-word clues; find your stars and steer clear of the black hole.",
   "icon": "🔭",
   "color": "#ffb547",

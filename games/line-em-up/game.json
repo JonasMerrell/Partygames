@@ -1,0 +1,11 @@
+{
+  "name": "Line 'Em Up",
+  "inspiredBy": "Timeline",
+  "description": "Four things, one right order. Sort them by year, size, speed or more, faster than everyone else.",
+  "icon": "📏",
+  "color": "#4dd8ff",
+  "minPlayers": 1,
+  "maxPlayers": 16,
+  "lateJoin": true,
+  "music": "think"
+}
