@@ -94,18 +94,23 @@ export const CSS = `
 .bt-chip.in { border: 4px solid var(--line); background: #fff; color: var(--fg); box-shadow: 0 4px 0 var(--line);
   animation: bt-bounce .35s cubic-bezier(.3,1.8,.5,1); }
 
-.bt-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 2vw; max-width: 1600px; }
-.bt-card { position: relative; width: 13em; min-height: 8em; background: #fffdf6; border: 5px solid var(--line);
+.bt-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: .6em 1em; max-width: 100%; }
+.bt-card { position: relative; width: 10.5em; min-height: 6.5em; background: #fffdf6; border: 5px solid var(--line);
   border-radius: 22px; padding: 1em 1em .8em; font-size: 1.25em; display: flex; flex-direction: column; gap: .4em;
   justify-content: center; transform: rotate(var(--tilt)); box-shadow: 0 0 0 8px var(--c), 0 0 0 12px var(--line), 0 16px 0 4px var(--line);
   margin: 12px; animation: bt-stick .45s backwards cubic-bezier(.3,1.7,.5,1); overflow-wrap: anywhere; }
 .bt-ans { font-weight: 900; font-size: 1.15em; line-height: 1.2; }
 .bt-num { position: absolute; top: -.9em; left: -.9em; width: 1.8em; height: 1.8em; display: grid; place-items: center;
   border-radius: 50%; background: var(--c); border: 4px solid var(--line); font-family: 'Fredoka', var(--font); }
-.bt-custom { font-size: .7em; color: var(--dim); }
-.bt-by { font-family: 'Fredoka', var(--font); font-size: .95em; filter: brightness(.75); }
-.bt-many .bt-card { width: 10.5em; min-height: 6em; font-size: 1em; margin: 8px; }
-.bt-card.dim { opacity: .55; filter: saturate(.5); }
+.bt-custom { font-size: .8em; color: var(--fg); opacity: .8; }
+.bt-by { font-family: 'Fredoka', var(--font); font-size: .95em; }
+.bt-many .bt-card { width: 9em; min-height: 5em; font-size: 1.05em; margin: 8px; }
+.bt-reveal .bt-card { min-height: 4em; padding: .7em .8em .6em; }
+.bt-round:has(.bt-reveal) .bt-big { font-size: 1.8em; padding: .45em .9em; }
+.bt-round:has(.bt-reveal) .bt-winner strong { font-size: 2.8em; }
+.bt-custom { font-size: .85em; }
+.bt-reveal .bt-card.win { transform: rotate(0) scale(1.06); animation: none; }
+.bt-card.dim { filter: saturate(.45) brightness(.93); }
 .bt-card.win { transform: rotate(0) scale(1.12); z-index: 1; animation: bt-wiggle 1s ease-in-out infinite alternate; }
 .bt-card.win::after { content: '⭐'; position: absolute; top: -.9em; right: -.6em; font-size: 2em; }
 @keyframes bt-stick { from { transform: scale(1.8) rotate(20deg); opacity: 0; } }
@@ -121,7 +126,7 @@ export const CSS = `
 .bt-srow { display: grid; grid-template-columns: 9em 1fr 3em; gap: 1em; align-items: center; background: #fff;
   border: 4px solid var(--line); border-left: 18px solid var(--c); border-radius: 20px; padding: .4em 1em; font-size: 1.4em;
   font-weight: 900; text-align: left; box-shadow: 0 5px 0 var(--line); animation: bt-bounce .4s backwards; }
-.bt-sname { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; filter: brightness(.75); }
+.bt-sname { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .bt-stars { letter-spacing: .1em; }
 .bt-spts { text-align: right; font-family: 'Fredoka', var(--font); }
 

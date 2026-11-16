@@ -233,7 +233,7 @@ export const CSS = `
 }
 .gs-card.gs-big .gs-card-big { font-size: 2em; letter-spacing: 0.04em; }
 .gs-card-small { color: var(--gs-dim); font-size: 0.95em; margin-top: 4px; }
-.gs-card.gs-dim { opacity: 0.5; filter: grayscale(0.6); }
+.gs-card.gs-dim { opacity: 0.75; filter: grayscale(0.6); }
 .gs-card.gs-accused {
   border-color: var(--gs-pink);
   box-shadow: 0 0 25px var(--gs-pink), inset 0 0 15px rgba(255, 0, 127, 0.3);

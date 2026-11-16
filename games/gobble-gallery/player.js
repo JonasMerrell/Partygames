@@ -393,7 +393,7 @@ function addStyles() {
     display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--ink);
     box-shadow: inset 0 2px 0 rgba(255,255,255,0.7), 0 3px 0 #c4af8a; }
   .ggp-tool span { font-size: 1.5em; line-height: 1; }
-  .ggp-tool small { font-size: .55em; line-height: 1; font-weight: 700; }
+  .ggp-tool small { font-size: .72em; line-height: 1; font-weight: 700; }
   .ggp-size span { display: block; border-radius: 50%; background: var(--ink); }
   .ggp-tool.on, .ggp-size.on { border-color: var(--ink); background: #ffe9a8; box-shadow: inset 0 2px 4px rgba(0,0,0,0.2); }
   .ggp-tool.arm { border-color: #e8413c; background: #ffd0cc; }
@@ -429,7 +429,7 @@ function addStyles() {
   .ggp-addrow { display: flex; gap: 8px; }
   .ggp-field { flex: 1; min-width: 0; background: #fff; color: var(--ink); border: 3px solid #e0cfae; border-radius: 16px; font-family: inherit; font-size: 1.15em; padding: 12px;
     box-shadow: inset 0 2px 4px rgba(0,0,0,0.1); }
-  .ggp-add { font-family: inherit; font-weight: 700; font-size: 1.1em; background: #f2a541; color: #fff; border: 0; border-radius: 16px; padding: 0 16px; cursor: pointer;
+  .ggp-add { font-family: inherit; font-weight: 700; font-size: 1.1em; background: #f2a541; color: #3a2208; border: 0; border-radius: 16px; padding: 0 16px; cursor: pointer;
     box-shadow: 0 4px 0 #b36e1c; }
   .ggp-add:disabled, .ggp-field:disabled { opacity: .5; box-shadow: none; }
   .ggp-row { display: flex; align-items: center; gap: 12px; width: 100%; background: #fff; border-left: 8px solid var(--c); border-radius: 16px; padding: 8px 12px; text-align: left;

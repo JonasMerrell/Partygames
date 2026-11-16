@@ -246,7 +246,7 @@ function answerCard(ctx, e, reveal, colorOf, nameOf, mult) {
 
 async function shred(ctx, strips, ledger) {
   const { h } = ctx;
-  const list = ctx.shuffle(strips).slice(0, 12);
+  const list = ctx.shuffle(strips).slice(0, 10);
   const papers = list.map((s) => h('div.strip', { style: { '--c': ctx.player(s.owner)?.color } },
     h('b', ctx.player(s.owner)?.name ?? ''), ' ', s.text));
   ctx.el.replaceChildren(h('div.shredder', ledger('chomp'), h('div.strips', papers)));
@@ -296,13 +296,17 @@ css.textContent = `
   .bubble h1.q { font-size: 2em; }
   .bubble p { font-size: 1.25em; margin: .3em 0; color: #4a4560; }
   .bubble .chips { justify-content: flex-start; margin-top: 1em; }
-  .bubble .chip { color: var(--fg); }
+  .bubble .chip { color: #1b1f2e; background: color-mix(in srgb, var(--c) 40%, #fff); }
+  .bubble .chip.away { opacity: 1; background: #fff; border-style: dashed; color: #4a4560; }
   .opening { display: inline-flex; gap: .6em; align-items: baseline; background: #1b1f2e; color: #fff7d6; border-radius: 10px;
     padding: .3em .8em; margin-bottom: .6em; font-size: 1.05em; }
-  .opening span { font-size: .7em; letter-spacing: .15em; text-transform: uppercase; color: var(--accent); font-weight: 900; }
+  .opening span { font-size: .8em; letter-spacing: .15em; text-transform: uppercase; color: var(--accent); font-weight: 900; }
   .vote-head { text-align: center; }
   .vote-head .q { font-size: 2em; max-width: 1200px; }
-  .answers { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 380px), 1fr)); gap: 2vh 2vw; width: 100%; max-width: 1600px; }
+  .answers { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 9.5em), 1fr)); gap: .7em .7em; width: 100%; }
+  .answers .tile { font-size: 1em; }
+  .answers .acard { padding: 2.6em .7em .8em; }
+  .answers .letter { left: 50%; top: .3em; transform: translateX(-50%); }
   .acard { position: relative; background: var(--card); border: 3px solid var(--line); border-radius: 22px; padding: 2.2vh 1.4vw 2.2vh 4.2em;
     text-align: left; animation: pop .35s ease-out both; }
   .acard.shown { border-color: var(--c); }
@@ -323,10 +327,11 @@ css.textContent = `
   .royal { display: flex; gap: .6em; flex-wrap: wrap; align-items: center; justify-content: center; color: var(--dim); }
   .chip.sm { font-size: .9em; padding: 6px 14px; }
   .shredder { display: flex; align-items: center; gap: 4vw; width: 100%; max-width: 1500px; }
-  .strips { flex: 1; display: flex; flex-direction: column; gap: 1.2vh; text-align: left; }
-  .strip { background: #fff7d6; color: #1b1f2e; padding: .5em .9em; border-radius: 6px; font-size: 1.05em; font-weight: 700;
-    border-left: 8px solid var(--c); animation: pop .3s ease-out both; min-height: 2.2em; }
-  .strip.cut { background: transparent; border-color: transparent; display: flex; flex-wrap: wrap; gap: .3em; }
+  .strips { flex: 1; display: grid; grid-template-columns: 1fr 1fr; gap: .5em .8em; text-align: left; align-content: center; }
+  .strip { background: #fff7d6; color: #1b1f2e; padding: .4em .8em; border-radius: 6px; font-size: 1em; font-weight: 700;
+    border-left: 8px solid var(--c); animation: pop .3s ease-out both; min-height: 2.2em;
+    display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3; overflow: hidden; }
+  .strip.cut { background: transparent; border-color: transparent; display: flex; flex-wrap: wrap; gap: .3em; overflow: visible; }
   .tile.fly { animation: fly 1.6s cubic-bezier(.5,-0.3,.8,.6) both; }
   @keyframes fly { to { transform: translate(var(--dx), var(--dy)) rotate(var(--r)); opacity: 0; } }
   .final { text-align: center; }

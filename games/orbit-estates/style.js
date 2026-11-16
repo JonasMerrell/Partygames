@@ -1,6 +1,6 @@
 // Orbit Estates look: dark glass tiles on a starfield, neon district bands.
 export const CSS = `
-.oe-root { --B: min(86vh, 64vw); display: flex; gap: 2vw; align-items: center; justify-content: center; width: 100%; text-align: left; }
+.oe-root { --B: min(84vh, 62vw); display: flex; gap: 2vw; align-items: center; justify-content: center; width: 100%; text-align: left; }
 .game:has(.oe-root), .game:has(.oe-intro) {
   background:
     radial-gradient(1px 1px at 12% 18%, #fff8, transparent), radial-gradient(1px 1px at 72% 12%, #fff9, transparent),
@@ -9,7 +9,7 @@ export const CSS = `
     radial-gradient(900px 600px at 50% 50%, #241a4a 0%, transparent 70%);
 }
 .oe-board { width: var(--B); height: var(--B); display: grid; grid-template: repeat(9, 1fr) / repeat(9, 1fr); gap: calc(var(--B) * .004);
-  font-size: calc(var(--B) / 9 * .12); flex-shrink: 0; }
+  font-size: calc(var(--B) / 9 * .145); flex-shrink: 0; }
 .oe-tile { position: relative; background: linear-gradient(160deg, #2c2550ee, #1b1636ee); border: 1px solid #ffffff1c; border-radius: calc(var(--B) * .008);
   display: flex; overflow: hidden; box-shadow: inset 0 0 0 calc(var(--B) * .003) var(--o); }
 .oe-tile.s-b { flex-direction: column; } .oe-tile.s-t { flex-direction: column-reverse; }
@@ -21,11 +21,11 @@ export const CSS = `
   letter-spacing: -.1em; font-size: .9em; line-height: 1; box-shadow: 0 0 12px color-mix(in srgb, var(--g) 60%, transparent); }
 .s-b .oe-band, .s-t .oe-band { height: 22%; } .s-l .oe-band, .s-r .oe-band { width: 22%; writing-mode: vertical-rl; }
 .oe-tbody { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 2px; gap: .1em; min-width: 0; }
-.oe-tname { font-weight: 800; line-height: 1.05; font-size: 1em; }
+.oe-tname { font-weight: 800; line-height: 1.05; font-size: 1em; overflow-wrap: anywhere; hyphens: auto; }
 .corner .oe-tname { font-size: 1.15em; }
 .oe-ticon { font-size: 1.8em; line-height: 1; }
 .corner .oe-ticon { font-size: 3em; }
-.oe-tprice { color: var(--dim); font-size: .95em; font-weight: 700; }
+.oe-tprice { color: #cfc9ea; font-size: .95em; font-weight: 700; }
 .oe-tokens { position: absolute; inset: auto 0 6% 0; display: flex; flex-wrap: wrap; justify-content: center; gap: 2px; }
 .oe-tok { font-size: 2.1em; line-height: 1; filter: drop-shadow(0 0 4px var(--c)) drop-shadow(0 0 2px var(--c)); animation: oe-hop .2s; }
 @keyframes oe-hop { from { transform: translateY(-30%) scale(1.2); } }
@@ -109,7 +109,7 @@ export const CSS = `
 .oe-bar-tok { font-size: 2em; }
 .oe-bar-cash { font-size: 1.9em; font-weight: 900; color: #ffd23d; flex: 1; font-variant-numeric: tabular-nums; }
 .oe-bar-tags { display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
-.oe-bar-tag { font-size: .75em; font-weight: 800; border: 1px solid #ffffff33; border-radius: 99px; padding: 2px 8px; color: var(--dim); }
+.oe-bar-tag { font-size: .85em; font-weight: 800; border: 1px solid #ffffff33; border-radius: 99px; padding: 2px 8px; color: var(--dim); }
 .oe-bar-tag.hot { color: #120f1d; background: #ffd23d; border-color: #ffd23d; }
 .oe-bar-deeds { display: flex; flex-wrap: wrap; gap: 6px; }
 .oe-bar-deed { font-size: .78em; font-weight: 700; border-left: 6px solid var(--g); background: #ffffff10; border-radius: 4px; padding: 2px 6px; }

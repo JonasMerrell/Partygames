@@ -163,6 +163,7 @@ export default async function (ctx) {
     ctx.sfx('win');
     grid.replaceChildren(...entries.map((e, i) => answerCard(h, prompt, e, i, {
       who: ctx.player(e.id), win: e === win })));
+    grid.classList.add('bt-many', 'bt-reveal');
     ctx.el.replaceChildren(h('div.bt-round',
       h('div.bt-winner', h('span', lucky ? 'The Judge ran out of time, so luck picked…' : `${judge.name} picked…`),
         h('strong', { style: { '--c': winner?.color } }, `⭐ ${winner?.name ?? 'Someone'} ⭐`)),
@@ -211,7 +212,7 @@ function answerCard(h, prompt, e, i, opts = {}) {
     h('span.bt-num', String(i + 1)),
     h('div.bt-ans', e.text),
     e.custom ? h('div.bt-custom', '✏️ written') : null,
-    opts.who ? h('div.bt-by', { style: { color: opts.who.color } }, opts.who.name) : null);
+    opts.who ? h('div.bt-by', h('span.pname', { style: { '--pc': opts.who.color } }, opts.who.name)) : null);
 }
 
 function fillText(prompt, answer) {
@@ -225,7 +226,7 @@ async function scoreboard(ctx, score, title, ms) {
   ctx.sfx('whoosh');
   ctx.el.replaceChildren(h('div.bt-round', h('h1.bt-h', title), h('div.bt-scores', rows.map(({ p, s }, i) =>
     h('div.bt-srow', { style: { '--c': STICKER[i % STICKER.length], animationDelay: `${i * 90}ms` } },
-      h('span.bt-sname', { style: { color: p.color } }, p.name),
+      h('span.bt-sname', h('span.pname', { style: { '--pc': p.color } }, p.name)),
       h('span.bt-stars', s ? '⭐'.repeat(Math.min(s, 10)) : '·'),
       h('span.bt-spts', s))))));
   await ctx.sleep(ms);

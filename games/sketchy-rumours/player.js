@@ -261,7 +261,7 @@ function addStyles() {
     font-size: 1.45em; min-height: 3.6em; resize: none; padding: 4px; outline: none; }
   .srp-row { display: flex; gap: 10px; }
   .srp-row > * { flex: 1; }
-  .srp-btn { font-family: var(--marker); font-size: 1.2em; background: #e8553e; color: #fff; border: 0; border-radius: 14px;
+  .srp-btn { font-family: var(--marker); font-size: 1.2em; background: #c43d26; color: #fff; border: 0; border-radius: 14px;
     padding: 14px 16px; box-shadow: 0 5px 0 #9c3221; cursor: pointer; }
   .srp-btn:active { transform: translateY(3px); box-shadow: 0 2px 0 #9c3221; }
   .srp-btn.alt { background: #2f5bd8; box-shadow: 0 5px 0 #1c3a8f; }

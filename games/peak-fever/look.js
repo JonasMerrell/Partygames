@@ -463,11 +463,15 @@ ${FONTS}
   inset: 0;
   pointer-events: none;
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 0 0 6em 1.5em;
 }
 
 .pf-cheer {
-  position: absolute;
-  bottom: 4%;
   padding: 8px 18px;
   border-radius: 4px;
   border: 3px solid var(--pf-navy);
@@ -483,10 +487,10 @@ ${FONTS}
 }
 
 @keyframes pf-cheer-rise {
-  0% { transform: translateY(24px) scale(0.7); opacity: 0; }
-  15% { transform: translateY(0) scale(1); opacity: 1; }
-  80% { opacity: 1; }
-  100% { transform: translateY(-48vh) scale(0.95); opacity: 0; }
+  0% { transform: translateX(-20px) scale(0.7); opacity: 0; }
+  12% { transform: none; opacity: 1; }
+  85% { opacity: 1; }
+  100% { opacity: 0; }
 }
 
 /* Geometric Avalanche Cascade Shards */

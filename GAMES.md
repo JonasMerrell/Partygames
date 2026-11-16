@@ -102,6 +102,21 @@ Phones draw views for you, so most games need no phone code at all.
 }
 ```
 
+## Make it readable from the sofa
+
+People read the TV from across a room, so:
+
+- Keep TV text at `.67em` or more (20px on a 1080p TV) and phone text at 14px or more.
+- Keep text contrast at WCAG AA: 4.5:1, or 3:1 for big bold text. Don't fade text with `opacity`.
+- Player colours are bright, so they read on the dark theme but not on light cards.
+  On a light background use the built-in name tag, which puts dark text on the
+  player's colour: `h('span.pname', { style: { '--pc': p.color } }, p.name)`.
+- Everything must fit the 16:9 frame without the auto zoom kicking in. Cap long
+  lists (show the latest few) and use columns rather than one tall stack.
+
+`node tools/audit.js <server> [game-id…]` plays each game with bots on a TV and
+phones and reports cut-off text, low contrast, small text and zoomed screens.
+
 ## tutorial.json (optional)
 
 An animated "How to play" that the host can run from the lobby. A list of

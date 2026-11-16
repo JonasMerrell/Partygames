@@ -258,7 +258,7 @@ function injectCss() {
   .hs-persona.back { background: repeating-linear-gradient(45deg, #ff9f1c 0 18px, #ffb23e 18px 36px); }
   .hs-persona.back span { font-size: 5em; font-weight: 900; color: #3a1d00; }
   .hs-deck .hs-persona:nth-child(1) { transform: rotate(-6deg); } .hs-deck .hs-persona:nth-child(3) { transform: rotate(6deg); }
-  .hs-persona.big { width: 22em; min-height: 26em; font-size: 1.1em; transform: rotate(-2deg); }
+  .hs-persona.big { width: 19em; min-height: 19em; font-size: 1.1em; transform: rotate(-2deg); }
   .hs-persona.small { width: 11em; min-height: 0; font-size: .8em; padding: .8em; box-shadow: 0 6px 0 #3a1d00; }
   .hs-pe { font-size: 5em; line-height: 1.1; }
   .hs-persona.small .hs-pe { font-size: 3em; }
