@@ -614,6 +614,7 @@ body.phone.pf-alpine .top {
   border-bottom: 3.5px solid var(--pf-navy);
   background: var(--pf-paper-aged);
 }
+body.phone.pf-alpine .top .me { color: var(--pf-navy) !important; }
 
 body.phone.pf-alpine .view h2 {
   font-family: 'Alfa Slab One', serif;

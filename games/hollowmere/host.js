@@ -124,6 +124,7 @@ export default async function (ctx) {
       portrait(x, 44).replace('<svg ', '<svg x="2" y="2" ');
     tok[x.id] = g; tokens.append(g);
   }
+  const side = h('div.hm-side');
   const boom = h('div.hm-boom');
   const bloom = h('div.hm-bloom');
   ctx.el.replaceChildren(h('div.hm', h('div.hm-boardwrap', board, boom, bloom), side));

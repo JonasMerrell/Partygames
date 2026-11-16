@@ -1,8 +1,10 @@
 # Changelog
 
-## Unreleased
+## 0.14.0
 
-- New game: Subspace Intercept, a starship-console word-deduction game, with narrated tutorial steps. Tutorials can now play a voice clip per step.
+- Tutorials can play a voice clip per step.
+- Subspace Intercept (a starship-console word-deduction game) is included but hidden from the game list for now.
+- Fixed: Hollowmere crashed at the start of a game.
 - New look and sound for eight games: Glitch Squad (CRT terminal), Gobble Gallery, Hexam Night, Hollowmere, Patch Party, Peak Fever, Saltwind and Tin Tongue get reworked visuals, animations, music and effects, plus new narrated tutorial voices. Tutorial audio now starts reliably on the first tap. The 0.13.0 legibility fixes were carried over to the new looks.
 
 ## 0.13.0

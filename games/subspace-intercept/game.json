@@ -6,5 +6,6 @@
   "color": "#ff9900",
   "minPlayers": 4,
   "maxPlayers": 12,
-  "music": "tense"
+  "music": "tense",
+  "hidden": true
 }
