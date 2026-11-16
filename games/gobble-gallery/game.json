@@ -1,0 +1,9 @@
+{
+  "name": "Gobble Gallery",
+  "description": "A Thanksgiving drawing game for kids and grown-ups. Draw a silly card like a turkey on roller skates, then everyone taps the picture that matches. Little reading, big buttons, and the TV reads the choices out loud.",
+  "icon": "🦃",
+  "color": "#f2a541",
+  "minPlayers": 2,
+  "maxPlayers": 10,
+  "music": "party"
+}

@@ -1,0 +1,76 @@
+[
+ {
+  "title": "Pick a card",
+  "text": "Everyone gets two picture cards on their phone. Pick the one you want to draw and keep it secret!",
+  "scene": [
+   {
+    "phone": "Pick one to draw!",
+    "buttons": [
+     "🦃 Turkey on roller skates",
+     "🥧 Giant pumpkin pie"
+    ],
+    "tap": 0
+   }
+  ],
+  "flow": true
+ },
+ {
+  "title": "Draw it",
+  "text": "Draw your card on your phone with crayons, a paint bucket and an eraser. No letters or numbers!",
+  "scene": [
+   {
+    "card": "🦃 Turkey on roller skates",
+    "color": "#f2c14e"
+   },
+   {
+    "icon": "🖍️",
+    "fx": "shake"
+   },
+   {
+    "card": "🖼️",
+    "color": "#ffffff",
+    "label": "your drawing"
+   }
+  ],
+  "flow": true
+ },
+ {
+  "title": "Guess the pictures",
+  "text": "Each drawing goes up on the TV. Tap the matching button on your phone. The TV reads the choices out loud.",
+  "scene": [
+   {
+    "tv": "What is it?",
+    "sub": "● ▲ ■ ★"
+   },
+   {
+    "phone": "What is it?",
+    "buttons": [
+     "🌽 Corn wearing a hat",
+     "🦃 Turkey on roller skates",
+     "🍂 Big pile of leaves"
+    ],
+    "tap": 1
+   }
+  ]
+ },
+ {
+  "title": "Win pies!",
+  "text": "A right guess wins 2 pies. Artists win a pie for everyone who guessed theirs. Everybody gets an award at the end!",
+  "scene": [
+   {
+    "score": "+2 🥧",
+    "label": "right guess"
+   },
+   {
+    "score": "+1 🥧",
+    "label": "per guesser",
+    "color": "#f2c14e"
+   },
+   {
+    "icon": "🏆",
+    "label": "most pies wins",
+    "fx": "float"
+   }
+  ]
+ }
+]

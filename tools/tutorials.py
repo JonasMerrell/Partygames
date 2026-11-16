@@ -233,6 +233,16 @@ T = {
   step("Win", "First to the target score on their own turn wins: 7 in a quick game, 10 in a full one.",
        I("🏆", fx="float"), S("10", "points")),
 ],
+"gobble-gallery": [
+  step("Pick a card", "Everyone gets two picture cards on their phone. Pick the one you want to draw and keep it secret!",
+       P("Pick one to draw!", buttons=["🦃 Turkey on roller skates", "🥧 Giant pumpkin pie"], tap=0), flow=True),
+  step("Draw it", "Draw your card on your phone with crayons, a paint bucket and an eraser. No letters or numbers!",
+       C("🦃 Turkey on roller skates", Y), I("🖍️", fx="shake"), C("🖼️", "#ffffff", label="your drawing"), flow=True),
+  step("Guess the pictures", "Each drawing goes up on the TV. Tap the matching button on your phone. The TV reads the choices out loud.",
+       TV("What is it?", "● ▲ ■ ★"), P("What is it?", buttons=["🌽 Corn wearing a hat", "🦃 Turkey on roller skates", "🍂 Big pile of leaves"], tap=1)),
+  step("Win pies!", "A right guess wins 2 pies. Artists win a pie for everyone who guessed theirs. Everybody gets an award at the end!",
+       S("+2 🥧", "right guess"), S("+1 🥧", "per guesser", color=Y), I("🏆", "most pies wins", fx="float")),
+],
 "sketchy-rumours": [
   step("Start a rumour", "Everyone writes something silly to start their notebook.",
        P("Start a rumour", type="my cat runs a bank")),
