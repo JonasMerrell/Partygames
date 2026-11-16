@@ -70,7 +70,11 @@ export async function playTutorial(host, game, { loop = false, controls = true }
   const caption = h('div.t-caption');
   const titleEl = h('div.t-title');
   const dots = h('div.t-dots', steps.map(() => h('span')));
-  let i = 0, stopped = false, wake = null;
+  let i = 0, stopped = false, wake = null, clip = null;
+  const stopAudio = () => {
+    if (clip) { clip.pause(); clip.currentTime = 0; clip = null; }
+    if ('speechSynthesis' in window) speechSynthesis.cancel();
+  };
   const go = (n) => { i = Math.max(0, Math.min(steps.length, n)); wake?.(); };
   const close = () => { stopped = true; wake?.(); };
   const overlay = h('div.t-overlay', { style: { '--accent': accent } },
@@ -98,10 +102,13 @@ export async function playTutorial(host, game, { loop = false, controls = true }
       caption.replaceChildren(h('span.t-in', s.text || ''));
       [...dots.children].forEach((d, k) => d.classList.toggle('on', k <= i));
       audio.sfx('whoosh');
+      stopAudio();
       const words = (s.text || '').split(/\s+/).length;
       const ms = s.ms || Math.max(4500, 1800 + words * 340);
-      if (speechOk() && s.text) {
-        speechSynthesis.cancel();
+      if (s.audio && !audio.isMuted()) {
+        clip = new Audio(`/games/${game.id}/${s.audio}?v=${game.version}`);
+        clip.play().catch(() => {});
+      } else if (speechOk() && s.text) {
         const u = new SpeechSynthesisUtterance(`${s.title || ''}. ${s.text}`);
         u.rate = 1.05;
         speechSynthesis.speak(u);
@@ -112,7 +119,7 @@ export async function playTutorial(host, game, { loop = false, controls = true }
       if (i === before && !stopped) i++;
     }
   } finally {
-    if ('speechSynthesis' in window) speechSynthesis.cancel();
+    stopAudio();
     overlay.remove();
   }
   return true;

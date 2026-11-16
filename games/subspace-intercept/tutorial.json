@@ -2,6 +2,8 @@
   {
     "title": "Step 1: Two Starfleet Teams",
     "text": "Welcome to Subspace Intercept. You are divided into Team Alpha and Team Beta. Each team must crack a five-letter Starfleet override code.",
+    "audio": "audio/tut_1.wav",
+    "ms": 9200,
     "scene": [
       { "icon": "🖖", "label": "Team Alpha: ? ? ? ? ?", "fx": "pop" },
       { "icon": "⚡", "label": "VS" },
@@ -11,6 +13,8 @@
   {
     "title": "Step 2: Transmit Three Clues",
     "text": "Each cycle, one Sender receives a secret word and transmits three one-word clues to their crewmates.",
+    "audio": "audio/tut_2.wav",
+    "ms": 7500,
     "scene": [
       { "phone": "Secret Word: Warp Core", "type": "antimatter engine fast", "label": "Sender" }
     ]
@@ -18,6 +22,8 @@
   {
     "title": "Step 3: Borg Assimilation",
     "text": "Before your crewmates see them, an opposing Borg operative assimilates one clue, replacing it with a decoy word.",
+    "audio": "audio/tut_3.wav",
+    "ms": 7500,
     "scene": [
       { "card": "antimatter", "color": "#ff9900", "label": "Marker 01" },
       { "card": "engine", "back": "POTATO", "color": "#39ff14", "label": "Assimilated!", "fx": "shake" },
@@ -27,6 +33,8 @@
   {
     "title": "Step 4: Call It Out & Crack the Code",
     "text": "Your crewmates call out their guess in person! If correct, reveal one letter of your code—or risk your turn to guess all five letters at once.",
+    "audio": "audio/tut_4.wav",
+    "ms": 9500,
     "scene": [
       { "tv": "WARP CORE!", "sub": "Transmission confirmed" },
       { "score": "A _ P _ _", "label": "1 letter or all 5!", "fx": "pop" }
@@ -36,6 +44,8 @@
   {
     "title": "Step 5: Signal Lost",
     "text": "If you miss, the opposing team unlocks a letter instead. First team to complete their override code wins!",
+    "audio": "audio/tut_5.wav",
+    "ms": 7500,
     "scene": [
       { "icon": "🚨", "label": "Miss = Enemy advances", "fx": "pulse" },
       { "icon": "🏆", "label": "Crack 5 letters to win", "fx": "float" }
