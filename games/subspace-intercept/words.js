@@ -6,29 +6,29 @@ export const OVERRIDE_CODES = [
 ];
 
 export const TRANSMISSIONS = [
-  // Starship Systems
-  { word: 'Warp Core', cat: 'Starship Systems' },
-  { word: 'Transporter', cat: 'Starship Systems' },
-  { word: 'Holodeck', cat: 'Starship Systems' },
-  { word: 'Phaser', cat: 'Starship Systems' },
-  { word: 'Deflector', cat: 'Starship Systems' },
-  { word: 'Tractor Beam', cat: 'Starship Systems' },
-  { word: 'Replicator', cat: 'Starship Systems' },
-  { word: 'Sickbay', cat: 'Starship Systems' },
-  { word: 'Turbolift', cat: 'Starship Systems' },
-  { word: 'Main Bridge', cat: 'Starship Systems' },
+  // Ship Parts
+  { word: 'Fuel Cell', cat: 'Ship Parts' },
+  { word: 'Airlock', cat: 'Ship Parts' },
+  { word: 'Escape Pod', cat: 'Ship Parts' },
+  { word: 'Laser Cannon', cat: 'Ship Parts' },
+  { word: 'Solar Panel', cat: 'Ship Parts' },
+  { word: 'Tractor Beam', cat: 'Ship Parts' },
+  { word: 'Space Suit', cat: 'Ship Parts' },
+  { word: 'Med Bay', cat: 'Ship Parts' },
+  { word: 'Cargo Hold', cat: 'Ship Parts' },
+  { word: 'Cockpit', cat: 'Ship Parts' },
 
-  // Starfleet & Aliens
-  { word: 'Vulcan', cat: 'Starfleet & Aliens' },
-  { word: 'Klingon', cat: 'Starfleet & Aliens' },
-  { word: 'Borg Cube', cat: 'Starfleet & Aliens' },
-  { word: 'Romulan', cat: 'Starfleet & Aliens' },
-  { word: 'Ferengi', cat: 'Starfleet & Aliens' },
-  { word: 'Tricorder', cat: 'Starfleet & Aliens' },
-  { word: 'Combadge', cat: 'Starfleet & Aliens' },
-  { word: 'Starbase', cat: 'Starfleet & Aliens' },
-  { word: 'Shuttlecraft', cat: 'Starfleet & Aliens' },
-  { word: 'Captain', cat: 'Starfleet & Aliens' },
+  // Crew & Aliens
+  { word: 'Robot', cat: 'Crew & Aliens' },
+  { word: 'Alien', cat: 'Crew & Aliens' },
+  { word: 'Astronaut', cat: 'Crew & Aliens' },
+  { word: 'Space Station', cat: 'Crew & Aliens' },
+  { word: 'Moon Base', cat: 'Crew & Aliens' },
+  { word: 'Jetpack', cat: 'Crew & Aliens' },
+  { word: 'Ray Gun', cat: 'Crew & Aliens' },
+  { word: 'Flying Saucer', cat: 'Crew & Aliens' },
+  { word: 'Space Dog', cat: 'Crew & Aliens' },
+  { word: 'Pilot', cat: 'Crew & Aliens' },
 
   // Space & Cosmos
   { word: 'Nebula', cat: 'Space & Cosmos' },
@@ -55,7 +55,7 @@ export const TRANSMISSIONS = [
   { word: 'Clockwork', cat: 'Earth Artifacts' },
 
   // Galley & Rations
-  { word: 'Earl Grey', cat: 'Galley & Rations' },
+  { word: 'Hot Cocoa', cat: 'Galley & Rations' },
   { word: 'Pizza', cat: 'Galley & Rations' },
   { word: 'Chocolate', cat: 'Galley & Rations' },
   { word: 'Espresso', cat: 'Galley & Rations' },
@@ -65,10 +65,10 @@ export const TRANSMISSIONS = [
   { word: 'Pretzel', cat: 'Galley & Rations' },
 
   // Tactical & Defense
-  { word: 'Red Alert', cat: 'Tactical & Defense' },
+  { word: 'Alarm', cat: 'Tactical & Defense' },
   { word: 'Forcefield', cat: 'Tactical & Defense' },
   { word: 'Torpedo', cat: 'Tactical & Defense' },
-  { word: 'Cloaking', cat: 'Tactical & Defense' },
+  { word: 'Smoke Screen', cat: 'Tactical & Defense' },
   { word: 'Self-Destruct', cat: 'Tactical & Defense' },
   { word: 'Quarantine', cat: 'Tactical & Defense' },
   { word: 'Radar', cat: 'Tactical & Defense' },

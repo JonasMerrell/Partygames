@@ -1,448 +1,123 @@
 import { OVERRIDE_CODES, TRANSMISSIONS } from './words.js';
 
-const VOICE_GROUPS = {
-  sf_start: ['sf_start_1.wav', 'sf_start_2.wav', 'sf_start_3.wav', 'sf_start_4.wav', 'sf_start_5.wav'],
-  sf_transmit: ['sf_transmit_1.wav', 'sf_transmit_2.wav', 'sf_transmit_3.wav', 'sf_transmit_4.wav', 'sf_transmit_5.wav'],
-  sf_decode: ['sf_decode_1.wav', 'sf_decode_2.wav', 'sf_decode_3.wav', 'sf_decode_4.wav', 'sf_decode_5.wav'],
-  sf_correct: ['sf_correct_1.wav', 'sf_correct_2.wav', 'sf_correct_3.wav', 'sf_correct_4.wav', 'sf_correct_5.wav'],
-  sf_wrong: ['sf_wrong_1.wav', 'sf_wrong_2.wav', 'sf_wrong_3.wav', 'sf_wrong_4.wav', 'sf_wrong_5.wav'],
-  sf_attempt: ['sf_attempt_1.wav', 'sf_attempt_2.wav'],
-  sf_win: ['sf_attempt_win.wav', 'sf_attempt_win_2.wav', 'sf_attempt_win_3.wav'],
-  borg_assimilate: [
-    'borg_assimilate_1.wav',
-    'borg_assimilate_2.wav',
-    'borg_assimilate_3.wav',
-    'borg_assimilate_4.wav',
-    'borg_assimilate_5.wav',
-    'borg_assimilate_6.wav',
-    'borg_assimilate_7.wav',
-    'borg_assimilate_8.wav',
+// Relay Station Kestrel: two crews share one deep-space relay, and a living
+// cloud of interference called the Static lets the other crew jam a clue.
+
+// Announcer lines, spoken with the browser's voice (no audio files).
+const LINES = {
+  start: [
+    'Relay Station Kestrel online. Two crews, one channel. Keep your messages clean.',
+    'Kestrel relay is live. Watch out. The Static is listening.',
   ],
-  borg_round: ['borg_win_round_1.wav', 'borg_win_round_2.wav', 'borg_win_round_3.wav', 'borg_win_round_4.wav'],
-  borg_win: ['borg_victory.wav'],
+  transmit: ['Sender, you have the channel.', 'Encoding. Three words, no more.', 'Channel open. Make every word count.'],
+  jam: ['Interference on the line.', 'The Static got in. One clue is fake.', 'Jammed. Trust carefully.'],
+  decode: ['Decode it. Say your guess out loud.', 'Three clues. One is a lie. What is the word?'],
+  correct: ['Signal confirmed.', 'Clean copy. Well decoded.', 'That is the word.'],
+  wrong: ['Signal lost.', 'Static wins that one.', 'Garbled. The other crew gains ground.'],
+  attempt: ['Going for the full code. Bold.'],
+  win: ['Access code accepted. The relay is yours.'],
 };
 
+const STATIC = '#ff4fd8';
+
 function injectStyles() {
-  if (document.getElementById('lcars-host-css')) return;
+  document.getElementById('sx-host-css')?.remove();
   const s = document.createElement('style');
-  s.id = 'lcars-host-css';
+  s.id = 'sx-host-css';
   s.textContent = `
-    .lcars-root {
-      width: 100%;
-      height: 100%;
-      background: #000;
-      color: #ffcf87;
-      font-family: 'Arial Narrow', 'Helvetica Neue', Arial, sans-serif;
-      display: grid;
-      grid-template-rows: auto auto 1fr auto;
-      gap: 0.7em;
-      padding: 1.1em 1.4em;
-      box-sizing: border-box;
-      position: relative;
-      overflow: hidden;
+    .sx-root {
+      --sx-ink: #e8f4ff; --sx-dim: #9fb4cc; --sx-line: #2a3d57; --sx-panel: #0d1726; --sx-teal: #3ee6c1; --sx-amber: #ffb347;
+      width: 100%; height: 100%; box-sizing: border-box; position: relative; overflow: hidden;
+      display: grid; grid-template-rows: auto auto 1fr auto; gap: .6em; padding: .9em 1.2em;
+      color: var(--sx-ink); font-family: 'Share Tech Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+      background:
+        repeating-linear-gradient(0deg, transparent 0 2.9em, #ffffff06 2.9em 3em),
+        repeating-linear-gradient(90deg, transparent 0 2.9em, #ffffff06 2.9em 3em),
+        radial-gradient(60em 30em at 50% 40%, #13263f, #070c15 70%);
+      border-radius: .6em;
     }
-    .lcars-root.borg-alert {
-      box-shadow: inset 0 0 60px rgba(57, 255, 20, 0.35);
-    }
-    .lcars-top {
-      display: grid;
-      grid-template-columns: 7em 1fr auto;
-      align-items: center;
-      gap: 0.6em;
-    }
-    .lcars-elbow-tl {
-      height: 2.3em;
-      background: #ff9900;
-      border-radius: 1.4em 0 0 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #000;
-      font-weight: 900;
-      font-size: 0.95em;
-      letter-spacing: 0.08em;
-    }
-    .lcars-bar {
-      height: 2.3em;
-      background: linear-gradient(90deg, #ffaa66 0%, #ffaa66 58%, #cc99cc 58%, #cc99cc 100%);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 1em;
-      color: #000;
-      font-weight: 800;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      font-size: 0.95em;
-      position: relative;
-      overflow: hidden;
-    }
-    .lcars-bar::after {
-      content: '';
-      position: absolute;
-      top: 0;
-      bottom: 0;
-      width: 5em;
-      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.45), transparent);
-      animation: barSweep 3.2s linear infinite;
-    }
-    @keyframes barSweep {
-      0% { left: -6em; }
-      100% { left: 105%; }
-    }
-    .lcars-pill-status {
-      height: 2.3em;
-      padding: 0 1.1em;
-      border-radius: 0 1.4em 1.4em 0;
-      background: #99ccff;
-      color: #000;
-      font-weight: 900;
-      display: flex;
-      align-items: center;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      font-size: 0.9em;
-      transition: background 0.3s, color 0.3s;
-    }
-    .lcars-pill-status.borg {
-      background: #39ff14;
-      color: #021402;
-      animation: borgPulse 0.7s infinite alternate;
-    }
-    @keyframes borgPulse {
-      from { box-shadow: 0 0 6px #39ff14; }
-      to { box-shadow: 0 0 24px #39ff14; }
-    }
+    .sx-root.jam { box-shadow: inset 0 0 70px ${STATIC}55; }
+    .sx-cut { clip-path: polygon(.8em 0, 100% 0, 100% calc(100% - .8em), calc(100% - .8em) 100%, 0 100%, 0 .8em); }
 
-    .lcars-teams {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1em;
-    }
-    .team-panel {
-      background: #0a0c14;
-      border: 2px solid #ff9900;
-      border-left: 1.1em solid #ff9900;
-      border-radius: 0.9em;
-      padding: 0.65em 1em;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 0.8em;
-      transition: transform 0.25s, box-shadow 0.25s, border-color 0.25s;
-    }
-    .team-panel.beta {
-      border-color: #cc99cc;
-      border-left-color: #cc99cc;
-    }
-    .team-panel.active {
-      box-shadow: 0 0 22px rgba(255, 153, 0, 0.35);
-      transform: translateY(-2px);
-    }
-    .team-panel.beta.active {
-      box-shadow: 0 0 22px rgba(204, 153, 204, 0.35);
-    }
-    .team-meta {
-      display: flex;
-      flex-direction: column;
-      gap: 0.2em;
-    }
-    .team-name {
-      font-size: 1.15em;
-      font-weight: 900;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-    }
-    .team-roster {
-      font-size: 0.8em;
-      color: #99ccff;
-      opacity: 0.9;
-    }
-    .cipher-row {
-      display: flex;
-      gap: 0.35em;
-    }
-    .cipher-cell {
-      width: 2.0em;
-      height: 2.3em;
-      border-radius: 0.35em;
-      border: 2px solid #334155;
-      background: #05070e;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.2em;
-      font-weight: 900;
-      color: #475569;
-      letter-spacing: 0;
-      position: relative;
-      overflow: hidden;
-      animation: cipherIdle 2.4s ease-in-out infinite;
-    }
-    .cipher-cell:nth-child(2) { animation-delay: 0.25s; }
-    .cipher-cell:nth-child(3) { animation-delay: 0.5s; }
-    .cipher-cell:nth-child(4) { animation-delay: 0.75s; }
-    .cipher-cell:nth-child(5) { animation-delay: 1.0s; }
-    @keyframes cipherIdle {
-      0%, 100% { border-color: #334155; }
-      50% { border-color: #475569; color: #64748b; }
-    }
-    .cipher-cell.unlocked {
-      border-color: #ff9900;
-      background: rgba(255, 153, 0, 0.16);
-      color: #fff3d6;
-      animation: cellPop 0.45s cubic-bezier(0.2, 1.4, 0.4, 1);
-    }
-    .team-panel.beta .cipher-cell.unlocked {
-      border-color: #cc99cc;
-      background: rgba(204, 153, 204, 0.18);
-    }
-    @keyframes cellPop {
-      0% { transform: scale(0.5); }
-      70% { transform: scale(1.18); }
-      100% { transform: scale(1); }
-    }
+    .sx-top { display: flex; align-items: center; gap: .8em; }
+    .sx-badge { display: flex; align-items: center; gap: .45em; padding: .3em .8em; background: var(--sx-teal); color: #04221b;
+      font-weight: 900; letter-spacing: .12em; text-transform: uppercase; font-size: .9em; }
+    .sx-title { flex: 1; display: flex; justify-content: space-between; align-items: center; padding: .3em .9em;
+      border: 2px solid var(--sx-line); background: var(--sx-panel); letter-spacing: .14em; text-transform: uppercase; font-size: .9em; color: var(--sx-dim); }
+    .sx-title b { color: var(--sx-ink); }
+    .sx-status { padding: .3em .9em; border: 2px solid var(--sx-teal); color: var(--sx-teal); font-weight: 900; letter-spacing: .12em;
+      text-transform: uppercase; font-size: .9em; transition: all .3s; }
+    .sx-status.jam { border-color: ${STATIC}; color: #1a0217; background: ${STATIC}; animation: sxPulse .7s infinite alternate; }
+    @keyframes sxPulse { from { box-shadow: 0 0 6px ${STATIC}; } to { box-shadow: 0 0 26px ${STATIC}; } }
 
-    .lcars-stage {
-      background: #070910;
-      border: 2px solid #334155;
-      border-radius: 1.2em;
-      padding: 1.2em 1.6em;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 1em;
-      position: relative;
-      overflow: hidden;
-    }
-    .stage-kicker {
-      font-size: 0.95em;
-      letter-spacing: 0.16em;
-      text-transform: uppercase;
-      color: #99ccff;
-      font-weight: 700;
-    }
-    .stage-title {
-      font-size: 2.1em;
-      font-weight: 900;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      color: #ff9900;
-      text-align: center;
-    }
-    .stage-sub {
-      font-size: 1.15em;
-      color: #ffcf87;
-      text-align: center;
-      max-width: 44em;
-      line-height: 1.35;
-    }
+    .sx-teams { display: grid; grid-template-columns: 1fr 1fr; gap: 1em; }
+    .sx-team { --tc: var(--sx-teal); background: var(--sx-panel); border: 2px solid color-mix(in srgb, var(--tc) 55%, var(--sx-line));
+      border-top: .35em solid var(--tc); padding: .55em 1em; display: flex; align-items: center; justify-content: space-between; gap: .8em;
+      transition: transform .25s, box-shadow .25s; }
+    .sx-team.beta { --tc: var(--sx-amber); }
+    .sx-team.active { box-shadow: 0 0 24px color-mix(in srgb, var(--tc) 40%, transparent); transform: translateY(-2px); }
+    .sx-tname { font-size: 1.15em; font-weight: 900; letter-spacing: .1em; text-transform: uppercase; color: var(--tc); }
+    .sx-roster { font-size: .8em; color: var(--sx-dim); }
+    .sx-code { display: flex; gap: .3em; }
+    .sx-cell { width: 1.9em; height: 2.2em; border: 2px solid #3b5374; background: #060b14; display: grid; place-items: center;
+      font-size: 1.2em; font-weight: 900; color: #8aa2c2; transform: skewX(-8deg); }
+    .sx-cell.on { border-color: var(--tc); background: color-mix(in srgb, var(--tc) 22%, #060b14); color: #fff;
+      animation: sxPop .45s cubic-bezier(.2, 1.4, .4, 1); }
+    @keyframes sxPop { 0% { transform: skewX(-8deg) scale(.5); } 70% { transform: skewX(-8deg) scale(1.18); } 100% { transform: skewX(-8deg); } }
 
-    .clue-grid {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(11em, 1fr));
-      gap: 1.1em;
-      width: 100%;
-      max-width: 44em;
-    }
-    .clue-card {
-      background: #0d1220;
-      border: 2px solid #ff9900;
-      border-top: 0.6em solid #ff9900;
-      border-radius: 0.8em;
-      padding: 1.2em 0.8em;
-      text-align: center;
-      position: relative;
-      animation: cardSlideIn 0.4s ease-out both;
-    }
-    .clue-card:nth-child(2) { animation-delay: 0.1s; }
-    .clue-card:nth-child(3) { animation-delay: 0.2s; }
-    @keyframes cardSlideIn {
-      from { opacity: 0; transform: translateY(14px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    .clue-label {
-      font-size: 0.75em;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      color: #99ccff;
-      margin-bottom: 0.35em;
-    }
-    .clue-word {
-      font-size: 1.7em;
-      font-weight: 900;
-      letter-spacing: 0.05em;
-      text-transform: uppercase;
-      color: #fff;
-      word-break: break-word;
-    }
-    .clue-card.encrypted .clue-word {
-      color: #ffaa66;
-      letter-spacing: 0.2em;
-    }
-    .clue-card.assimilated {
-      border-color: #39ff14;
-      border-top-color: #39ff14;
-      background: #051607;
-      box-shadow: 0 0 26px rgba(57, 255, 20, 0.35);
-      animation: borgGlitch 0.5s ease-in-out;
-    }
-    .clue-card.assimilated .clue-word {
-      color: #39ff14;
-    }
-    .clue-orig {
-      margin-top: 0.45em;
-      font-size: 0.8em;
-      color: #94a3b8;
-      text-decoration: line-through;
-    }
-    .borg-tag {
-      display: inline-block;
-      margin-top: 0.35em;
-      padding: 0.15em 0.55em;
-      border-radius: 999px;
-      background: #39ff14;
-      color: #021402;
-      font-size: 0.7em;
-      font-weight: 900;
-      letter-spacing: 0.1em;
-    }
-    @keyframes borgGlitch {
-      0%, 100% { transform: translate(0); }
-      20% { transform: translate(-4px, 2px) skewX(-4deg); }
-      40% { transform: translate(4px, -2px) skewX(4deg); }
-      60% { transform: translate(-3px, 0); }
-      80% { transform: translate(3px, 1px); }
-    }
+    .sx-stage { background: #081120e6; border: 2px solid var(--sx-line); padding: 1em 1.6em; display: flex; flex-direction: column;
+      align-items: center; justify-content: center; gap: .9em; position: relative; overflow: hidden; min-height: 0; }
+    .sx-stage::before { content: ''; position: absolute; width: 26em; height: 26em; border-radius: 50%; border: 2px solid #3ee6c114;
+      box-shadow: 0 0 0 4em #3ee6c10a, 0 0 0 8em #3ee6c107; pointer-events: none; }
+    .sx-kicker { font-size: .9em; letter-spacing: .18em; text-transform: uppercase; color: var(--sx-teal); font-weight: 700; }
+    .sx-big { font-size: 2.1em; font-weight: 900; letter-spacing: .05em; text-transform: uppercase; text-align: center; }
+    .sx-sub { font-size: 1.1em; color: var(--sx-ink); text-align: center; max-width: 44em; line-height: 1.35; }
+    .jamtext { color: ${STATIC} !important; }
 
-    .scanline-overlay {
-      position: absolute;
-      inset: 0;
-      pointer-events: none;
-      background: linear-gradient(
-        180deg,
-        transparent 0%,
-        rgba(57, 255, 20, 0.18) 50%,
-        transparent 100%
-      );
-      height: 35%;
-      animation: borgSweep 1.1s linear infinite;
-    }
-    @keyframes borgSweep {
-      0% { transform: translateY(-100%); }
-      100% { transform: translateY(320%); }
-    }
+    .sx-clues { display: grid; grid-template-columns: repeat(3, minmax(10em, 1fr)); gap: 1em; width: 100%; max-width: 44em; }
+    .sx-clue { background: #0f1c30; border: 2px solid #3b5374; border-left: .4em solid var(--sx-teal); padding: 1em .8em; text-align: center;
+      animation: sxIn .4s ease-out both; }
+    .sx-clue:nth-child(2) { animation-delay: .1s; } .sx-clue:nth-child(3) { animation-delay: .2s; }
+    @keyframes sxIn { from { opacity: 0; transform: translateY(14px); } }
+    .sx-clabel { font-size: .75em; letter-spacing: .16em; text-transform: uppercase; color: var(--sx-dim); margin-bottom: .3em; }
+    .sx-cword { font-size: 1.7em; font-weight: 900; letter-spacing: .05em; text-transform: uppercase; overflow-wrap: anywhere; }
+    .sx-clue.hidden .sx-cword { color: var(--sx-amber); letter-spacing: .25em; }
+    .sx-clue.scan { border-color: ${STATIC}; border-left-color: ${STATIC}; }
+    .sx-clue.scan .sx-cword, .sx-clue.scan .sx-clabel { color: ${STATIC}; }
+    .sx-clue.jammed { border-color: ${STATIC}; border-left-color: ${STATIC}; background: #2a0b27; box-shadow: 0 0 26px ${STATIC}55;
+      animation: sxGlitch .5s ease-in-out; }
+    .sx-clue.jammed .sx-cword { color: ${STATIC}; }
+    .sx-orig { margin-top: .4em; font-size: .8em; color: var(--sx-dim); text-decoration: line-through; }
+    .sx-tag { display: inline-block; margin-top: .35em; padding: .15em .6em; background: ${STATIC}; color: #1a0217; font-size: .75em;
+      font-weight: 900; letter-spacing: .1em; }
+    @keyframes sxGlitch { 20% { transform: translate(-4px, 2px) skewX(-4deg); } 40% { transform: translate(4px, -2px) skewX(4deg); }
+      60% { transform: translate(-3px, 0); } 80% { transform: translate(3px, 1px); } }
 
-    .subspace-wave {
-      display: flex;
-      align-items: center;
-      gap: 0.35em;
-      height: 2.2em;
-    }
-    .subspace-wave span {
-      width: 0.35em;
-      height: 0.6em;
-      border-radius: 999px;
-      background: #99ccff;
-      animation: waveBar 0.9s ease-in-out infinite;
-    }
-    .subspace-wave span:nth-child(2) { animation-delay: 0.12s; background: #ff9900; }
-    .subspace-wave span:nth-child(3) { animation-delay: 0.24s; }
-    .subspace-wave span:nth-child(4) { animation-delay: 0.36s; background: #cc99cc; }
-    .subspace-wave span:nth-child(5) { animation-delay: 0.48s; background: #ff9900; }
-    .subspace-wave span:nth-child(6) { animation-delay: 0.60s; }
-    .subspace-wave span:nth-child(7) { animation-delay: 0.72s; background: #cc99cc; }
-    @keyframes waveBar {
-      0%, 100% { height: 0.5em; opacity: 0.45; }
-      50% { height: 2.1em; opacity: 1; }
-    }
+    .sx-noise { position: absolute; inset: 0; pointer-events: none; opacity: .5;
+      background: repeating-linear-gradient(0deg, ${STATIC}22 0 2px, transparent 2px 6px); animation: sxNoise .25s steps(3) infinite; }
+    @keyframes sxNoise { to { background-position: 0 6px; } }
+    .sx-wave { display: flex; align-items: center; gap: .3em; height: 2.2em; }
+    .sx-wave span { width: .3em; height: .6em; background: var(--sx-teal); animation: sxBar .9s ease-in-out infinite; }
+    .sx-wave span:nth-child(even) { background: var(--sx-amber); }
+    .sx-wave span:nth-child(2) { animation-delay: .12s; } .sx-wave span:nth-child(3) { animation-delay: .24s; }
+    .sx-wave span:nth-child(4) { animation-delay: .36s; } .sx-wave span:nth-child(5) { animation-delay: .48s; }
+    .sx-wave span:nth-child(6) { animation-delay: .6s; } .sx-wave span:nth-child(7) { animation-delay: .72s; }
+    @keyframes sxBar { 0%, 100% { height: .5em; opacity: .5; } 50% { height: 2.1em; opacity: 1; } }
+    .sx-cloud { font-size: 3.2em; filter: drop-shadow(0 0 18px ${STATIC}); animation: sxShake .18s linear infinite; }
+    @keyframes sxShake { 25% { transform: translate(-2px, 1px); } 75% { transform: translate(2px, -1px); } }
 
-    .borg-reticle {
-      width: 4.2em;
-      height: 4.2em;
-      border: 3px dashed #39ff14;
-      border-radius: 0.6em;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #39ff14;
-      font-weight: 900;
-      font-size: 0.9em;
-      letter-spacing: 0.1em;
-      box-shadow: 0 0 22px rgba(57, 255, 20, 0.35);
-      animation: reticleSpin 3.5s linear infinite;
-    }
-    @keyframes reticleSpin {
-      0% { transform: rotate(0deg) scale(0.95); }
-      50% { transform: rotate(180deg) scale(1.06); }
-      100% { transform: rotate(360deg) scale(0.95); }
-    }
-
-    .lcars-telemetry-dots {
-      display: flex;
-      gap: 0.35em;
-      margin-left: auto;
-    }
-    .lcars-telemetry-dots span {
-      width: 1.4em;
-      height: 0.75em;
-      border-radius: 999px;
-      background: rgba(0, 0, 0, 0.45);
-      animation: dotBlink 1.6s infinite;
-    }
-    .lcars-telemetry-dots span:nth-child(2) { animation-delay: 0.35s; }
-    .lcars-telemetry-dots span:nth-child(3) { animation-delay: 0.7s; }
-    @keyframes dotBlink {
-      0%, 100% { background: rgba(0, 0, 0, 0.3); }
-      50% { background: #fff; }
-    }
-
-    .lcars-bottom {
-      display: grid;
-      grid-template-columns: auto 1fr 7em;
-      gap: 0.6em;
-      align-items: center;
-    }
-    .lcars-bottom-pill {
-      height: 1.8em;
-      padding: 0 1em;
-      border-radius: 1em 0 0 1em;
-      background: #cc99cc;
-      color: #000;
-      font-weight: 900;
-      font-size: 0.85em;
-      display: flex;
-      align-items: center;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-    }
-    .lcars-bottom-bar {
-      height: 1.8em;
-      background: #ff9900;
-      display: flex;
-      align-items: center;
-      padding: 0 1em;
-      color: #000;
-      font-weight: 800;
-      font-size: 0.85em;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-    }
-    .lcars-elbow-br {
-      height: 1.8em;
-      background: #99ccff;
-      border-radius: 0 0 1.2em 0;
-    }
+    .sx-foot { display: flex; align-items: center; gap: .8em; padding: .3em .9em; border: 2px solid var(--sx-line); background: var(--sx-panel);
+      font-size: .85em; letter-spacing: .1em; text-transform: uppercase; color: var(--sx-ink); }
+    .sx-foot .dots { margin-left: auto; display: flex; gap: .35em; }
+    .sx-foot .dots span { width: .7em; height: .7em; background: var(--sx-teal); animation: sxBlink 1.6s infinite; }
+    .sx-foot .dots span:nth-child(2) { animation-delay: .35s; } .sx-foot .dots span:nth-child(3) { animation-delay: .7s; }
+    @keyframes sxBlink { 50% { opacity: .2; } }
   `;
   document.head.appendChild(s);
 }
 
 function parseClues(raw) {
-  const parts = String(raw || '')
-    .split(/[\s,;/]+/)
-    .map((w) => w.trim())
-    .filter(Boolean);
+  const parts = String(raw || '').split(/[\s,;/]+/).map((w) => w.trim()).filter(Boolean);
   const out = parts.slice(0, 3);
   while (out.length < 3) out.push('REDACTED');
   return out;
@@ -452,24 +127,20 @@ export default async function (ctx) {
   injectStyles();
   const h = ctx.h;
 
-  const lastVoice = new Map();
-  let currentAudio = null;
-  function playVoice(group) {
-    const list = VOICE_GROUPS[group];
-    if (!list || !list.length) return;
-    let pick = list[Math.floor(Math.random() * list.length)];
-    if (list.length > 1 && lastVoice.get(group) === pick) {
-      pick = list[(list.indexOf(pick) + 1) % list.length];
-    }
-    lastVoice.set(group, pick);
+  // The announcer uses the browser's speech voice and stays quiet when the TV is muted.
+  const muted = () => { try { return localStorage.getItem('partyhall.muted') === '1'; } catch { return false; } };
+  const lastLine = new Map();
+  function announce(group) {
+    const list = LINES[group];
+    if (!list || muted() || !('speechSynthesis' in window)) return;
+    let i = Math.floor(Math.random() * list.length);
+    if (list.length > 1 && lastLine.get(group) === i) i = (i + 1) % list.length;
+    lastLine.set(group, i);
     try {
-      if (currentAudio) {
-        currentAudio.pause();
-        currentAudio.currentTime = 0;
-      }
-      currentAudio = new Audio(ctx.asset(`audio/${pick}`));
-      currentAudio.volume = 0.95;
-      currentAudio.play().catch(() => {});
+      speechSynthesis.cancel();
+      const u = new SpeechSynthesisUtterance(list[i]);
+      u.rate = 1.05; u.pitch = 0.8;
+      speechSynthesis.speak(u);
     } catch {}
   }
 
@@ -477,111 +148,56 @@ export default async function (ctx) {
   const mid = Math.ceil(players.length / 2);
   const codes = ctx.shuffle([...OVERRIDE_CODES]);
   const teams = [
-    {
-      id: 'alpha',
-      name: 'Team Alpha',
-      color: '#ff9900',
-      members: players.slice(0, mid),
-      code: codes[0],
-      revealed: [false, false, false, false, false],
-      senderIdx: 0,
-      borgIdx: 0,
-    },
-    {
-      id: 'beta',
-      name: 'Team Beta',
-      color: '#cc99cc',
-      members: players.slice(mid),
-      code: codes[1],
-      revealed: [false, false, false, false, false],
-      senderIdx: 0,
-      borgIdx: 0,
-    },
+    { id: 'alpha', name: 'Team Alpha', color: '#3ee6c1', members: players.slice(0, mid), code: codes[0],
+      revealed: [false, false, false, false, false], senderIdx: 0, jamIdx: 0 },
+    { id: 'beta', name: 'Team Beta', color: '#ffb347', members: players.slice(mid), code: codes[1],
+      revealed: [false, false, false, false, false], senderIdx: 0, jamIdx: 0 },
   ];
 
   const deck = ctx.shuffle([...TRANSMISSIONS]);
   let deckIdx = 0;
-  function nextWord() {
-    if (deckIdx >= deck.length) deckIdx = 0;
-    return deck[deckIdx++];
-  }
+  const nextWord = () => { if (deckIdx >= deck.length) deckIdx = 0; return deck[deckIdx++]; };
 
   function revealNextLetter(team) {
-    const locked = [];
-    team.revealed.forEach((r, i) => {
-      if (!r) locked.push(i);
-    });
+    const locked = team.revealed.map((r, i) => (r ? -1 : i)).filter((i) => i >= 0);
     if (!locked.length) return -1;
     const pick = locked[Math.floor(Math.random() * locked.length)];
     team.revealed[pick] = true;
     return pick;
   }
-
-  function isCodeCracked(team) {
-    return team.revealed.every(Boolean);
-  }
-
-  function formatCode(team) {
-    return team.code
-      .split('')
-      .map((ch, i) => (team.revealed[i] ? ch : '_'))
-      .join(' ');
-  }
+  const isCodeCracked = (team) => team.revealed.every(Boolean);
+  const formatCode = (team) => team.code.split('').map((ch, i) => (team.revealed[i] ? ch : '_')).join(' ');
 
   let round = 0;
   let activeTeamIdx = 0;
-  let borgAlert = false;
-  let statusText = 'SUBSPACE LINK ACTIVE';
-  let footerText = 'LCARS TELEMETRY ONLINE';
+  let jamAlert = false;
+  let statusText = 'Relay online';
+  let footerText = 'Kestrel relay • all channels clear';
 
   function renderScreen(stageChildren) {
-    ctx.el.innerHTML = '';
-    const root = h('div', { class: `lcars-root${borgAlert ? ' borg-alert' : ''}` },
-      h('div.lcars-top', {},
-        h('div.lcars-elbow-tl', {}, 'LCARS 47'),
-        h('div.lcars-bar', {},
-          h('span', {}, 'SUBSPACE INTERCEPT // STARFLEET COMMAND'),
-          h('span', {}, `CYCLE ${round || 1}`)
-        ),
-        h('div', { class: `lcars-pill-status${borgAlert ? ' borg' : ''}` }, statusText)
-      ),
-      h('div.lcars-teams', {},
-        ...teams.map((t, idx) =>
-          h('div', { class: `team-panel ${t.id}${idx === activeTeamIdx ? ' active' : ''}` },
-            h('div.team-meta', {},
-              h('div.team-name', { style: `color:${t.color}` }, t.name),
-              h('div.team-roster', {}, t.members.map((m) => m.name).join(' • '))
-            ),
-            h('div.cipher-row', {},
-              ...t.code.split('').map((ch, ci) =>
-                h('div', { class: `cipher-cell${t.revealed[ci] ? ' unlocked' : ''}` },
-                  t.revealed[ci] ? ch : '?'
-                )
-              )
-            )
-          )
-        )
-      ),
-      h('div.lcars-stage', {}, ...stageChildren),
-      h('div.lcars-bottom', {},
-        h('div.lcars-bottom-pill', {}, 'OVERRIDE'),
-        h('div.lcars-bottom-bar', {},
-          h('span', {}, footerText),
-          h('div.lcars-telemetry-dots', {}, h('span', {}), h('span', {}), h('span', {}))
-        ),
-        h('div.lcars-elbow-br', {})
-      )
-    );
-    ctx.el.appendChild(root);
+    ctx.el.replaceChildren(h('div', { class: `sx-root${jamAlert ? ' jam' : ''}` },
+      h('div.sx-top',
+        h('div.sx-badge.sx-cut', '📡 Kestrel'),
+        h('div.sx-title.sx-cut', h('span', h('b', 'Subspace Intercept'), ' // relay station Kestrel'), h('span', `Cycle ${round || 1}`)),
+        h('div', { class: `sx-status sx-cut${jamAlert ? ' jam' : ''}` }, statusText)),
+      h('div.sx-teams', teams.map((t, idx) =>
+        h('div', { class: `sx-team sx-cut ${t.id}${idx === activeTeamIdx ? ' active' : ''}` },
+          h('div', h('div.sx-tname', t.name), h('div.sx-roster', t.members.map((m) => m.name).join(' • '))),
+          h('div.sx-code', t.code.split('').map((ch, ci) => h('div', { class: `sx-cell${t.revealed[ci] ? ' on' : ''}` }, t.revealed[ci] ? ch : '?')))))),
+      h('div.sx-stage.sx-cut', ...stageChildren),
+      h('div.sx-foot.sx-cut', h('span', footerText), h('div.dots', h('span'), h('span'), h('span')))));
   }
+
+  const clueCards = (words, cls = '', style = {}) => h('div.sx-clues', words.map((w, i) =>
+    h('div', { class: `sx-clue${cls}`, style }, h('div.sx-clabel', `Clue 0${i + 1}`), h('div.sx-cword', w))));
 
   // Intro
   ctx.sfx('start');
-  playVoice('sf_start');
+  announce('start');
   renderScreen([
-    h('div.stage-kicker', {}, 'INCOMING STARFLEET BRIEFING'),
-    h('div.stage-title', {}, 'SUBSPACE INTERCEPT'),
-    h('div.stage-sub', {}, 'Send 3 one-word clues to your crewmate. The Borg will assimilate one. Crack your 5-letter override code first to neutralize the cube!'),
+    h('div.sx-kicker', 'Incoming briefing'),
+    h('div.sx-big', 'Subspace Intercept'),
+    h('div.sx-sub', 'Send 3 one-word clues to your crew. The other crew rides the Static and jams one of them with a fake. Crack your 5-letter access code first to take the relay!'),
   ]);
   await ctx.sleep(4500);
 
@@ -596,230 +212,178 @@ export default async function (ctx) {
     const sender = team.members[team.senderIdx % team.members.length];
     team.senderIdx += 1;
     const guessers = team.members.filter((m) => m.id !== sender.id);
-    const borgPlayer = opp.members[opp.borgIdx % opp.members.length];
-    opp.borgIdx += 1;
+    const jammer = opp.members[opp.jamIdx % opp.members.length];
+    opp.jamIdx += 1;
 
     const target = nextWord();
 
-    // 1. TRANSMIT PHASE
-    borgAlert = false;
-    statusText = 'TRANSMITTING';
-    footerText = `${team.name.toUpperCase()} • SENDER: ${sender.name.toUpperCase()}`;
-    playVoice('sf_transmit');
+    // 1. Transmit
+    jamAlert = false;
+    statusText = 'Transmitting';
+    footerText = `${team.name} • sender: ${sender.name}`;
+    announce('transmit');
     renderScreen([
-      h('div.stage-kicker', {}, `${team.name} • ENCRYPTED TRANSMISSION`),
-      h('div.stage-title', {}, `${sender.name} IS ENCODING`),
-      h('div.subspace-wave', {},
-        h('span', {}), h('span', {}), h('span', {}), h('span', {}), h('span', {}), h('span', {}), h('span', {})
-      ),
-      h('div.stage-sub', {}, `Category: ${target.cat} — Sending 3 one-word clues to ${guessers.map((g) => g.name).join(' & ')}.`),
-      h('div.clue-grid', {},
-        h('div.clue-card.encrypted', {}, h('div.clue-label', {}, 'MARKER 01'), h('div.clue-word', {}, '•••')),
-        h('div.clue-card.encrypted', {}, h('div.clue-label', {}, 'MARKER 02'), h('div.clue-word', {}, '•••')),
-        h('div.clue-card.encrypted', {}, h('div.clue-label', {}, 'MARKER 03'), h('div.clue-word', {}, '•••'))
-      ),
+      h('div.sx-kicker', `${team.name} • encoded transmission`),
+      h('div.sx-big', `${sender.name} is encoding`),
+      h('div.sx-wave', h('span'), h('span'), h('span'), h('span'), h('span'), h('span'), h('span')),
+      h('div.sx-sub', `Category: ${target.cat}. Sending 3 one-word clues to ${guessers.map((g) => g.name).join(' & ')}.`),
+      clueCards(['•••', '•••', '•••'], ' hidden'),
     ]);
 
     ctx.show(guessers, {
-      title: 'Stand By',
-      text: `${sender.name} is encoding 3 clues for you (${target.cat}). Watch out for ${borgPlayer.name} (Borg)!`,
-      wait: 'Awaiting subspace transmission...',
+      title: 'Stand by',
+      text: `${sender.name} is encoding 3 clues for you (${target.cat}). ${jammer.name} is jamming for the other crew!`,
+      wait: 'Waiting for the transmission…',
       color: team.color,
     });
-    ctx.show(borgPlayer, {
-      title: 'Borg Intercept Ready',
-      text: `${sender.name} is writing 3 clues. Get ready to assimilate one!`,
-      wait: 'Scanning subspace...',
-      color: '#39ff14',
+    ctx.show(jammer, {
+      title: 'You are the jammer',
+      text: `${sender.name} is writing 3 clues. Get ready to swap one for a fake!`,
+      wait: 'Listening to the channel…',
+      color: STATIC,
     });
-    const idleOpp = opp.members.filter((m) => m.id !== borgPlayer.id);
+    const idleOpp = opp.members.filter((m) => m.id !== jammer.id);
     if (idleOpp.length) {
-      ctx.show(idleOpp, {
-        title: `${team.name} Turn`,
-        text: `${borgPlayer.name} is your Borg operative this round.`,
-        wait: 'Monitoring subspace...',
-        color: opp.color,
-      });
+      ctx.show(idleOpp, { title: `${team.name}'s turn`, text: `${jammer.name} is jamming for your crew this round.`, wait: 'Listening to the channel…', color: opp.color });
     }
 
     const clueAns = await ctx.ask(sender, {
-      title: `Secret Word: ${target.word}`,
+      title: `Secret word: ${target.word}`,
       text: `Category: ${target.cat}\nEnter 3 one-word clues separated by spaces:`,
       color: team.color,
       buzz: true,
-      input: { placeholder: 'word1 word2 word3', max: 60, submit: 'Transmit Clues' },
+      input: { placeholder: 'word1 word2 word3', max: 60, submit: 'Transmit' },
     }, {
       timeout: 65,
-      after: { title: 'Transmitted', text: 'Routing through main deflector...', wait: 'Borg interference detected!' },
+      after: { title: 'Transmitted', text: 'Routing through the Kestrel relay…', wait: 'Interference detected!' },
     });
-
     const clues = parseClues(clueAns.get(sender.id));
 
-    // 2. BORG ASSIMILATION PHASE
-    borgAlert = true;
-    statusText = 'BORG INTERCEPT';
-    footerText = `BORG OPERATIVE: ${borgPlayer.name.toUpperCase()} • ASSIMILATING`;
+    // 2. Jam
+    jamAlert = true;
+    statusText = 'Jamming';
+    footerText = `Jammer: ${jammer.name} • swapping a clue`;
     ctx.sfx('glitch');
     renderScreen([
-      h('div.scanline-overlay', {}),
-      h('div.stage-kicker', { style: 'color:#39ff14' }, 'WARNING // SUBSPACE INTRUSION'),
-      h('div.stage-title', { style: 'color:#39ff14' }, `${borgPlayer.name} IS ASSIMILATING A CLUE`),
-      h('div.stage-sub', {}, 'The Borg Collective is overwriting one telemetry marker with disinformation.'),
-      h('div.clue-grid', {},
-        ...clues.map((_, i) =>
-          h('div.clue-card.encrypted', { style: 'border-color:#39ff14; border-top-color:#39ff14;' },
-            h('div.clue-label', { style: 'color:#39ff14' }, `MARKER 0${i + 1}`),
-            h('div.clue-word', { style: 'color:#39ff14' }, 'SCANNING')
-          )
-        )
-      ),
+      h('div.sx-noise'),
+      h('div.sx-kicker.jamtext', 'Warning // interference on the line'),
+      h('div.sx-big.jamtext', `${jammer.name} is jamming a clue`),
+      h('div.sx-sub', 'The Static is swapping one clue for a fake.'),
+      clueCards(['Scanning', 'Scanning', 'Scanning'], ' scan'),
     ]);
+    ctx.show(sender, { title: 'Interference!', text: `${jammer.name} is jamming one of your clues…`, wait: 'Hold on…', color: STATIC });
 
-    ctx.show(sender, {
-      title: 'Borg Interference!',
-      text: `${borgPlayer.name} is assimilating one of your clues...`,
-      wait: 'Hold for decode...',
-      color: '#39ff14',
-    });
-
-    const pickAns = await ctx.ask(borgPlayer, {
-      title: 'BORG INTERCEPT',
-      text: `Target category: ${target.cat}\nPick ONE clue to assimilate:`,
-      color: '#39ff14',
+    const pickAns = await ctx.ask(jammer, {
+      title: 'Jam a clue',
+      text: `Category: ${target.cat}\nPick ONE clue to swap out:`,
+      color: STATIC,
       buzz: true,
       choices: clues.map((c, i) => ({ label: `${i + 1}. ${c}`, value: i })),
     }, { timeout: 35 });
-
-    const chosenIdx = Number.isInteger(pickAns.get(borgPlayer.id)) ? pickAns.get(borgPlayer.id) : 0;
+    const chosenIdx = Number.isInteger(pickAns.get(jammer.id)) ? pickAns.get(jammer.id) : 0;
     const originalWord = clues[chosenIdx];
 
-    const replaceAns = await ctx.ask(borgPlayer, {
-      title: 'ASSIMILATE CLUE',
-      text: `Replacing "${originalWord}" — enter 1 misleading word:`,
-      color: '#39ff14',
-      input: { placeholder: 'Misleading word...', max: 24, submit: 'Assimilate' },
+    const replaceAns = await ctx.ask(jammer, {
+      title: 'Write the fake',
+      text: `Replacing "${originalWord}". Enter 1 misleading word:`,
+      color: STATIC,
+      input: { placeholder: 'Misleading word…', max: 24, submit: 'Jam it' },
     }, {
       timeout: 35,
-      after: { title: 'Assimilated', text: 'Disinformation injected into subspace.', wait: 'Watch the main screen!' },
+      after: { title: 'Jammed', text: 'Your fake is on the channel.', wait: 'Watch the main screen!' },
     });
-
-    const fakeWord = (replaceAns.get(borgPlayer.id) || 'CUBE').trim().split(/\s+/)[0] || 'CUBE';
+    const fakeWord = (replaceAns.get(jammer.id) || 'STATIC').trim().split(/\s+/)[0] || 'STATIC';
     const finalClues = [...clues];
     finalClues[chosenIdx] = fakeWord;
 
-    // Dramatic assimilation sweep on TV (without spoiling which slot!)
     ctx.sfx('glitch');
-    playVoice('borg_assimilate');
+    announce('jam');
     renderScreen([
-      h('div.scanline-overlay', {}),
-      h('div.borg-reticle', {}, 'BORG'),
-      h('div.stage-kicker', { style: 'color:#39ff14' }, 'RESISTANCE IS FUTILE'),
-      h('div.stage-title', { style: 'color:#39ff14' }, 'CLUE ASSIMILATED'),
-      h('div.stage-sub', {}, 'One of the three markers below now serves the Borg Collective.'),
+      h('div.sx-noise'),
+      h('div.sx-cloud', '⚡'),
+      h('div.sx-kicker.jamtext', 'The Static got in'),
+      h('div.sx-big.jamtext', 'Clue jammed'),
+      h('div.sx-sub', 'One of the three clues is now a fake.'),
     ]);
     await ctx.sleep(3200);
 
-    // 3. DECODE PHASE (IN-PERSON)
-    borgAlert = false;
-    statusText = 'DECODE SIGNAL';
-    footerText = `${team.name.toUpperCase()} • CALL OUT YOUR GUESS IN PERSON`;
-    playVoice('sf_decode');
+    // 3. Decode, out loud
+    jamAlert = false;
+    statusText = 'Decode';
+    footerText = `${team.name} • say your guess out loud`;
+    announce('decode');
     renderScreen([
-      h('div.stage-kicker', {}, `CATEGORY: ${target.cat.toUpperCase()}`),
-      h('div.stage-title', {}, `${guessers.map((g) => g.name).join(' & ')}: DECODE THE WORD`),
-      h('div.stage-sub', {}, 'Say your guess out loud! One of these three clues was overwritten by the Borg.'),
-      h('div.clue-grid', {},
-        ...finalClues.map((c, i) =>
-          h('div.clue-card', {},
-            h('div.clue-label', {}, `MARKER 0${i + 1}`),
-            h('div.clue-word', {}, c)
-          )
-        )
-      ),
+      h('div.sx-kicker', `Category: ${target.cat}`),
+      h('div.sx-big', `${guessers.map((g) => g.name).join(' & ')}: decode the word`),
+      h('div.sx-sub', 'Say your guess out loud! One of these three clues is a fake.'),
+      clueCards(finalClues),
     ]);
-
     ctx.show(guessers, {
       title: `Category: ${target.cat}`,
       text: `Clues: ${finalClues.join('  •  ')}\n\nSay your guess out loud to ${sender.name}!`,
       color: team.color,
       buzz: true,
     });
-    ctx.show(borgPlayer, {
-      title: 'Disinformation Active',
-      text: `You replaced "${originalWord}" with "${fakeWord}".`,
-      wait: `Waiting for ${team.name}'s guess...`,
-      color: '#39ff14',
-    });
+    ctx.show(jammer, { title: 'Fake on the line', text: `You swapped "${originalWord}" for "${fakeWord}".`, wait: `Waiting for ${team.name}'s guess…`, color: STATIC });
 
     const judgeAns = await ctx.ask(sender, {
       title: `Answer: ${target.word}`,
-      text: `Clues shown: ${finalClues.join(' • ')}\nDid your crewmate say "${target.word}" out loud?`,
+      text: `Clues shown: ${finalClues.join(' • ')}\nDid your crew say "${target.word}" out loud?`,
       color: team.color,
       choices: [
-        { label: '✓ Confirmed (Correct!)', value: 'hit' },
-        { label: '✕ Signal Lost (Wrong)', value: 'miss' },
+        { label: '✓ Got it (correct)', value: 'hit' },
+        { label: '✕ Signal lost (wrong)', value: 'miss' },
       ],
     }, { timeout: 90, clock: false });
-
     const isHit = judgeAns.get(sender.id) === 'hit';
 
-    // Reveal which clue was assimilated
-    const revealedCards = finalClues.map((c, i) =>
-      h('div', { class: `clue-card${i === chosenIdx ? ' assimilated' : ''}` },
-        h('div.clue-label', {}, `MARKER 0${i + 1}`),
-        h('div.clue-word', {}, c),
-        ...(i === chosenIdx
-          ? [
-              h('div.clue-orig', {}, `Original: ${originalWord}`),
-              h('div.borg-tag', {}, 'ASSIMILATED'),
-            ]
-          : [])
-      )
-    );
+    const revealedCards = h('div.sx-clues', finalClues.map((c, i) =>
+      h('div', { class: `sx-clue${i === chosenIdx ? ' jammed' : ''}` },
+        h('div.sx-clabel', `Clue 0${i + 1}`),
+        h('div.sx-cword', c),
+        ...(i === chosenIdx ? [h('div.sx-orig', `Original: ${originalWord}`), h('div.sx-tag', 'FAKE')] : []))));
 
     if (isHit) {
       ctx.sfx('ding');
-      playVoice('sf_correct');
-      statusText = 'CONFIRMED';
+      announce('correct');
+      statusText = 'Confirmed';
       renderScreen([
-        h('div.stage-kicker', { style: 'color:#99ccff' }, `TARGET IDENTIFIED: ${target.word.toUpperCase()}`),
-        h('div.stage-title', {}, 'TRANSMISSION CONFIRMED!'),
-        h('div.stage-sub', {}, `${team.name} may reveal 1 override letter—or risk it all to guess the full 5-letter code!`),
-        h('div.clue-grid', {}, ...revealedCards),
+        h('div.sx-kicker', `Word decoded: ${target.word}`),
+        h('div.sx-big', 'Transmission confirmed!'),
+        h('div.sx-sub', `${team.name} may reveal 1 code letter, or risk it all and guess the whole 5-letter code!`),
+        revealedCards,
       ]);
 
       const choiceAns = await ctx.ask(sender, {
-        title: `Override Code: ${formatCode(team)}`,
-        text: 'Reveal 1 letter, or skip the letter to attempt the whole 5-letter override code?',
+        title: `Access code: ${formatCode(team)}`,
+        text: 'Reveal 1 letter, or skip it and try the whole 5-letter code?',
         color: team.color,
         choices: [
-          { label: '🔓 Reveal 1 Letter', value: 'letter' },
-          { label: '⚡ Attempt Full 5-Letter Code', value: 'full' },
+          { label: '🔓 Reveal 1 letter', value: 'letter' },
+          { label: '⚡ Try the full code', value: 'full' },
         ],
       }, { timeout: 45 });
-
       const choice = choiceAns.get(sender.id) || 'letter';
 
       if (choice === 'full') {
-        playVoice('sf_attempt');
+        announce('attempt');
         const fullAns = await ctx.ask(sender, {
-          title: `Attempt Full Code (${formatCode(team)})`,
-          text: 'Enter the exact 5-letter Starfleet override code:',
+          title: `Full code (${formatCode(team)})`,
+          text: 'Enter the exact 5-letter access code:',
           color: team.color,
-          input: { placeholder: '5-LETTER CODE', max: 12, submit: 'Execute Override' },
+          input: { placeholder: '5-LETTER CODE', max: 12, submit: 'Send code' },
         }, { timeout: 45 });
-
         const attempt = (fullAns.get(sender.id) || '').trim().toUpperCase();
         if (attempt === team.code) {
           team.revealed = [true, true, true, true, true];
           winner = team;
-          winReason = `${team.name} cracked the full override code "${team.code}"!`;
+          winReason = `${team.name} cracked the full access code "${team.code}"!`;
         } else {
           ctx.sfx('buzz');
           renderScreen([
-            h('div.stage-kicker', { style: 'color:#cc4444' }, 'OVERRIDE REJECTED'),
-            h('div.stage-title', { style: 'color:#cc4444' }, `INVALID CODE: "${attempt || '---'}"`),
-            h('div.stage-sub', {}, 'No cipher letter unlocked this turn. Subspace control passes.'),
+            h('div.sx-kicker.jamtext', 'Code rejected'),
+            h('div.sx-big.jamtext', `Wrong code: "${attempt || '---'}"`),
+            h('div.sx-sub', 'No letter this turn. The channel passes to the other crew.'),
           ]);
           await ctx.sleep(3200);
         }
@@ -828,66 +392,51 @@ export default async function (ctx) {
         ctx.sfx('pop');
         if (isCodeCracked(team)) {
           winner = team;
-          winReason = `${team.name} decrypted all 5 letters of "${team.code}"!`;
+          winReason = `${team.name} decoded all 5 letters of "${team.code}"!`;
         } else {
           renderScreen([
-            h('div.stage-kicker', {}, 'CIPHER FRAGMENT DECRYPTED'),
-            h('div.stage-title', {}, `${team.name}: ${formatCode(team)}`),
-            h('div.stage-sub', {}, 'Advancing Starfleet override sequence.'),
+            h('div.sx-kicker', 'Code letter decoded'),
+            h('div.sx-big', `${team.name}: ${formatCode(team)}`),
+            h('div.sx-sub', 'One step closer to taking the relay.'),
           ]);
           await ctx.sleep(2600);
         }
       }
     } else {
       ctx.sfx('buzz');
-      borgAlert = true;
-      statusText = 'SIGNAL LOST';
-      playVoice(Math.random() < 0.5 ? 'sf_wrong' : 'borg_round');
+      jamAlert = true;
+      statusText = 'Signal lost';
+      announce('wrong');
       revealNextLetter(opp);
-
       renderScreen([
-        h('div.scanline-overlay', {}),
-        h('div.stage-kicker', { style: 'color:#39ff14' }, `TARGET WAS: ${target.word.toUpperCase()}`),
-        h('div.stage-title', { style: 'color:#39ff14' }, 'SIGNAL LOST — BORG ADVANCE'),
-        h('div.stage-sub', {}, `${opp.name} decrypts 1 override letter!`),
-        h('div.clue-grid', {}, ...revealedCards),
+        h('div.sx-noise'),
+        h('div.sx-kicker.jamtext', `The word was: ${target.word}`),
+        h('div.sx-big.jamtext', 'Signal lost'),
+        h('div.sx-sub', `${opp.name} decodes 1 letter of their code!`),
+        revealedCards,
       ]);
       await ctx.sleep(3600);
-
       if (isCodeCracked(opp)) {
         winner = opp;
-        winReason = `${opp.name} completed their override code "${opp.code}" via Borg interference!`;
+        winReason = `${opp.name} completed their access code "${opp.code}" thanks to the Static!`;
       }
     }
 
     activeTeamIdx = 1 - activeTeamIdx;
   }
 
-  // VICTORY
-  borgAlert = false;
-  statusText = 'OVERRIDE COMPLETE';
-  footerText = `${winner.name.toUpperCase()} VICTORIOUS`;
+  // Victory
+  jamAlert = false;
+  statusText = 'Code accepted';
+  footerText = `${winner.name} holds the relay`;
   ctx.sfx('win');
-  playVoice('sf_win');
-
+  announce('win');
   renderScreen([
-    h('div.stage-kicker', {}, 'STARFLEET OVERRIDE ACCEPTED'),
-    h('div.stage-title', { style: `color:${winner.color}; font-size:2.6em;` }, `${winner.name} WINS!`),
-    h('div.stage-sub', {}, winReason),
+    h('div.sx-kicker', 'Access code accepted'),
+    h('div.sx-big', { style: { color: winner.color, fontSize: '2.6em' } }, `${winner.name} wins!`),
+    h('div.sx-sub', winReason),
   ]);
-
-  ctx.show(winner.members, {
-    title: 'Victory!',
-    text: winReason,
-    color: winner.color,
-    buzz: true,
-  });
-  const losers = teams.find((t) => t.id !== winner.id).members;
-  ctx.show(losers, {
-    title: `${winner.name} Cracked the Code`,
-    text: winReason,
-    color: '#94a3b8',
-  });
-
+  ctx.show(winner.members, { title: 'Victory!', text: winReason, color: winner.color, buzz: true });
+  ctx.show(teams.find((t) => t.id !== winner.id).members, { title: `${winner.name} cracked the code`, text: winReason, color: '#9fb4cc' });
   await ctx.sleep(8000);
 }

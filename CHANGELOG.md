@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.14.1
+
+- Subspace Intercept is back in the game list with its own setting: two crews on relay station Kestrel, and a jammer from the other crew who swaps one clue for a fake through the Static. New console look, new word list and tutorial, and the announcer now uses the browser's voice.
+
 ## 0.14.0
 
 - Tutorials can play a voice clip per step.
