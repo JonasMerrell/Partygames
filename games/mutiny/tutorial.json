@@ -1,0 +1,159 @@
+[
+ {
+  "title": "Secret roles",
+  "text": "Most of the crew is loyal. A few are secret mutineers, and one of them is the Ringleader. Mutineers know each other.",
+  "scene": [
+   {
+    "card": "CREW",
+    "color": "#4dd8ff",
+    "label": "most players"
+   },
+   {
+    "card": "MUTINEER",
+    "color": "#ff5d73",
+    "label": "a few",
+    "fx": "shake"
+   },
+   {
+    "card": "RINGLEADER",
+    "color": "#ffd166",
+    "label": "just one",
+    "fx": "glow"
+   }
+  ]
+ },
+ {
+  "title": "Check your role in secret",
+  "text": "Hold the button on your phone to peek. Let go and it hides again.",
+  "scene": [
+   {
+    "phone": "🔒 Hold to see your role",
+    "label": "you"
+   },
+   {
+    "card": "CREW",
+    "color": "#4dd8ff",
+    "back": "?",
+    "fx": "pop"
+   }
+  ],
+  "flow": true
+ },
+ {
+  "title": "Captain picks a First Mate",
+  "text": "The Captain's seat goes round the table. The Captain nominates a First Mate, then everyone talks it over.",
+  "scene": [
+   {
+    "phone": "You are Captain",
+    "buttons": [
+     "Ana",
+     "Bo",
+     "Cy"
+    ],
+    "tap": 1,
+    "label": "Captain"
+   },
+   {
+    "tv": "Captain Dee + First Mate Bo?"
+   }
+  ],
+  "flow": true
+ },
+ {
+  "title": "Everyone votes",
+  "text": "More Ayes than Nays and the pair takes charge. Three failed pairs in a row and chaos enacts the top order.",
+  "scene": [
+   {
+    "phone": "Vote",
+    "buttons": [
+     "👍 Aye",
+     "👎 Nay"
+    ],
+    "tap": 0
+   },
+   {
+    "icon": "🗳️",
+    "label": "all at once"
+   },
+   {
+    "tv": "Approved, 4 to 3"
+   }
+  ],
+  "flow": true
+ },
+ {
+  "title": "Orders, passed in secret",
+  "text": "The Captain draws three orders and scraps one. The First Mate gets two and enacts one. Nobody sees what was thrown away.",
+  "scene": [
+   {
+    "phone": "Scrap one order",
+    "buttons": [
+     "🟥 Mutiny",
+     "🟦 Steady",
+     "🟥 Mutiny"
+    ],
+    "tap": 1,
+    "label": "Captain"
+   },
+   {
+    "phone": "Enact one order",
+    "buttons": [
+     "🟥 Mutiny",
+     "🟥 Mutiny"
+    ],
+    "tap": 0,
+    "label": "First Mate"
+   },
+   {
+    "card": "MUTINY",
+    "color": "#ff5d73",
+    "fx": "pop"
+   }
+  ],
+  "flow": true
+ },
+ {
+  "title": "Mutiny orders give powers",
+  "text": "Some Mutiny orders let the Captain scan the deck, check someone's loyalty, pick the next Captain, or throw someone out of the airlock.",
+  "scene": [
+   {
+    "icon": "📡",
+    "label": "scan"
+   },
+   {
+    "icon": "🔍",
+    "label": "check"
+   },
+   {
+    "icon": "🎖️",
+    "label": "promote"
+   },
+   {
+    "icon": "🚪",
+    "label": "airlock",
+    "fx": "shake"
+   }
+  ]
+ },
+ {
+  "title": "How to win",
+  "text": "Crew: five Steady orders, or airlock the Ringleader. Mutiny: six Mutiny orders, or the Ringleader made First Mate after three.",
+  "scene": [
+   {
+    "card": "STEADY ×5",
+    "color": "#4dd8ff",
+    "label": "crew wins"
+   },
+   {
+    "card": "MUTINY ×6",
+    "color": "#ff5d73",
+    "label": "mutiny wins"
+   },
+   {
+    "icon": "👑",
+    "label": "Ringleader as First Mate",
+    "fx": "pulse"
+   }
+  ]
+ }
+]

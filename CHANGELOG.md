@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- New game: Mutiny on the Starling, a hidden-role voting game for 5–10 players. Loyal crew and secret mutineers (led by a hidden Ringleader) elect Captain and First Mate pairs, who pass ship's orders in secret. Five Steady orders win it for the crew; six Mutiny orders, or the Ringleader made First Mate late in the game, win it for the mutiny. Mutiny orders unlock Captain powers (scan, background check, field promotion, airlock) and a late veto. Phones have a hold-to-see role button.
+
 ## 0.10.0
 
 - Animated "How to play" for every game, from a ▶ How to play button in the lobby (tutorial.json per game).
