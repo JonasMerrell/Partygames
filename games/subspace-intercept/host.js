@@ -660,22 +660,35 @@ export default async function (ctx) {
 
     const targetByPlayer = new Map();
     const cluesByPlayer = new Map();
-    await Promise.all(players.map(async (p) => {
-      const target = nextWord();
-      targetByPlayer.set(p.id, target);
-      const t = teams.find((tm) => tm.members.some((m) => m.id === p.id));
-      const ans = await ctx.ask(p, {
-        title: `Secret Word: ${target.word}`,
-        text: `Category: ${target.cat}\nEnter 3 one-word clues separated by spaces:`,
-        color: t.color,
-        buzz: true,
-        input: { placeholder: 'word1 word2 word3', max: 60, submit: 'Transmit Clues' },
-      }, {
-        timeout: 65,
-        after: { title: 'Transmitted', text: 'Signal routed!', wait: 'Waiting for other crew...' },
+    await new Promise((resolve) => {
+      let done = false;
+      const finish = () => {
+        if (done) return;
+        done = true;
+        clearTimeout(timer);
+        resolve();
+      };
+      const timer = setTimeout(finish, 65000);
+      const unsub = ctx.on('message', (p, data) => {
+        if (done || !data || !Array.isArray(data.clues)) return;
+        const clean = data.clues.slice(0, 3).map((w) => String(w || '').trim().split(/\s+/)[0] || 'REDACTED');
+        while (clean.length < 3) clean.push('REDACTED');
+        cluesByPlayer.set(p.id, clean);
+        if (cluesByPlayer.size >= players.length) {
+          unsub?.();
+          finish();
+        }
       });
-      cluesByPlayer.set(p.id, parseClues(ans.get(p.id)));
-    }));
+      players.forEach((p) => {
+        const target = nextWord();
+        targetByPlayer.set(p.id, target);
+        const t = teams.find((tm) => tm.members.some((m) => m.id === p.id));
+        ctx.send(p, { mode: 'threeClues', word: target.word, cat: target.cat, color: t.color });
+      });
+    });
+    players.forEach((p) => {
+      if (!cluesByPlayer.has(p.id)) cluesByPlayer.set(p.id, ['REDACTED', 'REDACTED', 'REDACTED']);
+    });
 
     // 2. SIMULTANEOUS BORG ASSIMILATION PHASE (everyone sabotages an opposing player's clues)
     borgAlert = true;

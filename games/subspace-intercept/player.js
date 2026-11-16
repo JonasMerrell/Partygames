@@ -32,7 +32,58 @@ export default function (ctx) {
         border: 2px solid #cc99cc !important;
         border-radius: 12px !important;
       }
+      .lcars-clues-form {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        width: 100%;
+      }
+      .lcars-clues-form input {
+        width: 100%;
+        padding: 12px 14px;
+        font-size: 1.05rem;
+        box-sizing: border-box;
+      }
     `;
     document.head.appendChild(style);
   }
+
+  ctx.on('message', (m) => {
+    if (!m || m.mode !== 'threeClues') return;
+    const h = ctx.h;
+    const inputs = [1, 2, 3].map((n) =>
+      h('input', {
+        type: 'text',
+        maxlength: 24,
+        placeholder: `Clue ${n} (one word)`,
+        autocomplete: 'off',
+      })
+    );
+    const err = h('div', { style: 'color:#ff6b6b;font-size:0.9rem;min-height:1.1em;' });
+    const btn = h('button', {
+      style: `background:${m.color || '#ff9900'};color:#000;padding:12px 18px;border:0;font-size:1rem;cursor:pointer;`,
+      onclick: () => {
+        const vals = inputs.map((el) => el.value.trim().split(/\s+/)[0] || '');
+        if (vals.some((v) => !v)) {
+          err.textContent = 'Enter all 3 one-word clues.';
+          return;
+        }
+        ctx.send({ clues: vals });
+        ctx.renderView({
+          title: 'Transmitted',
+          text: 'Signal routed!',
+          wait: 'Waiting for other crew...',
+          color: m.color,
+        });
+      },
+    }, 'Transmit 3 Clues');
+
+    ctx.el.replaceChildren(
+      h('div.card', { style: `border-color:${m.color || '#ff9900'};padding:16px;` },
+        h('h2', { style: 'margin:0 0 6px;' }, `Secret Word: ${m.word}`),
+        h('p', { style: 'margin:0 0 12px;color:#99ccff;' }, `Category: ${m.cat}`),
+        h('div.lcars-clues-form', {}, ...inputs, err, btn)
+      )
+    );
+  });
 }
