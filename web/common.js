@@ -75,3 +75,26 @@ export function socket({ hello, onMsg, onState }) {
   open();
   return { send, close() { closed = true; ws?.close(); } };
 }
+
+/**
+ * Keep the screen awake while a room is open (Screen Wake Lock API). Needs
+ * HTTPS (or localhost); browsers drop the lock when the tab is hidden, so it
+ * is taken again whenever the tab comes back.
+ */
+export function keepAwake(on) {
+  keepAwake.want = on;
+  if (!('wakeLock' in navigator)) return;
+  if (on && !keepAwake.lock && document.visibilityState === 'visible') {
+    navigator.wakeLock.request('screen').then((l) => {
+      keepAwake.lock = l;
+      l.addEventListener('release', () => { keepAwake.lock = null; });
+      if (!keepAwake.want) l.release();
+    }).catch(() => {});
+  } else if (!on && keepAwake.lock) {
+    keepAwake.lock.release().catch(() => {});
+    keepAwake.lock = null;
+  }
+}
+document.addEventListener('visibilitychange', () => {
+  if (keepAwake.want && document.visibilityState === 'visible') keepAwake(true);
+});

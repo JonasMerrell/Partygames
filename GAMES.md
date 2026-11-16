@@ -68,6 +68,14 @@ export default async function (ctx) {
 | `ctx.h(tag, attrs, ...children)` | Tiny element builder: `h('div.card', { onclick }, 'text')`. |
 | `ctx.shuffle(arr)`, `ctx.pick(arr)`, `ctx.esc(str)` | Helpers. |
 | `ctx.asset(path)` | URL of a file in your game folder. |
+| `ctx.sfx(name)` | Sound effect, synthesized (no files): `tick`, `tock`, `pop`, `join`, `ding`, `whoosh`, `start`, `win`, `lose`, `buzz`, `glitch`, `timeup`. |
+| `ctx.music(mood)` | Background music: `'lobby'`, `'party'`, `'think'`, `'tense'`, or `null`. Set `"music"` in game.json for the default. |
+
+Built in, no code needed: countdowns tick-tock for the last 10 seconds and
+buzz at zero, answers make a pop, `ctx.say` whooshes, there's a mute button on
+the TV, and the TV and phones keep their screens awake while a room is open
+(this needs HTTPS, so it works on the public address but not on plain LAN
+http).
 
 Your module can `import` other files from its own folder (`import { WORDS } from './words.js'`).
 
@@ -106,6 +114,9 @@ export default function (ctx) {
   ctx.el.append(ctx.h('button.big', { onclick: () => ctx.send({ buzz: Date.now() }) }, 'BUZZ'));
 }
 ```
+
+A `player.js` can also just restyle the phone (Glitch Squad's adds a class to
+`document.body` and a stylesheet) and leave the drawing to the standard views.
 
 If `player.js` listens for `'view'`, it takes over drawing views; otherwise the
 standard view screen still works alongside it.

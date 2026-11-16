@@ -1,5 +1,5 @@
 // The phone: join a room, then show whatever the host's game sends.
-import { h, socket, colorOf } from './common.js';
+import { h, socket, colorOf, keepAwake } from './common.js';
 import { renderView } from './widgets.js';
 
 const app = document.getElementById('app');
@@ -19,6 +19,8 @@ const params = new URLSearchParams(location.search);
 const codeFromUrl = (params.get('code') || location.hash.slice(1) || '').toUpperCase().slice(0, 4);
 
 function joinScreen(err) {
+  keepAwake(false);
+  document.body.className = 'phone';
   sock?.close(); sock = null; me = null;
   const code = h('input.code-in', { placeholder: 'ABCD', maxLength: 4, autocomplete: 'off', autocapitalize: 'characters',
     spellcheck: false, value: codeFromUrl || '', oninput: (e) => (e.target.value = e.target.value.toUpperCase().replace(/[^A-Z]/g, '')) });
@@ -43,6 +45,7 @@ function joinScreen(err) {
 }
 
 function gameScreen() {
+  keepAwake(true);
   banner = h('div.banner.hidden');
   stage = h('div.stage');
   app.replaceChildren(h('div.top',
@@ -113,6 +116,7 @@ function connect() {
             if (listeners.view.length) listeners.view.forEach((f) => f(d.view));
             else renderView(stage, d.view, (x) => sock.send({ t: 'send', data: x }));
             if (d.view?.color) document.body.style.setProperty('--accent', d.view.color);
+            else document.body.style.removeProperty('--accent');
             if (navigator.vibrate && d.view?.buzz) navigator.vibrate(80);
           } else listeners.message.forEach((f) => f(d));
           break;

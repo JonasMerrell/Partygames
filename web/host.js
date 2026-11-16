@@ -1,6 +1,12 @@
 // The host screen (the TV). Picks a game, runs the lobby, then loads the game's
 // host.js and hands it a `ctx` with everything a game needs. See GAMES.md.
-import { h, esc, sleep, shuffle, pick, socket, colorOf } from './common.js';
+import { h, esc, sleep, shuffle, pick, socket, colorOf, keepAwake } from './common.js';
+import * as audio from './audio.js';
+
+function muteButton(cls = '') {
+  const b = h('button.ghost.sm' + cls, { title: 'Sound on/off', onclick: () => { audio.setMuted(!audio.isMuted()); b.textContent = audio.isMuted() ? '🔇' : '🔊'; } }, audio.isMuted() ? '🔇' : '🔊');
+  return b;
+}
 
 const app = document.getElementById('app');
 const SAVE = 'partyhall.host';
@@ -11,13 +17,15 @@ const joinUrl = () => location.host;
 
 // ---------- game picker ----------
 async function picker(err) {
+  keepAwake(false);
+  audio.music(null);
   try { games = await (await fetch('/api/games')).json(); } catch { games = []; }
   app.replaceChildren(h('div.picker',
     h('h1.logo', 'Party', h('span', 'Hall')),
     err && h('p.err', err),
     h('p.sub', 'Pick a game. Everyone else joins on their phone.'),
     h('div.grid', games.map((g) => h('button.gcard', {
-      onclick: () => create(g),
+      onclick: () => { audio.unlock(); create(g); },
       style: { '--accent': g.color || '#7d8cff' },
     }, h('div.gicon', g.icon || '🎲'), h('h3', g.name || g.id), h('p', g.description || ''),
       h('span.tag', `${g.minPlayers || 1}–${g.maxPlayers || 16} players`)))),
@@ -52,6 +60,7 @@ function onMsg(m) {
       const p = players.get(m.id) || { id: m.id, color: colorOf(m.id) };
       Object.assign(p, { name: m.name, connected: true });
       players.set(m.id, p);
+      if (!m.rejoin) audio.sfx('join');
       run ? run.emit('join', p, m.rejoin) : lobby();
       break;
     }
@@ -74,6 +83,8 @@ function onMsg(m) {
 // ---------- lobby ----------
 function lobby() {
   if (!room) return;
+  keepAwake(true);
+  audio.music('lobby');
   const list = [...players.values()];
   const min = game?.minPlayers || 1;
   const enough = list.filter((p) => p.connected).length >= min;
@@ -87,7 +98,8 @@ function lobby() {
       : h('p.sub', 'Waiting for players…')),
     h('div.row',
       h('button.big', { disabled: !enough, onclick: start }, enough ? 'Everybody\'s in!' : `Need ${min}+ players`),
-      h('button.ghost', { onclick: quit }, 'Pick another game'))));
+      h('button.ghost', { onclick: quit }, 'Pick another game'),
+      muteButton())));
   list.forEach((p) => shown.add(p.id));
 }
 const shown = new Set();
@@ -115,6 +127,8 @@ async function start() {
     return;
   }
   run = makeRun();
+  audio.sfx('start');
+  audio.music(game.music || 'party');
   const fn = mod.default || mod.host;
   try {
     await fn(run.ctx);
@@ -141,6 +155,7 @@ function makeRun() {
   const bar = h('div.hostbar',
     h('span.roomcode-sm', room.code),
     h('span.timer'),
+    muteButton(),
     h('button.ghost.sm', { onclick: () => r.finish() }, 'End game'));
   app.replaceChildren(h('div.game', { style: { '--accent': game.color || '#7d8cff' } }, bar, stage));
 
@@ -158,6 +173,10 @@ function makeRun() {
     get connected() { return [...players.values()].filter((p) => p.connected); },
     player: (id) => players.get(id),
     asset: (p) => `/games/${game.id}/${p}`,
+    /** Play a sound effect: tick, tock, pop, join, ding, whoosh, start, win, lose, buzz, glitch, timeup. */
+    sfx: (name, delay) => audio.sfx(name, delay),
+    /** Background music: 'lobby', 'party', 'think', 'tense', or null for silence. */
+    music: (mood) => audio.music(mood),
     on(ev, fn) { (handlers[ev] ||= []).push(fn); },
     send(to, data) { live(); sock.send({ t: 'send', to: to === 'all' ? 'all' : ids(to), data }); },
     broadcast(data) { ctx.send('all', data); },
@@ -215,6 +234,7 @@ function makeRun() {
     async say(title, sub, ms) {
       live();
       stage.replaceChildren(h('div.say', h('h1', title), sub && h('p', sub)));
+      audio.sfx('whoosh');
       if (ms) await ctx.sleep(ms);
     },
     /** End the game and go back to the lobby. */
@@ -224,8 +244,14 @@ function makeRun() {
   function clock(seconds) {
     const el = bar.querySelector('.timer');
     const endAt = Date.now() + seconds * 1000;
+    let last = null;
     const tick = () => {
       const left = Math.max(0, Math.ceil((endAt - Date.now()) / 1000));
+      if (left !== last && last !== null) {
+        if (left === 0) audio.sfx('timeup');
+        else if (left <= 10) audio.sfx(left % 2 ? 'tick' : 'tock');
+      }
+      last = left;
       el.textContent = left;
       el.classList.toggle('urgent', left <= 5);
     };
@@ -253,6 +279,7 @@ function makeRun() {
         if (!a.who.includes(p.id) || a.answers.has(p.id)) return;
         a.answers.set(p.id, data.value);
         views.set(p.id, a.after);
+        audio.sfx('pop');
         sock.send({ t: 'send', to: [p.id], data: { kind: 'view', view: a.after } });
         try { a.opts.onAnswer?.(p, data.value, a.answers); } catch (e) { console.error(e); }
         a.check();

@@ -1,0 +1,9 @@
+{
+  "name": "Glitch Squad",
+  "description": "Everyone knows the secret word except the Glitch. Give a one-word clue, then find the Glitch before it figures out the word.",
+  "icon": "✂️",
+  "color": "#e8553d",
+  "minPlayers": 4,
+  "music": "think",
+  "maxPlayers": 10
+}
