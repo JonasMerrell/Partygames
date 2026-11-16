@@ -1,0 +1,68 @@
+[
+ {
+  "title": "A will, twelve heirs",
+  "text": "Lord Hollowmere is dead and the will is read at midnight. Secretly back a few of the twelve heirs.",
+  "scene": [
+   {
+    "phone": "Your heirs (secret)",
+    "buttons": [
+     "Lady Vane",
+     "Dr. Moss",
+     "Cousin Pip"
+    ]
+   },
+   {
+    "icon": "📜",
+    "label": "the will"
+   }
+  ]
+ },
+ {
+  "title": "Move ANY heir",
+  "text": "On your turn, roll two dice and move any heirs around the mansion, not just yours.",
+  "scene": [
+   {
+    "dice": [
+     3,
+     5
+    ]
+   },
+   {
+    "icon": "🏚️"
+   }
+  ],
+  "flow": true
+ },
+ {
+  "title": "Spring the traps",
+  "text": "Play trap cards on whoever is standing in a trap. Get rid of rivals' heirs without giving away your own.",
+  "scene": [
+   {
+    "card": "TRAPDOOR",
+    "color": "#e8553d",
+    "fx": "shake"
+   },
+   {
+    "icon": "💀"
+   }
+  ]
+ },
+ {
+  "title": "Who inherits",
+  "text": "The heir named in the will wins by walking out the front door. Otherwise the will decides at midnight, or the last player with an heir standing wins.",
+  "scene": [
+   {
+    "icon": "🚪",
+    "label": "front door"
+   },
+   {
+    "icon": "🕛",
+    "label": "midnight"
+   },
+   {
+    "icon": "👑",
+    "fx": "float"
+   }
+  ]
+ }
+]

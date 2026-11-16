@@ -1,0 +1,65 @@
+[
+ {
+  "title": "Draw a secret title",
+  "text": "Everyone gets a secret title and draws it on their phone.",
+  "scene": [
+   {
+    "phone": "Draw: \"a nervous volcano\"",
+    "title": "Your title"
+   },
+   {
+    "icon": "🎨"
+   }
+  ],
+  "flow": true
+ },
+ {
+  "title": "Write fake placards",
+  "text": "One artwork at a time, everyone else writes a fake museum placard for it.",
+  "scene": [
+   {
+    "tv": "🖼️"
+   },
+   {
+    "phone": "What is this artwork?",
+    "type": "Grandpa's barbecue"
+   }
+  ],
+  "flow": true
+ },
+ {
+  "title": "Spot the real title",
+  "text": "The real title hides among the fakes. Pick the one you think the artist was given.",
+  "scene": [
+   {
+    "phone": "Which is real?",
+    "buttons": [
+     "Grandpa's barbecue",
+     "a nervous volcano",
+     "Angry pudding"
+    ],
+    "tap": 1
+   }
+  ]
+ },
+ {
+  "title": "Scoring",
+  "text": "Points for picking the real title, for the artist when people find it, and for every visitor your fake fools.",
+  "scene": [
+   {
+    "score": "+500",
+    "label": "found it"
+   },
+   {
+    "score": "+300",
+    "label": "artist, per finder",
+    "color": "#f2c14e"
+   },
+   {
+    "score": "+400",
+    "label": "per visitor fooled",
+    "color": "#8cc084"
+   }
+  ]
+ }
+]

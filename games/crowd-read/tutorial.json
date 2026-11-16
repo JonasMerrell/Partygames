@@ -1,0 +1,58 @@
+[
+ {
+  "title": "A secret yes or no",
+  "text": "A question goes to everyone. Answer it honestly and secretly.",
+  "scene": [
+   {
+    "tv": "Have you ever sung in the shower?"
+   },
+   {
+    "phone": "Your answer",
+    "buttons": [
+     "Yes",
+     "No"
+    ],
+    "tap": 0
+   }
+  ],
+  "flow": true
+ },
+ {
+  "title": "Read the room",
+  "text": "Now guess how many people in the room said yes, including you.",
+  "scene": [
+   {
+    "phone": "How many said yes?",
+    "buttons": [
+     "3",
+     "4",
+     "5"
+    ],
+    "tap": 1
+   },
+   {
+    "icon": "🔮"
+   }
+  ]
+ },
+ {
+  "title": "Scoring",
+  "text": "Exact guesses score big. Off by one or two still scores. The last round is a double-points confession round!",
+  "scene": [
+   {
+    "score": "+1000",
+    "label": "exact"
+   },
+   {
+    "score": "+500",
+    "label": "off by 1",
+    "color": "#f2c14e"
+   },
+   {
+    "score": "+200",
+    "label": "off by 2",
+    "color": "#8cc084"
+   }
+  ]
+ }
+]

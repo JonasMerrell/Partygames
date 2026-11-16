@@ -136,6 +136,7 @@ async fn main() {
         .route("/sdk/play.js", asset!("play.js", "text/javascript"))
         .route("/sdk/widgets.js", asset!("widgets.js", "text/javascript"))
         .route("/sdk/audio.js", asset!("audio.js", "text/javascript"))
+        .route("/sdk/tutorial.js", asset!("tutorial.js", "text/javascript"))
         .route("/healthz", get(|| async { "ok" }))
         .route("/qr.svg", get(qr))
         .route("/ws", get(ws))

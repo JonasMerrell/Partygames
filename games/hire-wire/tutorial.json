@@ -1,0 +1,71 @@
+[
+ {
+  "title": "Small talk first",
+  "text": "Answer a few casual questions. Your words will come back to haunt someone.",
+  "scene": [
+   {
+    "phone": "What did you have for breakfast?",
+    "type": "cold pizza and regret"
+   }
+  ]
+ },
+ {
+  "title": "Shredded into tiles",
+  "text": "All the small talk is shredded into word tiles and shared out among the other players.",
+  "scene": [
+   {
+    "card": "pizza",
+    "color": "#f2c14e"
+   },
+   {
+    "card": "regret",
+    "color": "#5fa8d3"
+   },
+   {
+    "card": "cold",
+    "color": "#8cc084"
+   },
+   {
+    "card": "and",
+    "color": "#f78fb3"
+   }
+  ]
+ },
+ {
+  "title": "Nail the interview",
+  "text": "Answer interview questions using only the word tiles you salvaged. Build your answer on your phone.",
+  "scene": [
+   {
+    "tv": "Why should we hire you?"
+   },
+   {
+    "phone": "Build your answer",
+    "buttons": [
+     "regret",
+     "pizza",
+     "cold"
+    ],
+    "tap": 1
+   }
+  ],
+  "flow": true
+ },
+ {
+  "title": "Get hired",
+  "text": "Everyone votes on the answers. The highest salary at the end gets the job.",
+  "scene": [
+   {
+    "phone": "Best answer?",
+    "buttons": [
+     "Ana's answer",
+     "Ben's answer"
+    ],
+    "tap": 0
+   },
+   {
+    "score": "$$$",
+    "label": "top salary wins"
+   }
+  ]
+ }
+]

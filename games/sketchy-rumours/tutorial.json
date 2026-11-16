@@ -1,0 +1,52 @@
+[
+ {
+  "title": "Start a rumour",
+  "text": "Everyone writes something silly to start their notebook.",
+  "scene": [
+   {
+    "phone": "Start a rumour",
+    "type": "my cat runs a bank"
+   }
+  ]
+ },
+ {
+  "title": "Pass it on",
+  "text": "Notebooks get passed round. The next person draws what they read, the one after guesses the drawing, and so on.",
+  "scene": [
+   {
+    "card": "my cat runs a bank",
+    "color": "#f2c14e"
+   },
+   {
+    "icon": "✏️"
+   },
+   {
+    "card": "🐱🏦",
+    "color": "#5fa8d3"
+   },
+   {
+    "icon": "🤔"
+   },
+   {
+    "card": "tiger robs a shop",
+    "color": "#f78fb3"
+   }
+  ]
+ },
+ {
+  "title": "The reveal",
+  "text": "On the TV, each owner flips through their notebook page by page. Everyone throws reactions at the screen.",
+  "scene": [
+   {
+    "tv": "my cat runs a bank ➜ ... ➜ tiger robs a shop"
+   },
+   {
+    "icon": "😂",
+    "fx": "float"
+   },
+   {
+    "icon": "🍅"
+   }
+  ]
+ }
+]

@@ -1,0 +1,70 @@
+[
+ {
+  "title": "Write funny answers",
+  "text": "Each prompt goes to two players. You'll get two prompts on your phone. Funny beats correct!",
+  "scene": [
+   {
+    "phone": "The worst thing to hear from your pilot",
+    "title": "Prompt 1 of 2",
+    "type": "Anyone know how to land?"
+   },
+   {
+    "icon": "✍️"
+   }
+  ],
+  "flow": true
+ },
+ {
+  "title": "Head to head",
+  "text": "Answers go up on the TV in pairs. Everyone who didn't write that prompt votes for the better one.",
+  "scene": [
+   {
+    "card": "Anyone know how to land?",
+    "color": "#f2c14e",
+    "label": "Ana"
+   },
+   {
+    "icon": "🥊"
+   },
+   {
+    "card": "Oops, wrong country",
+    "color": "#5fa8d3",
+    "label": "Ben"
+   }
+  ]
+ },
+ {
+  "title": "Vote on your phone",
+  "text": "Tap the answer you like best. Your vote is secret until the reveal.",
+  "scene": [
+   {
+    "phone": "Which is better?",
+    "buttons": [
+     "Anyone know how to land?",
+     "Oops, wrong country"
+    ],
+    "tap": 1
+   }
+  ]
+ },
+ {
+  "title": "Score big",
+  "text": "Points follow the share of votes. Win every vote for a clean sweep bonus. Round two is worth double!",
+  "scene": [
+   {
+    "score": "+1000",
+    "label": "share of the votes"
+   },
+   {
+    "score": "+250",
+    "label": "clean sweep",
+    "color": "#f2c14e"
+   },
+   {
+    "icon": "🏆",
+    "label": "most points wins",
+    "fx": "float"
+   }
+  ]
+ }
+]

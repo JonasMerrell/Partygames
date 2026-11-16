@@ -2,6 +2,7 @@
 // host.js and hands it a `ctx` with everything a game needs. See GAMES.md.
 import { h, esc, sleep, shuffle, pick, socket, colorOf, keepAwake } from './common.js';
 import * as audio from './audio.js';
+import { playTutorial } from './tutorial.js';
 
 function muteButton(cls = '') {
   const b = h('button.ghost.sm' + cls, { title: 'Sound on/off', onclick: () => { audio.setMuted(!audio.isMuted()); b.textContent = audio.isMuted() ? '🔇' : '🔊'; } }, audio.isMuted() ? '🔇' : '🔊');
@@ -100,6 +101,7 @@ function lobby() {
       : h('p.sub', 'Waiting for players…')),
     h('div.row',
       h('button.big', { disabled: !enough, onclick: start }, enough ? 'Everybody\'s in!' : `Need ${min}+ players`),
+      game?.hasTutorial && h('button.ghost', { onclick: () => playTutorial(document.body, game) }, '▶ How to play'),
       h('button.ghost', { onclick: quit }, 'Pick another game'),
       muteButton())));
   list.forEach((p) => shown.add(p.id));
@@ -309,6 +311,22 @@ function makeRun() {
 
 // Resume a room after a refresh of the host screen.
 (async () => {
+  // /host?tutorial=<id> plays just that tutorial (used to record videos).
+  const tut = new URLSearchParams(location.search).get('tutorial');
+  if (tut) {
+    document.body.classList.add('recording');
+    games = await (await fetch('/api/games')).json();
+    const g = games.find((x) => x.id === tut);
+    if (g) {
+      await playTutorial(document.body, g, { controls: false });
+      app.replaceChildren(h('div.say.t-end', { style: { '--accent': g.color || '#7d8cff' } },
+        h('div.t-icon', g.icon || '🎲'), h('h1', `Let's play ${g.name}!`),
+        h('p', `Open ${location.host}/host on the TV, then join on your phone.`)));
+      await sleep(3000);
+    }
+    document.title = 'tutorial-done';
+    return;
+  }
   let saved = null;
   try { saved = JSON.parse(sessionStorage.getItem(SAVE)); } catch {}
   if (saved?.code) {

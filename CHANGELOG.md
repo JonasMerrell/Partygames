@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.10.0
+
+- Animated "How to play" for every game, from a ▶ How to play button in the lobby (tutorial.json per game).
+
 ## 0.9.0
 
 - The game picker and lobby show the well-known game each one plays like, in brackets (`inspiredBy` in game.json).

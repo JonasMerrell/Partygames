@@ -1,0 +1,84 @@
+[
+ {
+  "title": "Two teams, one sky",
+  "text": "Split into two teams. A 5 by 5 sky of words goes up on the TV.",
+  "scene": [
+   {
+    "tv": "ORBIT · APPLE · NIGHT · PIANO · …"
+   },
+   {
+    "icon": "🔵",
+    "label": "Team 1"
+   },
+   {
+    "icon": "🔴",
+    "label": "Team 2"
+   }
+  ]
+ },
+ {
+  "title": "The astronomer's map",
+  "text": "Each team's astronomer sees the secret star map on their phone: your stars, theirs, dust and the black hole.",
+  "scene": [
+   {
+    "phone": "Your stars: ORBIT, NIGHT, MOON",
+    "title": "Secret map"
+   },
+   {
+    "icon": "🗺️"
+   }
+  ]
+ },
+ {
+  "title": "One word, one number",
+  "text": "The astronomer says a one-word clue and a number out loud. Teammates vote on their phones for which words to chart.",
+  "scene": [
+   {
+    "icon": "🗣️",
+    "label": "\"SPACE, 2\""
+   },
+   {
+    "phone": "Chart which word?",
+    "buttons": [
+     "ORBIT",
+     "PIANO",
+     "NIGHT"
+    ],
+    "tap": 0
+   }
+  ],
+  "flow": true
+ },
+ {
+  "title": "Watch out",
+  "text": "Dust is a wasted guess. The other team's star helps them. The black hole loses the game on the spot!",
+  "scene": [
+   {
+    "card": "dust",
+    "color": "#cccccc"
+   },
+   {
+    "card": "their star",
+    "color": "#e8553d"
+   },
+   {
+    "card": "BLACK HOLE",
+    "color": "#2b2118",
+    "fx": "shake"
+   }
+  ]
+ },
+ {
+  "title": "Win",
+  "text": "Chart all of your team's stars first to win.",
+  "scene": [
+   {
+    "icon": "⭐⭐⭐",
+    "fx": "float"
+   },
+   {
+    "icon": "🏆"
+   }
+  ]
+ }
+]

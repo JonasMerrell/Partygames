@@ -1,0 +1,53 @@
+[
+ {
+  "title": "True or false?",
+  "text": "A statement goes up on the TV. Decide fast: fact or fib?",
+  "scene": [
+   {
+    "tv": "Octopuses have three hearts."
+   },
+   {
+    "phone": "Fact or fib?",
+    "buttons": [
+     "Fact",
+     "Fib"
+    ],
+    "tap": 0
+   }
+  ],
+  "flow": true
+ },
+ {
+  "title": "Speed matters",
+  "text": "Right answers score 500, plus up to 500 more for being quick.",
+  "scene": [
+   {
+    "score": "+500",
+    "label": "right"
+   },
+   {
+    "score": "+500",
+    "label": "speed bonus",
+    "color": "#f2c14e"
+   },
+   {
+    "icon": "⚡"
+   }
+  ]
+ },
+ {
+  "title": "Keep your streak",
+  "text": "Three right in a row starts a streak worth an extra 100 per answer. Latecomers can jump straight in.",
+  "scene": [
+   {
+    "icon": "🔥",
+    "label": "streak",
+    "fx": "pulse"
+   },
+   {
+    "score": "+100",
+    "label": "per answer"
+   }
+  ]
+ }
+]

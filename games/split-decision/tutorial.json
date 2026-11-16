@@ -1,0 +1,55 @@
+[
+ {
+  "title": "A tempting offer",
+  "text": "Each player gets a tempting offer on their phone.",
+  "scene": [
+   {
+    "phone": "You get a million dollars…",
+    "title": "Your offer"
+   }
+  ]
+ },
+ {
+  "title": "Add the catch",
+  "text": "Write a catch that makes it a tough call.",
+  "scene": [
+   {
+    "phone": "…but",
+    "type": "you can never sit down again"
+   }
+  ]
+ },
+ {
+  "title": "The room votes",
+  "text": "Everyone else votes whether they'd take the deal.",
+  "scene": [
+   {
+    "phone": "Take the deal?",
+    "buttons": [
+     "Take it",
+     "No way"
+    ],
+    "tap": 0
+   },
+   {
+    "tv": "52% · 48%"
+   }
+  ],
+  "flow": true
+ },
+ {
+  "title": "Aim for 50/50",
+  "text": "The closer the room splits to 50/50, the more the author scores. Voters on the minority side get a bravery bonus.",
+  "scene": [
+   {
+    "score": "50 / 50",
+    "label": "perfect split"
+   },
+   {
+    "score": "+100",
+    "label": "bravery bonus",
+    "color": "#f2c14e"
+   }
+  ]
+ }
+]

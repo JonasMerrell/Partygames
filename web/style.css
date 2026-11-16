@@ -118,3 +118,75 @@ body.tv.offline::after { content: 'Reconnecting to server…'; position: fixed; 
 .say p { font-size: 1.4em; color: var(--dim); }
 
 .inspired { color: var(--dim); font-weight: 600; font-size: .7em; }
+
+/* ---------- How to play ---------- */
+.t-overlay { position: fixed; inset: 0; z-index: 50; display: flex; flex-direction: column; align-items: center;
+  padding: 3vh 4vw; gap: 2.5vh; text-align: center;
+  background: radial-gradient(900px 600px at 50% 40%, color-mix(in srgb, var(--accent) 22%, #1f1a33), #100d19); }
+.t-head { width: 100%; display: flex; justify-content: space-between; align-items: center; color: var(--dim); font-weight: 800; }
+.t-ctrl { display: flex; gap: 8px; }
+.t-title { font-size: 2.6em; font-weight: 900; min-height: 1.2em; color: var(--fg); }
+.t-title span { display: inline-block; }
+.t-stage { flex: 1; width: 100%; display: flex; align-items: center; justify-content: center; gap: 3vw; flex-wrap: nowrap; }
+.t-caption { font-size: 1.45em; max-width: 1100px; min-height: 3em; color: var(--fg); }
+.t-dots { display: flex; gap: 10px; }
+.t-dots span { width: 34px; height: 6px; border-radius: 9px; background: var(--line); transition: background .3s; }
+.t-dots span.on { background: var(--accent); }
+.t-in { animation: t-rise .5s both cubic-bezier(.2,1.2,.4,1); }
+@keyframes t-rise { from { opacity: 0; transform: translateY(18px); } }
+
+.t-actor { display: flex; flex-direction: column; align-items: center; gap: 10px; animation: t-pop .55s both cubic-bezier(.3,1.5,.5,1); }
+@keyframes t-pop { from { opacity: 0; transform: translateY(40px) scale(.6); } }
+.t-label { font-weight: 800; color: var(--dim); font-size: .95em; max-width: 12em; }
+.t-arrow { font-size: 2.6em; color: var(--accent); animation: t-pop .4s both; }
+
+.t-phone { position: relative; width: clamp(150px, 15vw, 230px); aspect-ratio: 9 / 17; border-radius: 28px; background: #0c0a14;
+  border: 4px solid #3a3358; padding: 26px 12px 14px; box-shadow: 0 20px 50px rgba(0,0,0,.5); }
+.t-notch { position: absolute; top: 9px; left: 50%; width: 38%; height: 8px; transform: translateX(-50%); border-radius: 9px; background: #3a3358; }
+.t-screen { height: 100%; border-radius: 14px; background: #1f1a33; padding: 12px 10px; display: flex; flex-direction: column; gap: 8px;
+  text-align: left; overflow: hidden; font-size: .78em; }
+.t-ptitle { font-weight: 900; color: var(--accent); font-size: 1.1em; }
+.t-ptext { color: var(--fg); white-space: pre-wrap; }
+.t-typed { background: #2a2445; border: 2px solid var(--accent); border-radius: 8px; padding: 6px 8px; font-weight: 700; }
+.t-typed span { display: inline-block; overflow: hidden; white-space: nowrap; vertical-align: bottom; width: 0;
+  animation: t-type 1s steps(var(--n)) forwards; max-width: 100%; }
+@keyframes t-type { to { width: calc(var(--n) * 1ch); } }
+.t-btns { display: flex; flex-direction: column; gap: 6px; margin-top: auto; }
+.t-btn { background: #2a2445; border: 2px solid #3d3560; border-radius: 9px; padding: 7px 8px; font-weight: 700; }
+.t-btn.t-tapped { animation: t-tap .4s forwards; }
+@keyframes t-tap { to { background: var(--accent); color: #120f1d; border-color: var(--accent); transform: scale(.96); } }
+.t-finger { position: absolute; right: -6px; bottom: calc(14px + (var(--rows, 3) - var(--row)) * 0px + 12%); font-size: 2.2em;
+  opacity: 0; animation: t-finger 1s both; }
+@keyframes t-finger { 0% { opacity: 0; transform: translate(40px, 40px); } 60% { opacity: 1; transform: none; } 80% { transform: scale(.85); } 100% { opacity: 1; transform: none; } }
+
+.t-tv { display: flex; flex-direction: column; align-items: center; }
+.t-tvscreen { width: clamp(260px, 30vw, 460px); aspect-ratio: 16 / 9; background: #1f1a33; border: 8px solid #2c2640; border-radius: 14px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; padding: 14px;
+  box-shadow: 0 0 60px color-mix(in srgb, var(--accent) 35%, transparent); }
+.t-tvtext { font-size: 1.5em; font-weight: 900; }
+.t-tvsub { color: var(--dim); }
+.t-tvstand { width: 30%; height: 12px; background: #2c2640; border-radius: 0 0 10px 10px; }
+
+.t-card { position: relative; width: clamp(120px, 11vw, 180px); aspect-ratio: 5 / 7; perspective: 800px; color: #2b2118; }
+.t-face { position: absolute; inset: 0; background: var(--c); border-radius: 12px; display: flex; align-items: center; justify-content: center;
+  padding: 10px; font-weight: 900; font-size: 1.05em; box-shadow: 0 10px 30px rgba(0,0,0,.4); backface-visibility: hidden; }
+.t-flip .t-face { animation: t-flipa .6s var(--d2) forwards; }
+.t-flip .t-back { transform: rotateY(180deg); background: var(--accent); animation-name: t-flipb; }
+@keyframes t-flipa { to { transform: rotateY(-180deg); } }
+@keyframes t-flipb { to { transform: rotateY(0); } }
+
+.t-icon { font-size: clamp(60px, 7vw, 110px); line-height: 1; }
+.t-score { font-size: 3.4em; font-weight: 900; }
+.t-dice { display: flex; gap: 10px; font-size: clamp(60px, 7vw, 100px); line-height: 1; }
+.t-die { animation: t-roll .8s both; }
+@keyframes t-roll { from { transform: rotate(-540deg) scale(.3); } }
+
+.fx-shake > :first-child { animation: t-shake .5s 1.2s 3; }
+.fx-pulse > :first-child { animation: t-pulse 1s 1s infinite alternate; }
+.fx-glow > :first-child { filter: drop-shadow(0 0 22px var(--accent)); }
+.fx-float > :first-child { animation: t-float 2.4s ease-in-out infinite; }
+@keyframes t-shake { 25% { transform: translateX(-8px) rotate(-3deg); } 75% { transform: translateX(8px) rotate(3deg); } }
+@keyframes t-pulse { to { transform: scale(1.1); } }
+@keyframes t-float { 50% { transform: translateY(-14px); } }
+body.recording .t-head .t-ctrl { display: none; }
+.t-end { min-height: 94vh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; animation: t-rise .6s both; }

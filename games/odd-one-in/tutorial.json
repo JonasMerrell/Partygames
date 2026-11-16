@@ -1,0 +1,82 @@
+[
+ {
+  "title": "One player is different",
+  "text": "Everyone answers the same question, except one player whose phone shows a different one.",
+  "scene": [
+   {
+    "phone": "How many hours do you sleep?"
+   },
+   {
+    "phone": "How many pets have you had?",
+    "accent": "#e8553d",
+    "label": "The odd one",
+    "fx": "shake"
+   }
+  ]
+ },
+ {
+  "title": "Answers go up",
+  "text": "All the answers appear on the TV. Talk it over: whose answer doesn't fit?",
+  "scene": [
+   {
+    "card": "8",
+    "color": "#f2c14e",
+    "label": "Ana"
+   },
+   {
+    "card": "7",
+    "color": "#5fa8d3",
+    "label": "Ben"
+   },
+   {
+    "card": "3",
+    "color": "#f78fb3",
+    "label": "Cy"
+   },
+   {
+    "card": "9",
+    "color": "#8cc084",
+    "label": "Dee"
+   }
+  ]
+ },
+ {
+  "title": "Vote",
+  "text": "Everyone votes for who they think got the different question.",
+  "scene": [
+   {
+    "phone": "Who's the odd one?",
+    "buttons": [
+     "Ben",
+     "Cy",
+     "Dee"
+    ],
+    "tap": 1
+   },
+   {
+    "icon": "🗳️"
+   }
+  ],
+  "flow": true
+ },
+ {
+  "title": "Scoring",
+  "text": "Points for spotting the odd one. The odd one scores for every player they fooled, and a bonus for escaping.",
+  "scene": [
+   {
+    "score": "+500",
+    "label": "found them"
+   },
+   {
+    "score": "+250",
+    "label": "odd one, per miss",
+    "color": "#f2c14e"
+   },
+   {
+    "score": "+500",
+    "label": "odd one escapes",
+    "color": "#8cc084"
+   }
+  ]
+ }
+]

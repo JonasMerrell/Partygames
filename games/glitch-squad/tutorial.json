@@ -1,0 +1,17 @@
+[
+  {"title": "One of you is the Glitch", "text": "Everyone gets the same secret word on their phone, except one player: the Glitch, who only sees the category.",
+   "scene": [{"phone": "Category: Breakfast", "title": "Secret word: Pancakes", "label": "The squad"},
+             {"phone": "Category: Breakfast\nYou don't know the word!", "title": "⚡ GLITCH ⚡", "accent": "#7b3fe4", "label": "The Glitch", "fx": "shake"}]},
+  {"title": "Give a one-word clue", "text": "Write one word that proves you know the secret. Too obvious and the Glitch learns the word. Too vague and you look like the Glitch.",
+   "scene": [{"phone": "Secret word: Pancakes", "type": "fluffy", "label": "Ana"}, {"phone": "Secret word: Pancakes", "type": "syrup", "label": "Ben"},
+             {"phone": "Category: Breakfast", "type": "crunchy", "accent": "#7b3fe4", "label": "The Glitch bluffs"}]},
+  {"title": "The clues go up", "text": "Every clue gets pinned on the big screen. Talk it over out loud. Whose clue doesn't quite fit?",
+   "scene": [{"card": "fluffy", "color": "#f2c14e", "label": "Ana"}, {"card": "syrup", "color": "#5fa8d3", "label": "Ben"},
+             {"card": "crunchy", "color": "#f78fb3", "label": "Cy", "fx": "shake"}, {"card": "stack", "color": "#8cc084", "label": "Dee"}]},
+  {"title": "Vote out the Glitch", "text": "Everyone votes on their phone. If the most votes land on the Glitch, the squad caught it.",
+   "scene": [{"phone": "Who is the Glitch?", "buttons": ["Ana: fluffy", "Cy: crunchy", "Dee: stack"], "tap": 1}, {"icon": "🗳️"}, {"card": "Cy", "back": "GLITCH!", "color": "#fffaf0"}], "flow": true},
+  {"title": "One last guess", "text": "A caught Glitch gets one guess at the secret word. Guess it right and the Glitch steals the round anyway!",
+   "scene": [{"phone": "Which one is the secret word?", "buttons": ["Waffles", "Pancakes", "Toast"], "tap": 1, "accent": "#7b3fe4"}, {"score": "+250", "label": "Glitch steals it"}]},
+  {"title": "Scoring", "text": "Squad wins: everyone gets points, more if you voted for the Glitch. Glitch escapes: the Glitch scores big. Three rounds, most points wins.",
+   "scene": [{"icon": "🕵️", "label": "Squad +100 to +200"}, {"icon": "⚡", "label": "Glitch escapes +300"}, {"icon": "🏆", "label": "Most points wins", "fx": "float"}]}
+]

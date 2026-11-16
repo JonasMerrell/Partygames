@@ -1,0 +1,71 @@
+[
+ {
+  "title": "Draw patches",
+  "text": "Everyone draws two jacket patch designs on their phone.",
+  "scene": [
+   {
+    "phone": "Draw a patch",
+    "title": "Patch 1 of 2"
+   },
+   {
+    "icon": "🎨"
+   }
+  ],
+  "flow": true
+ },
+ {
+  "title": "Write mottos",
+  "text": "Then write three short mottos.",
+  "scene": [
+   {
+    "phone": "Write a motto",
+    "type": "Born to nap"
+   }
+  ]
+ },
+ {
+  "title": "Stitch the best combo",
+  "text": "You get a random handful of other people's designs and mottos. Stitch the best combination into a patch.",
+  "scene": [
+   {
+    "card": "🦖",
+    "color": "#8cc084"
+   },
+   {
+    "icon": "➕"
+   },
+   {
+    "card": "Born to nap",
+    "color": "#f2c14e"
+   },
+   {
+    "icon": "➜"
+   },
+   {
+    "card": "🦖 Born to nap",
+    "color": "#f4a259",
+    "fx": "pop"
+   }
+  ]
+ },
+ {
+  "title": "Vote",
+  "text": "All the patches go up on the TV. Everyone votes for two favourites. The stitcher, artist and motto writer all score.",
+  "scene": [
+   {
+    "score": "+300",
+    "label": "stitcher"
+   },
+   {
+    "score": "+200",
+    "label": "artist",
+    "color": "#f2c14e"
+   },
+   {
+    "score": "+200",
+    "label": "motto writer",
+    "color": "#8cc084"
+   }
+  ]
+ }
+]
