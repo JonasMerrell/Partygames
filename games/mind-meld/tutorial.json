@@ -1,42 +1,46 @@
 [
- {
-  "title": "Think like the room",
-  "text": "A category goes up. Write the answer you think everyone else will write.",
-  "scene": [
-   {
-    "tv": "Name a fruit"
-   },
-   {
-    "phone": "Your answer",
-    "type": "banana"
-   }
-  ],
-  "flow": true
- },
- {
-  "title": "Every match scores",
-  "text": "You score 100 for every other player who wrote the same thing. Typos and plurals still count.",
-  "scene": [
-   {
-    "card": "banana",
-    "color": "#f2c14e"
-   },
-   {
-    "card": "banana",
-    "color": "#f2c14e"
-   },
-   {
-    "card": "bananas",
-    "color": "#f2c14e"
-   },
-   {
-    "card": "kiwi",
-    "color": "#8cc084"
-   },
-   {
-    "score": "+200",
-    "label": "Ana"
-   }
-  ]
- }
+  {
+    "title": "Think like the room",
+    "text": "A category goes up. Write the answer you think everyone else will write.",
+    "scene": [
+      {
+        "tv": "Name a fruit"
+      },
+      {
+        "phone": "Your answer",
+        "type": "banana"
+      }
+    ],
+    "flow": true,
+    "audio": "audio/tut_1.wav",
+    "ms": 6300
+  },
+  {
+    "title": "Every match scores",
+    "text": "You score 100 for every other player who wrote the same thing. Typos and plurals still count.",
+    "scene": [
+      {
+        "card": "banana",
+        "color": "#f2c14e"
+      },
+      {
+        "card": "banana",
+        "color": "#f2c14e"
+      },
+      {
+        "card": "bananas",
+        "color": "#f2c14e"
+      },
+      {
+        "card": "kiwi",
+        "color": "#8cc084"
+      },
+      {
+        "score": "+200",
+        "label": "Ana"
+      }
+    ],
+    "audio": "audio/tut_2.wav",
+    "ms": 7020
+  }
 ]

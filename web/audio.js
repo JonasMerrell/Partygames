@@ -7,7 +7,10 @@
 
 let ac = null, master, sfxBus, musicBus, noiseBuf;
 let muted = false;
+let musicVol = 0.5, sfxVol = 0.7;
 try { muted = localStorage.getItem('partyhall.muted') === '1'; } catch {}
+try { const mv = parseFloat(localStorage.getItem('partyhall.musicVol')); if (!isNaN(mv)) musicVol = Math.max(0, Math.min(1, mv)); } catch {}
+try { const sv = parseFloat(localStorage.getItem('partyhall.sfxVol')); if (!isNaN(sv)) sfxVol = Math.max(0, Math.min(1, sv)); } catch {}
 
 function init() {
   if (ac) return true;
@@ -16,8 +19,8 @@ function init() {
   ac = new AC();
   master = ac.createGain(); master.gain.value = muted ? 0 : 1; master.connect(ac.destination);
   const comp = ac.createDynamicsCompressor(); comp.connect(master);
-  sfxBus = ac.createGain(); sfxBus.gain.value = 0.55; sfxBus.connect(comp);
-  musicBus = ac.createGain(); musicBus.gain.value = 0.22; musicBus.connect(comp);
+  sfxBus = ac.createGain(); sfxBus.gain.value = sfxVol * 0.8; sfxBus.connect(comp);
+  musicBus = ac.createGain(); musicBus.gain.value = musicVol * 0.45; musicBus.connect(comp);
   noiseBuf = ac.createBuffer(1, ac.sampleRate, ac.sampleRate);
   const d = noiseBuf.getChannelData(0);
   for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
@@ -35,6 +38,18 @@ export function setMuted(m) {
   muted = m;
   try { localStorage.setItem('partyhall.muted', m ? '1' : '0'); } catch {}
   if (ac) master.gain.setTargetAtTime(m ? 0 : 1, ac.currentTime, 0.05);
+}
+export const getMusicVol = () => musicVol;
+export function setMusicVol(v) {
+  musicVol = Math.max(0, Math.min(1, Number(v)));
+  try { localStorage.setItem('partyhall.musicVol', String(musicVol)); } catch {}
+  if (musicBus) musicBus.gain.setTargetAtTime(musicVol * 0.45, ac.currentTime, 0.05);
+}
+export const getSfxVol = () => sfxVol;
+export function setSfxVol(v) {
+  sfxVol = Math.max(0, Math.min(1, Number(v)));
+  try { localStorage.setItem('partyhall.sfxVol', String(sfxVol)); } catch {}
+  if (sfxBus) sfxBus.gain.setTargetAtTime(sfxVol * 0.8, ac.currentTime, 0.05);
 }
 
 const ready = () => ac && ac.state === 'running';

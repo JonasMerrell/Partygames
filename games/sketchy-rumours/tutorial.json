@@ -1,52 +1,58 @@
 [
- {
-  "title": "Start a rumour",
-  "text": "Everyone writes something silly to start their notebook.",
-  "scene": [
-   {
-    "phone": "Start a rumour",
-    "type": "my cat runs a bank"
-   }
-  ]
- },
- {
-  "title": "Pass it on",
-  "text": "Notebooks get passed round. The next person draws what they read, the one after guesses the drawing, and so on.",
-  "scene": [
-   {
-    "card": "my cat runs a bank",
-    "color": "#f2c14e"
-   },
-   {
-    "icon": "✏️"
-   },
-   {
-    "card": "🐱🏦",
-    "color": "#5fa8d3"
-   },
-   {
-    "icon": "🤔"
-   },
-   {
-    "card": "tiger robs a shop",
-    "color": "#f78fb3"
-   }
-  ]
- },
- {
-  "title": "The reveal",
-  "text": "On the TV, each owner flips through their notebook page by page. Everyone throws reactions at the screen.",
-  "scene": [
-   {
-    "tv": "my cat runs a bank ➜ ... ➜ tiger robs a shop"
-   },
-   {
-    "icon": "😂",
-    "fx": "float"
-   },
-   {
-    "icon": "🍅"
-   }
-  ]
- }
+  {
+    "title": "Start a rumour",
+    "text": "Everyone writes something silly to start their notebook.",
+    "scene": [
+      {
+        "phone": "Start a rumour",
+        "type": "my cat runs a bank"
+      }
+    ],
+    "audio": "audio/tut_1.wav",
+    "ms": 4940
+  },
+  {
+    "title": "Pass it on",
+    "text": "Notebooks get passed round. The next person draws what they read, the one after guesses the drawing, and so on.",
+    "scene": [
+      {
+        "card": "my cat runs a bank",
+        "color": "#f2c14e"
+      },
+      {
+        "icon": "\u270f\ufe0f"
+      },
+      {
+        "card": "\ud83d\udc31\ud83c\udfe6",
+        "color": "#5fa8d3"
+      },
+      {
+        "icon": "\ud83e\udd14"
+      },
+      {
+        "card": "tiger robs a shop",
+        "color": "#f78fb3"
+      }
+    ],
+    "audio": "audio/tut_2.wav",
+    "ms": 9340
+  },
+  {
+    "title": "The reveal",
+    "text": "On the TV, each owner flips through their notebook page by page. Everyone throws reactions at the screen.",
+    "scene": [
+      {
+        "tv": "my cat runs a bank \u279c ... \u279c tiger robs a shop"
+      },
+      {
+        "icon": "\ud83d\ude02",
+        "fx": "float"
+      },
+      {
+        "icon": "\ud83c\udf45"
+      }
+    ],
+    "audio": "audio/tut_3.wav",
+    "ms": 9020
+  }
 ]

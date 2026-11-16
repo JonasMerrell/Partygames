@@ -1,47 +1,53 @@
 [
- {
-  "title": "Four things",
-  "text": "Four things go up on the TV with a way to sort them: by year, size, speed and more.",
-  "scene": [
-   {
-    "tv": "Oldest to newest",
-    "sub": "Telephone · Internet · Printing press · Radio"
-   }
-  ]
- },
- {
-  "title": "Put them in order",
-  "text": "Tap them on your phone one at a time, lowest to highest.",
-  "scene": [
-   {
-    "phone": "Tap in order",
-    "buttons": [
-     "Printing press",
-     "Telephone",
-     "Radio"
+  {
+    "title": "Four things",
+    "text": "Four things go up on the TV with a way to sort them: by year, size, speed and more.",
+    "scene": [
+      {
+        "tv": "Oldest to newest",
+        "sub": "Telephone \u00b7 Internet \u00b7 Printing press \u00b7 Radio"
+      }
     ],
-    "tap": 0
-   }
-  ]
- },
- {
-  "title": "Scoring",
-  "text": "Points for every item in the right spot, a bonus for a perfect line, and more for the fastest perfect line.",
-  "scene": [
-   {
-    "score": "+250",
-    "label": "per right spot"
-   },
-   {
-    "score": "+500",
-    "label": "perfect line",
-    "color": "#f2c14e"
-   },
-   {
-    "score": "+250",
-    "label": "fastest perfect",
-    "color": "#8cc084"
-   }
-  ]
- }
+    "audio": "audio/tut_1.wav",
+    "ms": 8060
+  },
+  {
+    "title": "Put them in order",
+    "text": "Tap them on your phone one at a time, lowest to highest.",
+    "scene": [
+      {
+        "phone": "Tap in order",
+        "buttons": [
+          "Printing press",
+          "Telephone",
+          "Radio"
+        ],
+        "tap": 0
+      }
+    ],
+    "audio": "audio/tut_2.wav",
+    "ms": 5820
+  },
+  {
+    "title": "Scoring",
+    "text": "Points for every item in the right spot, a bonus for a perfect line, and more for the fastest perfect line.",
+    "scene": [
+      {
+        "score": "+250",
+        "label": "per right spot"
+      },
+      {
+        "score": "+500",
+        "label": "perfect line",
+        "color": "#f2c14e"
+      },
+      {
+        "score": "+250",
+        "label": "fastest perfect",
+        "color": "#8cc084"
+      }
+    ],
+    "audio": "audio/tut_3.wav",
+    "ms": 8420
+  }
 ]

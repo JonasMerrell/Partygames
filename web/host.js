@@ -5,8 +5,32 @@ import * as audio from './audio.js';
 import { playTutorial } from './tutorial.js?v=2';
 
 function muteButton(cls = '') {
-  const b = h('button.ghost.sm' + cls, { title: 'Sound on/off', onclick: () => { audio.setMuted(!audio.isMuted()); b.textContent = audio.isMuted() ? '🔇' : '🔊'; } }, audio.isMuted() ? '🔇' : '🔊');
-  return b;
+  const b = h('button.ghost.sm' + cls, {
+    title: 'Sound on/off',
+    onclick: () => {
+      audio.setMuted(!audio.isMuted());
+      b.textContent = audio.isMuted() ? '🔇' : '🔊';
+      if (lobbyAudio) lobbyAudio.muted = audio.isMuted();
+    },
+  }, audio.isMuted() ? '🔇' : '🔊');
+  const mSlider = h('input', {
+    type: 'range', min: '0', max: '1', step: '0.05', value: String(audio.getMusicVol()),
+    title: 'Music volume', style: { width: '4.5em', accentColor: 'var(--accent, #7d8cff)', cursor: 'pointer' },
+    oninput: (e) => {
+      const v = parseFloat(e.target.value);
+      audio.setMusicVol(v);
+      if (lobbyAudio) lobbyAudio.volume = v * 0.7;
+    },
+  });
+  const sSlider = h('input', {
+    type: 'range', min: '0', max: '1', step: '0.05', value: String(audio.getSfxVol()),
+    title: 'SFX volume', style: { width: '4.5em', accentColor: 'var(--accent, #7d8cff)', cursor: 'pointer' },
+    oninput: (e) => audio.setSfxVol(parseFloat(e.target.value)),
+  });
+  return h('span', { style: { display: 'inline-flex', alignItems: 'center', gap: '0.45em' } },
+    b,
+    h('span', { title: 'Music volume', style: { fontSize: '0.85em', opacity: 0.85 } }, '🎵'), mSlider,
+    h('span', { title: 'SFX volume', style: { fontSize: '0.85em', opacity: 0.85 } }, '🔔'), sSlider);
 }
 
 const app = document.getElementById('app');
@@ -111,10 +135,36 @@ function onMsg(m) {
 }
 
 // ---------- lobby ----------
+let lobbyAudio = null, lobbyAudioId = null;
+function stopLobbyAudio() {
+  if (lobbyAudio) { lobbyAudio.pause(); lobbyAudio = null; lobbyAudioId = null; }
+}
+function startLobbyAudio(g) {
+  if (!g?.id) { stopLobbyAudio(); audio.music('lobby'); return; }
+  if (lobbyAudioId === g.id) {
+    if (lobbyAudio) lobbyAudio.muted = audio.isMuted();
+    return;
+  }
+  stopLobbyAudio();
+  lobbyAudioId = g.id;
+  const a = new Audio(`/games/${g.id}/audio/bg_main.ogg?v=${g.version || ''}`);
+  a.loop = true;
+  a.volume = audio.getMusicVol() * 0.7;
+  a.muted = audio.isMuted();
+  a.onerror = () => { if (lobbyAudio === a) { stopLobbyAudio(); audio.music('lobby'); } };
+  const tryPlay = () => {
+    if (lobbyAudio !== a) return;
+    a.play().then(() => { if (lobbyAudio === a) audio.music(null); }).catch(() => {});
+  };
+  tryPlay();
+  for (const ev of ['pointerdown', 'keydown']) document.addEventListener(ev, tryPlay, { once: true, capture: true });
+  lobbyAudio = a;
+}
+
 function lobby() {
   if (!room) return;
   keepAwake(true);
-  audio.music('lobby');
+  startLobbyAudio(game);
   const list = [...players.values()];
   const min = game?.minPlayers || 1;
   const enough = list.filter((p) => p.connected).length >= min;
@@ -138,6 +188,7 @@ function lobby() {
 const shown = new Set();
 
 function quit() {
+  stopLobbyAudio();
   sock?.send({ t: 'close' });
   sock?.close(); sock = null; room = null; run = null;
   try { sessionStorage.removeItem(SAVE); } catch {}
@@ -162,6 +213,7 @@ async function start() {
   run = makeRun();
   audio.sfx('start');
   audio.music(game.music || 'party');
+  stopLobbyAudio();
   const fn = mod.default || mod.host;
   try {
     await fn(run.ctx);
