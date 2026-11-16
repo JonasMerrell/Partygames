@@ -90,6 +90,8 @@ function lobby() {
   const enough = list.filter((p) => p.connected).length >= min;
   app.replaceChildren(h('div.lobby', { style: { '--accent': game?.color || '#7d8cff' } },
     h('div.lobby-head',
+      h('div.qr', h('img', { src: '/qr.svg?text=' + encodeURIComponent(`${location.origin}/?code=${room.code}`), alt: 'Scan to join' }),
+        h('p.sub', 'Scan to join')),
       h('div', h('p.sub', 'Join on your phone at'), h('div.url', joinUrl())),
       h('div', h('p.sub', 'Room code'), h('div.roomcode', room.code))),
     h('h2', `${game?.icon || ''} ${game?.name || ''}`),

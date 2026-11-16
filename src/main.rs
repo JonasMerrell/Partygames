@@ -137,6 +137,7 @@ async fn main() {
         .route("/sdk/widgets.js", asset!("widgets.js", "text/javascript"))
         .route("/sdk/audio.js", asset!("audio.js", "text/javascript"))
         .route("/healthz", get(|| async { "ok" }))
+        .route("/qr.svg", get(qr))
         .route("/ws", get(ws))
         .route("/api/games", get(games::list))
         .route(
@@ -172,4 +173,29 @@ async fn ws(
     }
     up.max_message_size(512 * 1024)
         .on_upgrade(move |sock| rooms::handle_socket(state, sock, addr))
+}
+
+#[derive(serde::Deserialize)]
+struct QrQuery {
+    text: String,
+}
+
+/// QR code for the join link on the lobby screen.
+async fn qr(axum::extract::Query(q): axum::extract::Query<QrQuery>) -> Response {
+    if q.text.len() > 300 {
+        return StatusCode::BAD_REQUEST.into_response();
+    }
+    match qrcode::QrCode::with_error_correction_level(q.text.as_bytes(), qrcode::EcLevel::M) {
+        Ok(code) => {
+            let svg = code
+                .render::<qrcode::render::svg::Color>()
+                .min_dimensions(256, 256)
+                .quiet_zone(true)
+                .dark_color(qrcode::render::svg::Color("#14111f"))
+                .light_color(qrcode::render::svg::Color("#ffffff"))
+                .build();
+            ([(header::CONTENT_TYPE, "image/svg+xml"), (header::CACHE_CONTROL, "max-age=3600")], svg).into_response()
+        }
+        Err(_) => StatusCode::BAD_REQUEST.into_response(),
+    }
 }

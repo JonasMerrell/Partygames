@@ -93,6 +93,9 @@ body.tv.offline::after { content: 'Reconnecting to server…'; position: fixed; 
 .lobby { display: flex; flex-direction: column; gap: 4vh; align-items: center; text-align: center; }
 .lobby-head { display: flex; gap: 6vw; flex-wrap: wrap; justify-content: center; align-items: flex-end; }
 .url { font-size: 2em; font-weight: 900; }
+.qr { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+.qr img { width: clamp(140px, 16vw, 260px); aspect-ratio: 1; border-radius: 14px; background: #fff; padding: 6px;
+  box-shadow: 0 8px 30px rgba(0,0,0,.35); }
 .roomcode { font-size: 5em; font-weight: 900; letter-spacing: .12em; color: var(--accent); line-height: 1; }
 .chips { display: flex; flex-wrap: wrap; gap: 14px; justify-content: center; min-height: 3em; max-width: 1200px; }
 .chip { background: color-mix(in srgb, var(--c) 22%, var(--card)); border: 3px solid var(--c); border-radius: 99px;
