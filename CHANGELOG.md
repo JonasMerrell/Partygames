@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- New game: Long Shot, a guess-and-bet trivia game for 2–12 players. Everyone guesses a number on a phone keypad, the guesses line up on a felt betting board with payout odds, and players bet free chips (and later their own points) on the guess closest without going over. 124 original questions; the final question pays double.
 - New game: Blanktastic, a family-friendly fill-in-the-blank card game for 3–10 players. A rotating Judge reads a prompt; everyone else plays the funniest answer card from the hand on their phone (or writes their own, twice a game), and the Judge picks a winner without knowing who played what. 117 prompts and 315 answers, all original; written cards pass a word filter.
 
 ## 0.5.0
