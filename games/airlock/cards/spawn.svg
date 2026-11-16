@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 420" width="300" height="420">
+<defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ff4f9a"/><stop offset="1" stop-color="#4a0f2c"/></linearGradient>
+<pattern id="s" width="22" height="22" patternUnits="userSpaceOnUse"><circle cx="4" cy="4" r="1.4" fill="#fff" opacity=".35"/><circle cx="15" cy="13" r=".9" fill="#fff" opacity=".25"/></pattern></defs>
+<rect x="4" y="4" width="292" height="412" rx="26" fill="url(#g)" stroke="#120f1d" stroke-width="8"/>
+<rect x="20" y="64" width="260" height="272" rx="18" fill="#14111f"/><rect x="20" y="64" width="260" height="272" rx="18" fill="url(#s)"/>
+<text x="150" y="46" text-anchor="middle" font-family="Nunito, ui-rounded, system-ui, sans-serif" font-weight="900" font-size="34" fill="#120f1d">SPAWN</text>
+<g><g transform="translate(150 205) scale(.78) translate(-150 -195)">
+  <path d="M70 250 C60 150 100 110 150 110 C200 110 240 150 230 250 C222 262 212 248 204 262 C196 276 186 252 176 268 C166 284 156 254 146 270 C136 286 126 254 116 268 C106 282 98 252 88 264 C80 272 72 262 70 250 Z" fill="#ff4f9a" stroke="#120f1d" stroke-width="7" stroke-linejoin="round"/>
+  <path d="M100 150 q20 -22 50 -22" stroke="#ffffff" stroke-width="8" fill="none" stroke-linecap="round" opacity=".45"/>
+  <circle cx="118" cy="182" r="18" fill="#fff" stroke="#120f1d" stroke-width="5"/><circle cx="121.6" cy="183.8" r="9" fill="#120f1d"/><circle cx="118.9" cy="178.4" r="2.88" fill="#fff"/><circle cx="152" cy="164" r="22" fill="#fff" stroke="#120f1d" stroke-width="5"/><circle cx="156.4" cy="166.2" r="11" fill="#120f1d"/><circle cx="153.1" cy="159.6" r="3.52" fill="#fff"/><circle cx="186" cy="188" r="16" fill="#fff" stroke="#120f1d" stroke-width="5"/><circle cx="189.2" cy="189.6" r="8" fill="#120f1d"/><circle cx="186.8" cy="184.8" r="2.56" fill="#fff"/></g></g>
+<rect x="20" y="350" width="260" height="48" rx="14" fill="#120f1d"/>
+<text x="150" y="384" text-anchor="middle" font-family="Nunito, ui-rounded, system-ui, sans-serif" font-weight="900" font-size="26" letter-spacing="6" fill="#ff4f9a">SWARM</text>
+</svg>

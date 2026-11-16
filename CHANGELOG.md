@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- New game: Airlock, a hidden-team game for 6–16 players in two real rooms. Everyone gets a secret card (Crew or Swarm, with one Captain and one Mimic; Scanner and Lurker from 8 players, a lone Drifter when the count is odd) and splits between Module A (the TV room) and Module B. On your phone you show your whole card or just your colour to someone in your module, back a chief (anyone backed by more than half the module takes over), and pop up what others show you with a one-tap "show mine back". When the timer runs out the chiefs send people through the airlock. After three rounds the cards flip: if the Mimic ended up with the Captain, the Swarm wins. The TV shows both modules, the chiefs, the round timer and the big reveal; the host picks Quick, Standard or Long rounds.
 - New game: Tall Tales, for 2–10 players. Strange-but-true facts with a blank: everyone writes a believable lie, then picks the truth from the list. 34 original facts, house lies fill in for small groups, and round 2 is worth double.
 - New game: Letter Forge, for 1–16 players. Everyone gets the same nine letter tiles and types as many words as they can in 75 seconds; tile values add up, and words nobody else found score double. Words are checked against a bundled SCOWL word list.
 - New game: Crowd Read, for 2–16 players. Answer a yes-or-no question in secret, then guess how many of the room said yes. Exact guesses score big; the last question is double.

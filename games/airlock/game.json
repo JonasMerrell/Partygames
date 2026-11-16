@@ -1,0 +1,9 @@
+{
+  "name": "Airlock",
+  "description": "Hidden teams in two rooms. Show your card to people you trust, elect a chief, and trade crew through the airlock. Will the Mimic reach the Captain?",
+  "icon": "🛰️",
+  "color": "#3fd6c6",
+  "minPlayers": 6,
+  "maxPlayers": 16,
+  "music": "think"
+}
