@@ -1,0 +1,9 @@
+{
+  "name": "Hollowmere",
+  "description": "Secretly back heirs in a creaky old mansion, move anyone's piece into traps, and walk your favourite out the front door before midnight.",
+  "icon": "🏚️",
+  "color": "#d4ac0d",
+  "minPlayers": 2,
+  "maxPlayers": 6,
+  "music": "tense"
+}

@@ -3,6 +3,9 @@
 ## Unreleased
 
 - New game: Sketchy Rumours, a drawing telephone game for 3–12 players. Everyone writes a rumour, notebooks pass round alternating draw and guess, then each owner flips through their notebook on the TV while everyone throws emoji reactions; the most-loved pages win Crowd favourites. Phones get a full drawing pad (14 colours, 3 brush sizes, fill bucket, eraser, undo, clear), an Inspire me button, and anything unfinished is sent automatically when time runs out. The first player picks Quick, Normal or Relaxed timers.
+- New game: Long Shot, a guess-and-bet trivia game for 2–12 players. Everyone guesses a number on a phone keypad, the guesses line up on a felt betting board with payout odds, and players bet free chips (and later their own points) on the guess closest without going over. 124 original questions; the final question pays double.
+- New game: Blanktastic, a family-friendly fill-in-the-blank card game for 3–10 players. A rotating Judge reads a prompt; everyone else plays the funniest answer card from the hand on their phone (or writes their own, twice a game), and the Judge picks a winner without knowing who played what. 117 prompts and 315 answers, all original; written cards pass a word filter.
+- New game: Hollowmere, a mansion inheritance board game for 2–6 players. Everyone secretly backs a few of twelve heirs, rolls two dice to move anyone around the house with a D-pad on their phone, and springs trap cards (chandelier, trapdoor, hungry orchid and more) on whoever is standing in a trap. The heir named in the will wins by walking out the front door; codicil cards rewrite the will, and at midnight the will is read.
 
 ## 0.5.0
 
