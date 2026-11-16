@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- New game: Split Decision, for 3–12 players. Each player finishes a tempting offer with a catch ("…BUT"), and the room votes deal or no deal. The closer the vote splits 50/50, the more the author scores; voters in the minority get a bravery bonus.
+- New game: Gallery of Lies, for 3–10 players. Everyone secretly draws a title, then writes fake museum placards for each other's art, and visitors try to pick the real one. Points for finding the truth and for every visitor your forgery fools.
+- New game: Odd One In, for 4–12 players. Everyone answers the same question except one player, who got a different one and has to blend in. Answers go up on the TV, the room talks, then votes.
+- New game: Fact or Fib, for 1–16 players (late joiners welcome). Twelve rapid true-or-false statements with speed bonuses and streaks, plus a one-line explanation after each.
 - New game: Peak Fever, a push-your-luck dice race for 2–6 players. Roll four dice, pair them into two sums and move your climbers up eleven mountain peaks (2 to 12). Keep rolling to climb higher or make camp to bank it; a roll with no usable pair is an avalanche that sweeps the turn away. Summit and make camp to plant a flag; three flags wins. The TV shows the range at dusk, the dice and the odds that the next roll is safe; the climbing player picks routes and pushes or camps on their phone, and everyone else can shout Push on / Make camp / Avalanche at them.
 
 ## 0.6.0

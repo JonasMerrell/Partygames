@@ -1,0 +1,9 @@
+{
+  "name": "Odd One In",
+  "description": "Everyone answers the same question, except one player who got a different one. Find them.",
+  "icon": "🕵️",
+  "color": "#5dd6c0",
+  "minPlayers": 4,
+  "maxPlayers": 12,
+  "music": "tense"
+}
