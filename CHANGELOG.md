@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- New game: Hollowmere, a mansion inheritance board game for 2–6 players. Everyone secretly backs a few of twelve heirs, rolls two dice to move anyone around the house with a D-pad on their phone, and springs trap cards (chandelier, trapdoor, hungry orchid and more) on whoever is standing in a trap. The heir named in the will wins by walking out the front door; codicil cards rewrite the will, and at midnight the will is read.
+
 ## 0.4.0
 
 - New game: Hard Sell, for 3–10 players. One player is the customer and picks a persona card; everyone else glues two word cards into a product, pitches it out loud, and the customer buys one. Sellers also vote a crowd favourite.
