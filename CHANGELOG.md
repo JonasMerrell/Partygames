@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- New game: Codswallop, a bluffing game for 3–12 players. The TV shows a bizarre word, an odd law, a strange fact or an obscure everyday thing (164 real ones, all checked). Everyone writes a convincing fake answer, the truth is shuffled in, and players vote for the real one: points for finding the truth and for every player your lie fools. Six prompts, the last two rounds worth double and triple.
 - New game: Saltwind Isles, an island-settling trading game for 2–6 players. Roll for cargo from a random hex archipelago, build bridges, huts and lighthouses from your phone's map, trade with friends or the harbours, dodge the squall, and race to 7 or 10 points. The TV shows the islands, dice and scores; turn timers and stand-ins keep it moving when someone wanders off.
 - New game: Hexam Night, for 2–10 players. Wizarding-world trivia (468 original questions about the Harry Potter books and films, mixed difficulty) hosted by Proctor Hollowell, a ghostly exam proctor. Get a question wrong and you go to detention, one of five deadly mini-games (Shifting Stairs, Counter-Curse, Candlelight, the Proctor's Brew, Oral Exam). The fallen keep playing as ghosts, then everyone races for the gate in the Midnight Escape, where ghosts who catch a living player come back to life.
 - New game: Split Decision, for 3–12 players. Each player finishes a tempting offer with a catch ("…BUT"), and the room votes deal or no deal. The closer the vote splits 50/50, the more the author scores; voters in the minority get a bravery bonus.
