@@ -233,6 +233,19 @@ body.tv .tag { font-size: .8em; padding: 4px 12px; }
 }
 .lobby.lobby-press-conference .roomcode { color: #facc15; background: #dc2626; padding: .06em .28em; border-radius: 6px; box-shadow: 0 6px 20px rgba(220,38,38,.45); }
 .lobby.lobby-press-conference button.big { background: #dc2626; color: #fff; text-transform: uppercase; letter-spacing: .06em; }
+/* 13. Tread Carefully — Pixel Tank Arena */
+.lobby.lobby-tread-carefully {
+  background: repeating-linear-gradient(0deg, #3f7a2a 0 8px, #4a8a32 8px 16px), #4a8a32;
+  color: #fffbe8; font-family: 'Press Start 2P', 'DotGothic16', ui-monospace, monospace; font-variant-ligatures: none;
+  border: 16px solid #6a6a76; box-shadow: inset 0 0 0 4px #1a1a1e, inset 0 0 60px rgba(0,0,0,.45);
+}
+.lobby.lobby-tread-carefully .sub, .lobby.lobby-tread-carefully .inspired { color: #fffbe8; text-shadow: 2px 2px 0 #1a1a1e; }
+.lobby.lobby-tread-carefully h2 { text-shadow: 3px 3px 0 #1a1a1e; }
+.lobby.lobby-tread-carefully .roomcode { color: #ffd84a; background: #1a1a1e; padding: .1em .3em; text-shadow: 4px 4px 0 #8a3a10; box-shadow: 6px 6px 0 #000; }
+.lobby.lobby-tread-carefully .url { background: #1a1a1e; padding: .1em .3em; }
+.lobby.lobby-tread-carefully button.big { background: #ffd84a; color: #1a1206; border-radius: 0; box-shadow: 6px 6px 0 #8a3a10; font-family: inherit; }
+.lobby.lobby-tread-carefully .chip { border-radius: 0; box-shadow: 4px 4px 0 #1a1a1e; }
+.lobby.lobby-tread-carefully button.ghost { background: #1a1a1e; color: #fffbe8; border-color: #000; border-radius: 0; box-shadow: 4px 4px 0 #000; }
 .lobby-head { display: flex; gap: 6vw; flex-wrap: wrap; justify-content: center; align-items: flex-end; }
 .url { font-size: 2em; font-weight: 900; }
 .qr { display: flex; flex-direction: column; align-items: center; gap: 6px; }

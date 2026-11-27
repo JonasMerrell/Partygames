@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- New game: Tread Carefully, 1–8 players plus computer tanks. A free-for-all pixel tank battle: drive with one thumb, drag to aim and tap to fire with the other. Bouncing shells, mines, breakable crates, rockets, a ricochet laser, homing missiles and five power-ups (each can be switched off). Four modes (Last Tank Standing, Frag Frenzy, Hold the Hill, Bank Shots Only) across six arenas: meadow, ice, lava, teleporters, a dark city and bushes to hide in.
+
 ## 0.15.0
 
 - New game: Bot Brawl, 2–8 players. Program four moves, then watch scrapyard robots shove, zap and tumble through a factory. Race for flags or survive the night shift.
