@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.16.0
 
 - New game: Tread Carefully, 1–8 players plus computer tanks. A free-for-all pixel tank battle: drive with one thumb, drag to aim and tap to fire with the other. Bouncing shells, mines, breakable crates, rockets, a ricochet laser, homing missiles and five power-ups (each can be switched off). Four modes (Last Tank Standing, Frag Frenzy, Hold the Hill, Bank Shots Only) across six arenas: meadow, ice, lava, teleporters, a dark city and bushes to hide in.
 
