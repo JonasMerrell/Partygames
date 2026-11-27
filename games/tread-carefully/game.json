@@ -1,0 +1,10 @@
+{
+  "name": "Tread Carefully",
+  "inspiredBy": "Wii Play Tanks",
+  "description": "Pixel tanks, bouncing shells and sneaky mines. Drive with one thumb, aim and fire with the other, and be the last tank rolling across six wild arenas.",
+  "icon": "💥",
+  "color": "#ffd84a",
+  "minPlayers": 1,
+  "maxPlayers": 8,
+  "music": "tense"
+}

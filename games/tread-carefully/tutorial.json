@@ -1,0 +1,61 @@
+[
+  {
+    "title": "Your phone is the controller",
+    "text": "Drag on the left pad to drive. On the right pad, drag to turn your turret and tap to fire.",
+    "flow": true,
+    "scene": [
+      { "phone": "Drive", "buttons": ["Drag anywhere"], "tap": 0, "label": "left thumb" },
+      { "phone": "Drag to aim · tap to fire", "buttons": ["Tap to fire"], "tap": 0, "label": "right thumb" },
+      { "tv": "💥", "sub": "your tank fires", "fx": "shake" }
+    ]
+  },
+  {
+    "title": "Bank your shots",
+    "text": "Shells bounce off walls once. Line up trick shots around corners. Your own shells can't hurt you.",
+    "scene": [
+      { "icon": "🧱", "label": "wall" },
+      { "icon": "↗️", "label": "bounce", "fx": "pulse" },
+      { "icon": "🎯", "label": "hit!", "fx": "pop" }
+    ]
+  },
+  {
+    "title": "Mines and crates",
+    "text": "Drop up to two mines from your phone. Explosions smash wooden crates and anything parked next to them.",
+    "scene": [
+      { "phone": "Drop mine (2)", "buttons": ["Drop mine"], "tap": 0 },
+      { "icon": "💣", "fx": "pulse" },
+      { "icon": "📦", "label": "crates break", "fx": "shake" }
+    ]
+  },
+  {
+    "title": "Grab pick-ups",
+    "text": "Boxes appear around the arena: rockets, spread shots, a ricochet laser, homing missiles, shields, turbo, cloaks and more.",
+    "scene": [
+      { "card": "Rockets", "color": "#e8483b" },
+      { "card": "Ricochet laser", "color": "#2ed3d3" },
+      { "card": "Shield", "color": "#22b8a8" },
+      { "card": "Ghost treads", "color": "#a78bfa", "fx": "float" }
+    ]
+  },
+  {
+    "title": "Four ways to play",
+    "text": "Last Tank Standing, Frag Frenzy, Hold the Hill or Bank Shots Only. Add computer tanks and switch pick-ups on or off before you start.",
+    "scene": [
+      { "tv": "Last Tank Standing", "sub": "one life a round" },
+      { "tv": "Frag Frenzy", "sub": "most knockouts" },
+      { "tv": "Hold the Hill", "sub": "sit in the zone" }
+    ]
+  },
+  {
+    "title": "Six wild arenas",
+    "text": "Slide on ice, dodge lava, ride teleporters, fight in the dark and hide in the bushes. Last tank rolling wins!",
+    "scene": [
+      { "icon": "❄️", "label": "ice" },
+      { "icon": "🌋", "label": "lava" },
+      { "icon": "🌀", "label": "teleporters" },
+      { "icon": "🌙", "label": "darkness" },
+      { "icon": "🌿", "label": "bushes" },
+      { "score": "WIN", "label": "last tank", "fx": "glow" }
+    ]
+  }
+]
